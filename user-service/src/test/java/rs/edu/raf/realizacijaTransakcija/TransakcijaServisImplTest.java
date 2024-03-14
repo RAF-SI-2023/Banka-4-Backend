@@ -1,5 +1,6 @@
 package rs.edu.raf.realizacijaTransakcija;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import rs.edu.raf.racun.model.DevizniRacun;
 import rs.edu.raf.racun.model.PravniRacun;
 import rs.edu.raf.racun.model.TekuciRacun;
 import rs.edu.raf.racun.servis.RacunServis;
+import rs.edu.raf.transakcija.dto.RealizacijaTransakcije;
 import rs.edu.raf.transakcija.mapper.DtoOriginalMapper;
 import rs.edu.raf.transakcija.model.PrenosSredstava;
 import rs.edu.raf.transakcija.model.Status;
@@ -18,6 +20,8 @@ import rs.edu.raf.transakcija.repository.*;
 import rs.edu.raf.transakcija.servis.impl.TransakcijaServisImpl;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,7 +82,7 @@ public class TransakcijaServisImplTest {
         ));
     }
 
-    private void initObject(){
+    private void initObject() {
         tekuciRacun = new TekuciRacun(
                 987654321L,// Broj računa
                 456L,          // ID vlasnika
@@ -95,6 +99,7 @@ public class TransakcijaServisImplTest {
         );
 
         pravniRacun = new PravniRacun(
+                1L, // ID
                 987654321L, // Broj računa
                 456L,       // ID Firme
                 new BigDecimal("1000.00"),   // Stanje
@@ -201,7 +206,7 @@ public class TransakcijaServisImplTest {
 
         transakcijaServis.neuspeoPrenos("TekuciRacun", prenosSredstava);
 
-        assertEquals(new BigDecimal("950.00"),tekuciRacun.getRaspolozivoStanje());  // provera da li se vratio novac
+        assertEquals(new BigDecimal("950.00"), tekuciRacun.getRaspolozivoStanje());  // provera da li se vratio novac
     }
 
     @Test
@@ -229,7 +234,7 @@ public class TransakcijaServisImplTest {
 
     //----- Pravni switch case -----//
     @Test
-    public void shouldHandleFailedTransferForPravniRacun(){
+    public void shouldHandleFailedTransferForPravniRacun() {
         initObject();
 
         long vremeIzvrsavanja = System.currentTimeMillis();
@@ -249,7 +254,7 @@ public class TransakcijaServisImplTest {
 
         transakcijaServis.neuspeoPrenos("PravniRacun", prenosSredstava);
 
-        assertEquals(new BigDecimal("950.00"),pravniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
+        assertEquals(new BigDecimal("950.00"), pravniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
     }
 
     @Test
@@ -260,7 +265,7 @@ public class TransakcijaServisImplTest {
     }
 
     @Test
-    public void shouldHandleFailedTransferForPravniRacunWithNullRacunPosiljaoca(){
+    public void shouldHandleFailedTransferForPravniRacunWithNullRacunPosiljaoca() {
         prenosSredstava = new PrenosSredstava(
                 1L,                 // ID
                 null,            // RacunPosiljaoca
@@ -277,7 +282,7 @@ public class TransakcijaServisImplTest {
 
     //----- Devizni switch case -----//
     @Test
-    public void shouldHandleFailedTransferForDevizniRacun(){
+    public void shouldHandleFailedTransferForDevizniRacun() {
         initObject();
 
         long vremeIzvrsavanja = System.currentTimeMillis();
@@ -297,19 +302,19 @@ public class TransakcijaServisImplTest {
 
         transakcijaServis.neuspeoPrenos("DevizniRacun", prenosSredstava);
 
-        assertEquals(new BigDecimal("950.00"),devizniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
+        assertEquals(new BigDecimal("950.00"), devizniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
 
     }
 
     @Test
-    public void shouldHandleFailedTransferForNonExistentDevizniRacun(){
+    public void shouldHandleFailedTransferForNonExistentDevizniRacun() {
         initObject();
         Mockito.when(racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(Mockito.anyLong())).thenReturn(null);
         assertThrows(NullPointerException.class, () -> transakcijaServis.neuspeoPrenos("DevizniRacun", prenosSredstava));
     }
 
     @Test
-    public void shouldHandleFailedTransferForDevizniRacunWithNullRacunPosiljaoca(){
+    public void shouldHandleFailedTransferForDevizniRacunWithNullRacunPosiljaoca() {
         prenosSredstava = new PrenosSredstava(
                 1L,                 // ID
                 null,            // RacunPosiljaoca
@@ -353,7 +358,7 @@ public class TransakcijaServisImplTest {
 
         transakcijaServis.neuspelaUplata("TekuciRacun", uplata);
 
-        assertEquals(new BigDecimal("1000.00"),tekuciRacun.getRaspolozivoStanje());  // provera da li se vratio novac
+        assertEquals(new BigDecimal("1000.00"), tekuciRacun.getRaspolozivoStanje());  // provera da li se vratio novac
     }
 
     @Test
@@ -385,7 +390,7 @@ public class TransakcijaServisImplTest {
 
     //----- Pravni switch case -----//
     @Test
-    public void shouldHandleFailedPaymentForPravniRacun(){
+    public void shouldHandleFailedPaymentForPravniRacun() {
         initObject();
 
         long vremeIzvrsavanja = System.currentTimeMillis() + 1000;
@@ -410,7 +415,7 @@ public class TransakcijaServisImplTest {
 
         transakcijaServis.neuspelaUplata("PravniRacun", uplata);
 
-        assertEquals(new BigDecimal("1000.00"),pravniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
+        assertEquals(new BigDecimal("1000.00"), pravniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
     }
 
     @Test
@@ -421,7 +426,7 @@ public class TransakcijaServisImplTest {
     }
 
     @Test
-    public void shouldHandleFailedPaymentForPravniRacunWithNullRacunPosiljaoca(){
+    public void shouldHandleFailedPaymentForPravniRacunWithNullRacunPosiljaoca() {
         uplata = new Uplata(
                 1L, // ID
                 null, // Broj računa pošiljaoca
@@ -442,7 +447,7 @@ public class TransakcijaServisImplTest {
 
     //----- Devizni switch case -----//
     @Test
-    public void shouldHandleFailedPaymentForDevizniRacun(){
+    public void shouldHandleFailedPaymentForDevizniRacun() {
         initObject();
 
         long vremeIzvrsavanja = System.currentTimeMillis() + 1000;
@@ -467,18 +472,18 @@ public class TransakcijaServisImplTest {
 
         transakcijaServis.neuspelaUplata("DevizniRacun", uplata);
 
-        assertEquals(new BigDecimal("1000.00"),devizniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
+        assertEquals(new BigDecimal("1000.00"), devizniRacun.getRaspolozivoStanje());  // provera da li se vratio novac
     }
 
     @Test
-    public void shouldHandleFailedPaymentForNonExistentDevizniRacun(){
+    public void shouldHandleFailedPaymentForNonExistentDevizniRacun() {
         initObject();
         Mockito.when(racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(Mockito.anyLong())).thenReturn(null);
         assertThrows(NullPointerException.class, () -> transakcijaServis.neuspelaUplata("DevizniRacun", uplata));
     }
 
     @Test
-    public void shouldHandleFailedPaymentForDevizniRacunWithNullRacunPosiljaoca(){
+    public void shouldHandleFailedPaymentForDevizniRacunWithNullRacunPosiljaoca() {
         uplata = new Uplata(
                 1L, // ID
                 null, // Broj računa pošiljaoca
@@ -495,4 +500,276 @@ public class TransakcijaServisImplTest {
 
         assertThrows(NullPointerException.class, () -> transakcijaServis.neuspelaUplata("DevizniRacun", uplata));
     }
+
+
+    /////////// realizacijaTransakcijaZaUplatu metoda
+
+    //----- Pravni switch case -----//
+    @Test
+    public void shouldNotExecuteTransactionsForPaymentWhenPosiljalacNotFoundPravniRacun() {
+        initObject();
+
+        List<Uplata> uplate = List.of(uplata);
+        uplata.setRacunPrimaoca(null);
+
+        Mockito.doReturn(uplate).when(transakcijaServis).vratiUplateUObradi();
+
+        Mockito.when(racunServis.nadjiVrstuRacuna(uplata.getRacunPosiljaoca())).thenReturn("PravniRacun");
+        Mockito.when(racunServis.nadjiVrstuRacuna(uplata.getRacunPrimaoca())).thenReturn("NepostojecaVrstaRacuna");
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(Mockito.anyLong())).thenReturn(pravniRacun);
+
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(pravniRacun.getId());
+        Mockito.doReturn(uplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+
+        transakcijaServis.realizacijaTransakcijaZaUplatu();
+
+        Mockito.verify(transakcijaServis, Mockito.times(1)).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+    }
+
+    @Test
+    public void shouldNotExecuteTransactionsForPaymentWhenPrimaocNotFoundPravniRacun() {
+        initObject();
+
+        List<Uplata> uplate = List.of(uplata);
+        uplata.setRacunPosiljaoca(null);
+
+        Mockito.doReturn(uplate).when(transakcijaServis).vratiUplateUObradi();
+
+        Mockito.when(racunServis.nadjiVrstuRacuna(uplata.getRacunPosiljaoca())).thenReturn("NepostojecaVrstaRacuna");
+        Mockito.when(racunServis.nadjiVrstuRacuna(uplata.getRacunPrimaoca())).thenReturn("PravniRacun");
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(Mockito.anyLong())).thenReturn(pravniRacun);
+
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(pravniRacun.getId());
+        Mockito.doReturn(uplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+
+        transakcijaServis.realizacijaTransakcijaZaUplatu();
+
+        Mockito.verify(transakcijaServis, Mockito.times(1)).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+    }
+
+    @Test
+    public void shouldNotExecuteTransactionsForPaymentWhenIsNotActivePravniRacunPosiljaoc() {
+        initObject();
+        pravniRacun.setAktivan(false);
+
+        PravniRacun racunPrimaoca = new PravniRacun(
+                2L, // ID
+                987654321L, // Broj računa
+                456L,       // ID Firme
+                new BigDecimal("1000.00"),   // Stanje
+                new BigDecimal("900.00"),    // Raspoloživo stanje
+                789L,       // ID zaposlenog
+                1234567890L,   // Datum kreiranja
+                1234567890L,   // Datum isteka
+                "EUR",     // Valuta
+                true      // Aktivan
+        );
+
+        List<Uplata> uplate = List.of(uplata);
+
+        Mockito.doReturn(uplate).when(transakcijaServis).vratiUplateUObradi();
+
+        Mockito.when(racunServis.nadjiVrstuRacuna(Mockito.anyLong())).thenReturn("PravniRacun");
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca())).thenReturn(pravniRacun);
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPrimaoca())).thenReturn(racunPrimaoca);
+
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(pravniRacun.getId());
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(racunPrimaoca.getId());
+
+        Mockito.doNothing().when(transakcijaServis).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+
+        transakcijaServis.realizacijaTransakcijaZaUplatu();
+
+        Mockito.verify(transakcijaServis, Mockito.times(0)).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.verify(transakcijaServis, Mockito.times(1)).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+    }
+
+    @Test
+    public void shouldNotExecuteTransactionsForPaymentWhenIsNotActivePravniRacunPrimaoc() {
+        initObject();
+
+        PravniRacun racunPrimaoca = new PravniRacun(
+                2L, // ID
+                987654321L, // Broj računa
+                456L,       // ID Firme
+                new BigDecimal("1000.00"),   // Stanje
+                new BigDecimal("900.00"),    // Raspoloživo stanje
+                789L,       // ID zaposlenog
+                1234567890L,   // Datum kreiranja
+                1234567890L,   // Datum isteka
+                "EUR",     // Valuta
+                false      // Aktivan
+        );
+
+        List<Uplata> uplate = List.of(uplata);
+
+        Mockito.doReturn(uplate).when(transakcijaServis).vratiUplateUObradi();
+
+        Mockito.when(racunServis.nadjiVrstuRacuna(Mockito.anyLong())).thenReturn("PravniRacun");
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca())).thenReturn(pravniRacun);
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPrimaoca())).thenReturn(racunPrimaoca);
+
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(pravniRacun.getId());
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(racunPrimaoca.getId());
+
+        Mockito.doNothing().when(transakcijaServis).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+
+        transakcijaServis.realizacijaTransakcijaZaUplatu();
+
+        Mockito.verify(transakcijaServis, Mockito.times(0)).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.verify(transakcijaServis, Mockito.times(1)).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+    }
+
+    @Test
+    public void shouldNotExecuteTransactionsForPaymentWhenIsCurrencyNotFoundPravniRacun() {
+        initObject();
+
+        PravniRacun racunPrimaoca = new PravniRacun(
+                2L, // ID
+                987654321L, // Broj računa
+                456L,       // ID Firme
+                new BigDecimal("1000.00"),   // Stanje
+                new BigDecimal("900.00"),    // Raspoloživo stanje
+                789L,       // ID zaposlenog
+                1234567890L,   // Datum kreiranja
+                1234567890L,   // Datum isteka
+                "USD,RSD",     // Valuta
+                true      // Aktivan
+        );
+
+        List<Uplata> uplate = List.of(uplata);
+
+        Mockito.doReturn(uplate).when(transakcijaServis).vratiUplateUObradi();
+
+        Mockito.when(racunServis.nadjiVrstuRacuna(Mockito.anyLong())).thenReturn("PravniRacun");
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca())).thenReturn(pravniRacun);
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPrimaoca())).thenReturn(racunPrimaoca);
+
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(pravniRacun.getId());
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(racunPrimaoca.getId());
+        Mockito.doReturn(false).when(transakcijaServis).proveriZajednickiElement(Mockito.any(), Mockito.any());
+        Mockito.doNothing().when(transakcijaServis).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+
+        transakcijaServis.realizacijaTransakcijaZaUplatu();
+
+        Mockito.verify(transakcijaServis, Mockito.times(0)).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.verify(transakcijaServis, Mockito.times(1)).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+    }
+
+    @Test
+    public void shouldNotExecuteTransactionsForPaymentWhenNotEnoughMoneyPravniRacun() {
+        initObject();
+
+        PravniRacun racunPrimaoca = new PravniRacun(
+                2L, // ID
+                987654321L, // Broj računa
+                456L,       // ID Firme
+                new BigDecimal("1000.00"),   // Stanje
+                new BigDecimal("900.00"),    // Raspoloživo stanje
+                789L,       // ID zaposlenog
+                1234567890L,   // Datum kreiranja
+                1234567890L,   // Datum isteka
+                "EUR",     // Valuta
+                true      // Aktivan
+        );
+
+        List<Uplata> uplate = List.of(uplata);
+        uplata.setIznos(new BigDecimal("300.00"));
+
+        Mockito.doReturn(uplate).when(transakcijaServis).vratiUplateUObradi();
+
+        Mockito.when(racunServis.nadjiVrstuRacuna(Mockito.anyLong())).thenReturn("PravniRacun");
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca())).thenReturn(pravniRacun);
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPrimaoca())).thenReturn(racunPrimaoca);
+
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(pravniRacun.getId());
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(racunPrimaoca.getId());
+        Mockito.doReturn(true).when(transakcijaServis).proveriZajednickiElement(Mockito.any(), Mockito.any());
+        Mockito.doReturn(uplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+
+
+        transakcijaServis.realizacijaTransakcijaZaUplatu();
+
+        Mockito.verify(transakcijaServis, Mockito.times(1)).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+        Mockito.verify(transakcijaServis, Mockito.times(0)).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+    }
+
+
+    @Test
+    public void shouldExecuteTransactionsForPaymentPravniRacun() {
+        initObject();
+
+        PravniRacun racunPrimaoca = new PravniRacun(
+                2L, // ID
+                9876543210L, // Broj računa
+                456L,       // ID Firme
+                new BigDecimal("1000.00"),   // Stanje
+                new BigDecimal("900.00"),    // Raspoloživo stanje
+                789L,       // ID zaposlenog
+                1234567890L,   // Datum kreiranja
+                1234567890L,   // Datum isteka
+                "EUR",     // Valuta
+                true      // Aktivan
+        );
+
+
+
+        PravniRacun promenjenRacunPosiljaoca = new PravniRacun(
+                1L, // ID
+                987654321L, // Broj računa
+                456L,       // ID Firme
+                new BigDecimal("900.00"),   // Stanje
+                new BigDecimal("900.00"),    // Raspoloživo stanje
+                789L,       // ID zaposlenog
+                1234567890L,   // Datum kreiranja
+                1234567890L,   // Datum isteka
+                "EUR",     // Valuta
+                true      // Aktivan
+        );
+
+        PravniRacun promenjenRacunPrimaoca = new PravniRacun(
+                2L, // ID
+                9876543210L, // Broj računa
+                456L,       // ID Firme
+                new BigDecimal("1100.00"),   // Stanje
+                new BigDecimal("1000.00"),    // Raspoloživo stanje
+                789L,       // ID zaposlenog
+                1234567890L,   // Datum kreiranja
+                1234567890L,   // Datum isteka
+                "EUR",     // Valuta
+                true      // Aktivan
+        );
+
+
+
+        List<Uplata> uplate = List.of(uplata);
+
+        Mockito.doReturn(uplate).when(transakcijaServis).vratiUplateUObradi();
+
+        Mockito.when(racunServis.nadjiVrstuRacuna(Mockito.anyLong())).thenReturn("PravniRacun");
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca())).thenReturn(pravniRacun);
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPrimaoca())).thenReturn(racunPrimaoca);
+
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(pravniRacun.getBrojRacuna())).thenReturn(pravniRacun);
+        Mockito.when(racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(racunPrimaoca.getBrojRacuna())).thenReturn(racunPrimaoca);
+        Mockito.when(pravniRacunRepository.save(pravniRacun)).thenReturn(promenjenRacunPosiljaoca);
+        Mockito.when(pravniRacunRepository.save(racunPrimaoca)).thenReturn(promenjenRacunPrimaoca);
+
+
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(pravniRacun.getId());
+        Mockito.doReturn(new BigDecimal("100.00")).when(transakcijaServis).izracunajRezervisanaSredstva(racunPrimaoca.getId());
+        Mockito.doReturn(true).when(transakcijaServis).proveriZajednickiElement(Mockito.any(), Mockito.any());
+        Mockito.doReturn(uplata).when(transakcijaServis).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+
+
+        transakcijaServis.realizacijaTransakcijaZaUplatu();
+
+//        Mockito.verify(transakcijaServis, Mockito.times(0)).neuspelaUplata(Mockito.anyString(), Mockito.any(Uplata.class));
+        Mockito.verify(transakcijaServis, Mockito.times(1)).promeniStatusUplate(Mockito.anyLong(), Mockito.anyString(), Mockito.anyLong());
+       assertEquals(new BigDecimal("900.00"), pravniRacun.getStanje());
+       assertEquals(new BigDecimal("1100.00"), racunPrimaoca.getStanje());
+
+
+    }
+
 }
