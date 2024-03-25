@@ -32,22 +32,31 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
+
+                            //pri uzimanju claimsa se proverava potpis
             username = jwtUtil.extractUsername(jwt);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
+                                    //uzimamo podatke usera da bismo ih nakon provere jwta stavili u obliku userDetails u UsernamePasswordAuthenticationToken i globalno mu pristupali iz servisa odnosno kao da je user ulogovan u nas servis
+                                    //takodje UserDetails je dostupan i u authentication objektu koji je nastao nakon provere jwt-a iz jwtFiltera
+                        //userDetails sadrzi podatke(email,password,prava) usera iz baze a pronasli smo ga preko username iz tokena
             UserDetails userDetails = this.userService.loadUserByUsername(username);
 
+                        //provera datum isteka
             if (jwtUtil.validateToken(jwt, userDetails)) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+
+                                    //setujemo da je ulogovan u nasem servisu odnosno globalno se moze pristupiti njegovim podacima
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
+        //nastavljamo lanac filtera
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }

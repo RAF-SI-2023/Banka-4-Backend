@@ -1,7 +1,7 @@
 package rs.edu.raf.security;
 
 public class Permisije {
-    public static final long listanje_korisnika = 0b1;
+    public static final long listanje_korisnika = 0b1;//binarni broj
     public static final long dodavanje_korisnika = 0b10;
     public static final long editovanje_korisnika = 0b100;
     public static final long deaktiviranje_korisnika = 0b1000;

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
+
 @Component
 public class RacunSeeder implements CommandLineRunner {
 
@@ -50,8 +52,10 @@ public class RacunSeeder implements CommandLineRunner {
         this.transakcijaServis = transakcijaServis;
     }
 
+    //automatski se izvrsava pri pokretanju spring boota za dodavanje entiteta u bazu
     @Override
     public void run(String... args) throws Exception {
+
 
 //        Korisnik korisnik = new Korisnik();
 //        korisnik.setIme("Petar");

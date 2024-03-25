@@ -49,14 +49,14 @@ public class KorisnikController {
     })
     public ResponseEntity<String> login(@RequestBody @Valid @Parameter(description = "Kredencijali za logovanje") LoginDto loginRequest) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+          authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (Exception e){
             e.printStackTrace();
             return ResponseEntity.status(401).build();
         }
-
         return ResponseEntity.ok(jwtUtil.generateToken(loginRequest.getUsername()));
     }
+
 
     @PostMapping("/add")
     @Operation(description = "Dodaj novog korisnika")
@@ -70,6 +70,7 @@ public class KorisnikController {
             @ApiResponse(responseCode = "200", description = "Uspesna promena korisnika"),
             @ApiResponse(responseCode = "403", description = "Mozes samo sebi da menjas podatke")
     })
+
     public ResponseEntity<KorisnikDTO> izmeniKorisnika(@RequestBody @Valid @Parameter(description = "Novi podaci o korisniku") IzmenaKorisnikaDTO izmenaKorisnikaDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = "";
@@ -79,6 +80,7 @@ public class KorisnikController {
             List<? extends GrantedAuthority> authorityList = new ArrayList<>(((UserDetails)authentication.getPrincipal()).getAuthorities());
             permission = Long.parseLong(authorityList.get(0).getAuthority());
         }
+
         if(username.equals(izmenaKorisnikaDTO.getEmail()) || (permission & Permisije.editovanje_korisnika) == Permisije.editovanje_korisnika)
             return new ResponseEntity<>(korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO),HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -108,11 +110,14 @@ public class KorisnikController {
         return new ResponseEntity<>(korisnikServis.nadjiAktivnogKorisnikaPoBrojuTelefona(telefon),HttpStatus.OK);
     }
 
+
     @PostMapping("/generate-login")
     @Operation(description = "Generisanje koda pri prvom logovanju korisnika")
     public ResponseEntity<String> generisiKod(@RequestBody @Valid @Parameter(description = "Podaci o korisniku") DodavanjeSifreDTO dodavanjeSifreDTO) {
         String kod = UUID.randomUUID().toString();
+
         KorisnikDTO korisnikDTO = korisnikServis.nadjiAktivnogKorisnikaPoEmail(dodavanjeSifreDTO.getEmail());
+
         mailServis.posaljiMailZaRegistraciju(korisnikDTO, kod);
         kodServis.dodajKod(dodavanjeSifreDTO.getEmail(),kod,new Date(System.currentTimeMillis() + 1000 * 60 * 15).getTime(),false);
         return new ResponseEntity<>("Kod je poslat",HttpStatus.OK);
@@ -148,6 +153,7 @@ public class KorisnikController {
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             username = ((UserDetails) authentication.getPrincipal()).getUsername();
         }
+
         return new ResponseEntity<>(korisnikServis.promeniSifruKorisnika(username,izmenaSifreDto),HttpStatus.OK);
     }
 

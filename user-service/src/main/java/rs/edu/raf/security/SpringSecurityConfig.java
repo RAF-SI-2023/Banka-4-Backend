@@ -32,7 +32,7 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+        return config.getAuthenticationManager();//defaultni AuthenticationManager
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -40,6 +40,13 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
 //                .cors()
 //                .and()
                 .authorizeRequests(authorize -> authorize
+
+                        //vazi za sve putanje u /korisnik/ ali samo sa GET metodom
+                        //.requestMatchers(HttpMethod.GET,"/korisnik/**")
+
+                        //vazi za sve putanje u /korisnik/ svih metoda
+                        //.requestMatchers("/korisnik/**")
+
                         .requestMatchers("/swagger-ui/**","/api-docs/**","/swagger-resources/**").permitAll()
                         .requestMatchers("/korisnik/login","/korisnik/generate-login","/korisnik/generate-reset","/korisnik/verifikacija","/korisnik/reset-password", "/korisnik/id/**", "/korisnik/addAccount/**").permitAll()
                         .requestMatchers(HttpMethod.PUT,"/korisnik","/korisnik/change-password").authenticated()

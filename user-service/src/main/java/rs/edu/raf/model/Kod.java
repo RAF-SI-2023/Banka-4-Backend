@@ -16,7 +16,11 @@ public class Kod {
     private Long id;
     private String email;
     private String code;
+
+    //postavljen na datum izdavanja koda preko System.currentTimeMillis+15minuta_kao_milisec
+    //istek se uporedjuje preko expirationDate>=System.currentTimeMillis
     private Long expirationDate;
+
     private boolean reset;
 
     public Kod(String email, String code, Long expirationDate, boolean reset) {

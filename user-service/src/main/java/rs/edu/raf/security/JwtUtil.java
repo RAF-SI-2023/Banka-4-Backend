@@ -25,6 +25,8 @@ public class JwtUtil {
     private RadnikRepository radnikRepository;
 
     public  Claims extractAllClaims(String token) {
+                            //setujemo isti KEY za potpis kao pri izdavanju jer se pri uzimanju claimsa ponovo potpisuje
+                            //da bi se proverilo da li je claims menjan
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
@@ -63,6 +65,7 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token, UserDetails user) {
+                //vec smo prethodno proverili username!!!
         return (user.getUsername().equals(extractUsername(token)) && !isTokenExpired(token));
     }
 }

@@ -65,6 +65,9 @@ public class KorisnikServisImpl implements KorisnikServis {
     public boolean registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
 
         if(kodServis.dobarKod(registrujKorisnikDTO.getEmail(),registrujKorisnikDTO.getCode(),false)) {
+
+                                                //DtoToNekiEntity ili NoviDtoToNekiEntity radimo kada ocemo da vrsimo neke operacije nad bazom za konkretan Dto sa fronta
+                                                //NekiEntityToDto kada saljemo frontu
             Korisnik korisnik = korisnikMapper.registrujKorisnikDtoToKorisnik(registrujKorisnikDTO);
             if(korisnik == null){
                 Radnik radnik = korisnikMapper.registrujRadnikDtoToRadnik(registrujKorisnikDTO);
@@ -75,6 +78,8 @@ public class KorisnikServisImpl implements KorisnikServis {
 
             }
             if(korisnik.getPovezaniRacuni().contains(registrujKorisnikDTO.getBrojRacuna())) {
+                                //samo azurira korisnika jer ga je vec dodao radnik u bazu
+                                //sifra mora biti po Bcrypt hashovana jer se tako cuva u bazi
                 korisnikRepository.save(korisnik);
                 return true;
             }
