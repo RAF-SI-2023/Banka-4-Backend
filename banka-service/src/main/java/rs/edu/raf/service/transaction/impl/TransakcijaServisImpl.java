@@ -1,6 +1,7 @@
 package rs.edu.raf.service.transaction.impl;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -45,8 +46,8 @@ public class TransakcijaServisImpl implements TransakcijaServis {
 
     private final RacunServis racunServis;
 
-    private SimpMessagingTemplate messagingTemplate;
-
+    @Autowired
+    private final SimpMessagingTemplate messagingTemplate;
 
     /////////////////////////////////////////////////////////////////////////
 
