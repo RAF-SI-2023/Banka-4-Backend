@@ -14,9 +14,9 @@ import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 //  - @ConfigurationParameter - koristimo ovu anotaciju da naznacimo u kom paketu se nalazi Glue kod (obicno je to ovaj
 //    isti paket)
 
-@Suite
-@IncludeEngines("cucumber")
-@SelectClasspathResource("features/stocks/integration/controller")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.stocks.integration.controller")
+//@Suite
+//@IncludeEngines("cucumber")
+//@SelectClasspathResource("features/stocks/integration/controller")
+//@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.stocks.integration.controller")
 public class StocksControllerTests {
 }
