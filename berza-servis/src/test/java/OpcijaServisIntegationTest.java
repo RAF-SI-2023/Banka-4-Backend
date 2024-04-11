@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 //@RunWith(MockitoJUnitRunner.class)
 //@PrepareForTest(FinansijaApiUtil.class)
-public class OpcijaServisIntegationTest {
+public class OpcijaServisUnitTest {
 
     //@InjectMocks
     //FinansijaApiUtil finansijaApiUtil;
@@ -240,7 +240,7 @@ public class OpcijaServisIntegationTest {
         finansijaApiUtil.setHttpClient(httpClientMock);
         finansijaApiUtil.setResponse(responseMock);
         finansijaApiUtil.setHttpGet(httpGet);
-                                                         //nebitno je sta se prosledjuje ali bitno je da je 1 parametar da bi se test izvrsio jednom
+        //nebitno je sta se prosledjuje ali bitno je da je 1 parametar da bi se test izvrsio jednom
         List<OptionYahooApiMap> result = finansijaApiUtil.fetchOptionsFromYahooApi(Arrays.asList("AAPL"));
         OptionYahooApiMap firstOption = result.get(0);
 
@@ -325,7 +325,7 @@ public class OpcijaServisIntegationTest {
         //najbitniji je poslednji when jer on odredjuje sta ce biti ulazni parametri u testnu metodu
         when(entity.getContent()).thenReturn(mockInputStream);
 
-       List<String> result = finansijaApiUtil.fetchTickerNames();
+        List<String> result = finansijaApiUtil.fetchTickerNames();
         assertNotNull("ticker objekat ne sme biti null",result.get(0));
         assertEquals("A",result.get(0));
 
@@ -357,58 +357,58 @@ public class OpcijaServisIntegationTest {
                 "}";
 
         String json2 =  "{" +
-                        "\"Symbol\": \"AAPL\"," +
-                        "\"AssetType\": \"Common Stock\"," +
-                        "\"Name\": \"Apple Inc\"," +
-                        "\"Description\": \"Apple Inc. is an American multinational technology company that specializes in consumer electronics, computer software, and online services. Apple is the world's largest technology company by revenue (totalling $274.5 billion in 2020) and, since January 2021, the world's most valuable company. As of 2021, Apple is the world's fourth-largest PC vendor by unit sales, and fourth-largest smartphone manufacturer. It is one of the Big Five American information technology companies, along with Amazon, Google, Microsoft, and Facebook.\"," +
-                        "\"CIK\": \"320193\"," +
-                        "\"Exchange\": \"NASDAQ\"," +
-                        "\"Currency\": \"USD\"," +
-                        "\"Country\": \"USA\"," +
-                        "\"Sector\": \"TECHNOLOGY\"," +
-                        "\"Industry\": \"ELECTRONIC COMPUTERS\"," +
-                        "\"Address\": \"ONE INFINITE LOOP, CUPERTINO, CA, US\"," +
-                        "\"FiscalYearEnd\": \"September\"," +
-                        "\"LatestQuarter\": \"2023-12-31\"," +
-                        "\"MarketCapitalization\": \"2660330373000\"," +
-                        "\"EBITDA\": \"130108998000\"," +
-                        "\"PERatio\": \"26.83\"," +
-                        "\"PEGRatio\": \"2.12\"," +
-                        "\"BookValue\": \"4.793\"," +
-                        "\"DividendPerShare\": \"0.95\"," +
-                        "\"DividendYield\": \"0.0056\"," +
-                        "\"EPS\": \"6.42\"," +
-                        "\"RevenuePerShareTTM\": \"24.65\"," +
-                        "\"ProfitMargin\": \"0.262\"," +
-                        "\"OperatingMarginTTM\": \"0.338\"," +
-                        "\"ReturnOnAssetsTTM\": \"0.212\"," +
-                        "\"ReturnOnEquityTTM\": \"1.543\"," +
-                        "\"RevenueTTM\": \"385706000000\"," +
-                        "\"GrossProfitTTM\": \"170782000000\"," +
-                        "\"DilutedEPSTTM\": \"6.42\"," +
-                        "\"QuarterlyEarningsGrowthYOY\": \"0.16\"," +
-                        "\"QuarterlyRevenueGrowthYOY\": \"0.021\"," +
-                        "\"AnalystTargetPrice\": \"201.28\"," +
-                        "\"AnalystRatingStrongBuy\": \"10\"," +
-                        "\"AnalystRatingBuy\": \"17\"," +
-                        "\"AnalystRatingHold\": \"12\"," +
-                        "\"AnalystRatingSell\": \"2\"," +
-                        "\"AnalystRatingStrongSell\": \"0\"," +
-                        "\"TrailingPE\": \"26.83\"," +
-                        "\"ForwardPE\": \"26.39\"," +
-                        "\"PriceToSalesRatioTTM\": \"6.9\"," +
-                        "\"PriceToBookRatio\": \"35.9\"," +
-                        "\"EVToRevenue\": \"6.99\"," +
-                        "\"EVToEBITDA\": \"20.19\"," +
-                        "\"Beta\": \"1.289\"," +
-                        "\"52WeekHigh\": \"199.37\"," +
-                        "\"52WeekLow\": \"155.15\"," +
-                        "\"50DayMovingAverage\": \"182.33\"," +
-                        "\"200DayMovingAverage\": \"183.71\"," +
-                        "\"SharesOutstanding\": \"15441900000\"," +
-                        "\"DividendDate\": \"2024-02-15\"," +
-                        "\"ExDividendDate\": \"2024-02-09\"" +
-                        "}";
+                "\"Symbol\": \"AAPL\"," +
+                "\"AssetType\": \"Common Stock\"," +
+                "\"Name\": \"Apple Inc\"," +
+                "\"Description\": \"Apple Inc. is an American multinational technology company that specializes in consumer electronics, computer software, and online services. Apple is the world's largest technology company by revenue (totalling $274.5 billion in 2020) and, since January 2021, the world's most valuable company. As of 2021, Apple is the world's fourth-largest PC vendor by unit sales, and fourth-largest smartphone manufacturer. It is one of the Big Five American information technology companies, along with Amazon, Google, Microsoft, and Facebook.\"," +
+                "\"CIK\": \"320193\"," +
+                "\"Exchange\": \"NASDAQ\"," +
+                "\"Currency\": \"USD\"," +
+                "\"Country\": \"USA\"," +
+                "\"Sector\": \"TECHNOLOGY\"," +
+                "\"Industry\": \"ELECTRONIC COMPUTERS\"," +
+                "\"Address\": \"ONE INFINITE LOOP, CUPERTINO, CA, US\"," +
+                "\"FiscalYearEnd\": \"September\"," +
+                "\"LatestQuarter\": \"2023-12-31\"," +
+                "\"MarketCapitalization\": \"2660330373000\"," +
+                "\"EBITDA\": \"130108998000\"," +
+                "\"PERatio\": \"26.83\"," +
+                "\"PEGRatio\": \"2.12\"," +
+                "\"BookValue\": \"4.793\"," +
+                "\"DividendPerShare\": \"0.95\"," +
+                "\"DividendYield\": \"0.0056\"," +
+                "\"EPS\": \"6.42\"," +
+                "\"RevenuePerShareTTM\": \"24.65\"," +
+                "\"ProfitMargin\": \"0.262\"," +
+                "\"OperatingMarginTTM\": \"0.338\"," +
+                "\"ReturnOnAssetsTTM\": \"0.212\"," +
+                "\"ReturnOnEquityTTM\": \"1.543\"," +
+                "\"RevenueTTM\": \"385706000000\"," +
+                "\"GrossProfitTTM\": \"170782000000\"," +
+                "\"DilutedEPSTTM\": \"6.42\"," +
+                "\"QuarterlyEarningsGrowthYOY\": \"0.16\"," +
+                "\"QuarterlyRevenueGrowthYOY\": \"0.021\"," +
+                "\"AnalystTargetPrice\": \"201.28\"," +
+                "\"AnalystRatingStrongBuy\": \"10\"," +
+                "\"AnalystRatingBuy\": \"17\"," +
+                "\"AnalystRatingHold\": \"12\"," +
+                "\"AnalystRatingSell\": \"2\"," +
+                "\"AnalystRatingStrongSell\": \"0\"," +
+                "\"TrailingPE\": \"26.83\"," +
+                "\"ForwardPE\": \"26.39\"," +
+                "\"PriceToSalesRatioTTM\": \"6.9\"," +
+                "\"PriceToBookRatio\": \"35.9\"," +
+                "\"EVToRevenue\": \"6.99\"," +
+                "\"EVToEBITDA\": \"20.19\"," +
+                "\"Beta\": \"1.289\"," +
+                "\"52WeekHigh\": \"199.37\"," +
+                "\"52WeekLow\": \"155.15\"," +
+                "\"50DayMovingAverage\": \"182.33\"," +
+                "\"200DayMovingAverage\": \"183.71\"," +
+                "\"SharesOutstanding\": \"15441900000\"," +
+                "\"DividendDate\": \"2024-02-15\"," +
+                "\"ExDividendDate\": \"2024-02-09\"" +
+                "}";
 
         FinansijaApiUtil finansijaApiUtil = new FinansijaApiUtil();
         finansijaApiUtil.setJsonParserUtil(new JsonParserUtil());
@@ -483,75 +483,6 @@ public class OpcijaServisIntegationTest {
         //ti moras znati unapred koji je ispravan rezultat za testni input da bi mogao da proveris da li testna funkcija radi ispravno
         assertTrue(result == 0);
 
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-
-    @Test//https://query1.finance.yahoo.com/v6/finance/options/AAPL
-    public void testIntegrationYahooApi(){
-        RestAssured.baseURI = "https://query1.finance.yahoo.com";
-
-        given()
-                .when()
-                .get("/v6/finance/options/AAPL")
-                .then()
-                .statusCode(200)
-                .assertThat()
-                .body(not(isEmpty()))
-                .body("optionChain", notNullValue());
-    }
-
-    @Test//https://api.polygon.io/v3/reference/tickers?active=true&apiKey=sD9RXYv12OWqAVg8ovsgtVaI91l988Op
-    public void testIntegrationPolygonApi(){
-
-        RestAssured.baseURI = "https://api.polygon.io";
-
-        given()
-                .queryParam("active", "true")
-                .queryParam("apiKey", "sD9RXYv12OWqAVg8ovsgtVaI91l988Op")
-                .when()
-                .get("/v3/reference/tickers")
-                .then()
-                .statusCode(200)
-                .assertThat()
-                .body(not(isEmpty()))
-                .body("results", notNullValue());//samo na prvoj dubini polja objekta
-    }
-
-    @Test//https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=AAPL&apikey=A9OROHDG6WFRDS62
-    public void testIntegrationAlphaVantage1(){
-
-        RestAssured.baseURI = "https://www.alphavantage.co";
-
-        given()
-                .queryParam("function", "GLOBAL_QUOTE")
-                .queryParam("symbol", "AAPL")
-                .queryParam("apikey", "A9OROHDG6WFRDS62")
-                .when()
-                .get("/query")
-                .then()
-                .statusCode(200)
-                .body(not(isEmpty()))
-                .body("'Global Quote'", notNullValue());
-    }
-    @Test//https://www.alphavantage.co/query?function=OVERVIEW&symbol=AAPL&apikey=A9OROHDG6WFRDS62
-    public void testIntegrationAlphaVantage2(){
-
-        RestAssured.baseURI = "https://www.alphavantage.co";
-
-        // Slanje GET zahteva na odgovarajući endpoint sa query parametrima
-        given()
-                .queryParam("function", "OVERVIEW")
-                .queryParam("symbol", "AAPL")
-                .queryParam("apikey", "A9OROHDG6WFRDS62")
-                .when()
-                .get("/query")
-                .then()
-                .statusCode(200)
-                .body(not(isEmpty()))
-                .body("Name", notNullValue())
-                .body("Symbol", notNullValue())
-                .body("SharesOutstanding", notNullValue());
     }
 }
 

@@ -31,7 +31,14 @@ public class OpcijaMapper {
     public Opcija novaOpcijaDtoToOpcija(NovaOpcijaDto novaOpcijaDto){
 
         Opcija opcija = new Opcija();
-
+        opcija.setTicker(novaOpcijaDto.getTicker());
+        opcija.setContractSymbol(novaOpcijaDto.getContractSymbol());
+        opcija.setStrikePrice(novaOpcijaDto.getStrikePrice());
+        opcija.setImpliedVolatility(novaOpcijaDto.getImpliedVolatility());
+        opcija.setOpenInterest(novaOpcijaDto.getOpenInterest());
+        opcija.setSettlementDate(novaOpcijaDto.getSettlementDate());
+        opcija.setOptionType(novaOpcijaDto.getOptionType());
+        opcija.setBrojUgovora(novaOpcijaDto.getBrojUgovora());
 
         return opcija;
     }
@@ -98,24 +105,48 @@ public class OpcijaMapper {
         if(opcija.getDatumIstekaVazenja().isBefore(trenutnoVreme)) {
             opcija.setOpcijaStanje(OpcijaStanje.EXPIRED);
             //opcija.setIstaIstorijaGroupId();
-        }else if(akcija != null){
-            OpcijaStanje opcijaStanje = null;
-
-            if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
-                opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-            else if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
-                opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
-
-            if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
-                opcijaStanje = OpcijaStanje.IN_THE_MONEY;
-            else if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
-                opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
-
-            if(opcijaStanje == null)
-                opcijaStanje = OpcijaStanje.AT_THE_MONEY;
-
-            opcija.setOpcijaStanje(opcijaStanje);
         }
+
+        //defaultna
+        if(akcija == null) {
+            //neke defaultne vrednosti za akciju jer nije pronadjen globalquote odnosno akcija za tickera te opcije
+            //opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
+            akcija = new GlobalQuote();
+            akcija.setPrice(100.0);
+            akcija.setVolume(100);
+            akcija.setPreviousClose(100);
+            akcija.setOpen(100);
+            akcija.setHigh(100);
+            akcija.setLow(100);
+            akcija.setTicker(opcija.getTicker());
+            akcija.setSharesOutstanding(Long.valueOf(10000000));
+            akcija.setChangePercent("3%");
+            akcija.setVolume(71160138);
+            akcija.setChange(100);
+
+            globalQuoteRepository.save(akcija);
+        }
+
+        OpcijaStanje opcijaStanje = null;
+
+        if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            opcijaStanje = OpcijaStanje.IN_THE_MONEY;
+        else if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.PUT))
+            opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
+
+        if(opcija.getStrikePrice() < akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            opcijaStanje = OpcijaStanje.IN_THE_MONEY;
+        else if(opcija.getStrikePrice() > akcija.getPrice() && opcija.getOptionType().equals(OpcijaTip.CALL))
+            opcijaStanje = OpcijaStanje.OUT_OF_MONEY;
+
+        if(opcijaStanje == null)
+            opcijaStanje = OpcijaStanje.AT_THE_MONEY;
+
+        opcija.setOpcijaStanje(opcijaStanje);
+
+
+        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
+
 
         //POTREBNI PARAMETRI ZA IZVEDENE VREDNOSTI
         //trenutnaCenaOsnovneAkcijeKompanije//na alphavantage
@@ -124,7 +155,6 @@ public class OpcijaMapper {
         //expiration
         //ukupanBrojIzdatihAkcijaKompanije//na alphavantage
 
-        opcija.izracunajIzvedeneVrednosti(izvedeneVrednostiUtil,akcija);
 
         return opcija;
     }

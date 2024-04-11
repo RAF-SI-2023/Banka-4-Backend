@@ -28,7 +28,7 @@ public class FinansijaApiUtil {
     @Autowired
     private JsonParserUtil jsonParserUtil;
 
-    //OBAVEZNO OVDE GLOBALNO REFERENCIRANJE ODNOSNO IZVAN TESTIRANE METODE DA BISMO MOGLI DA IM SERUJEMO MOCK
+    //OBAVEZNO OVDE GLOBALNO REFERENCIRANJE ODNOSNO IZVAN TESTIRANE METODE DA BISMO MOGLI DA IM SETUJEMO MOCK
     //OBAVEZNO OVDE INSTANCIRANJA AKO POSTOJE ZBOG MOCKOVANJA
     //JER AKO SU U METODI ONDA CE BITI MOCK OVERIDOVAN PA NECE RADITI when(mock)..thenReturn..
     CloseableHttpResponse response;
@@ -100,11 +100,11 @@ public class FinansijaApiUtil {
     public List<GlobalQuoteApiMap> fetchGlobalQuote(List<String> tickerNames) throws IOException {
 
         List<GlobalQuoteApiMap> allGlobalQuoteApiMap = new ArrayList<>();                                                       //K2S940RX1TZYB0T1
-                                                                                                                                //4D528NVJMHJ6UR1X
+        //4D528NVJMHJ6UR1X
         for(String ticker : tickerNames) {                                                                                      //A9OROHDG6WFRDS62
-            if (httpGet == null) {//ako ne radimo test                                                                                              //PYBCOV2EOC716Q0Q
-                httpGet = new HttpGet("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=FVHPQRIRKBYHSTJU");
-                httpGetAlpha = new HttpGet("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + ticker + "&apikey=FVHPQRIRKBYHSTJU");
+            if (httpGet == null) {//ako ne radimo test                                                                          //PYBCOV2EOC716Q0Q
+                httpGet = new HttpGet("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + ticker + "&apikey=A9OROHDG6WFRDS62");
+                httpGetAlpha = new HttpGet("https://www.alphavantage.co/query?function=OVERVIEW&symbol=" + ticker + "&apikey=A9OROHDG6WFRDS62");
                 response = httpClient.execute(httpGet);
                 responseAlpha = httpClient.execute(httpGetAlpha);
                 httpGet = null;

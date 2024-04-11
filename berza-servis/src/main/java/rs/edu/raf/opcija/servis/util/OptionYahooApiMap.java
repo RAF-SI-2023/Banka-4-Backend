@@ -56,6 +56,6 @@ public class OptionYahooApiMap {
 
     private Long volume;
 
-    private Double openInterest;
+    private Long openInterest;
 
 }

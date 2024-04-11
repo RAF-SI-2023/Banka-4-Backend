@@ -30,9 +30,9 @@ public class AppConfig {
 
 
     //in memory cache
-   @Bean
-   @Scope("singleton")
-   public CacheManager cacheManager() {
+    @Bean
+    @Scope("singleton")
+    public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager("opcijeCache");
     }
 

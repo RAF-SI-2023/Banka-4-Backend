@@ -20,9 +20,7 @@ public interface OpcijaRepository extends JpaRepository<Opcija,Long> {
     List<Opcija> findByStockAndDateAndStrike(@Param("stockSymbol") String ticker,
                                              @Param("expiryDate") LocalDateTime expiryDate,
                                              @Param("strikePrice") Double strikePrice);
-                                             //@Param("pageOffset") int pageOffset);
-
-
+    //@Param("pageOffset") int pageOffset);
 
 
 }

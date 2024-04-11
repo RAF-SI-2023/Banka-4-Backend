@@ -13,9 +13,9 @@ public class IzvedeneVrednostiUtil {
     //odnosno iako trenutna cena akcije menja vrednost, cena akcije u opciji ostaje nepromenjena
 
     public double calculateBlackScholesValue(double trenutnaCenaOsnovneAkcijeKompanije,
-                                                    double strikePrice,
-                                                    double impliedVolatility,
-                                                    long expiration) {
+                                             double strikePrice,
+                                             double impliedVolatility,
+                                             long expiration) {
         double S = trenutnaCenaOsnovneAkcijeKompanije;
         double K = strikePrice;
         double r = 0.05; //pretpostavljena vrednost bezrizicne kamatne stope
@@ -89,7 +89,7 @@ public class IzvedeneVrednostiUtil {
     }
 
 
-                        //i za call i za put opcije
+    //i za call i za put opcije
     /*public double proceniVrednostOpcije(
                                         //stvarna trenutna trzisna cena akcije koja se menja u svakom trenutku
                                         double trenutnaCenaOsnovneAkcije,

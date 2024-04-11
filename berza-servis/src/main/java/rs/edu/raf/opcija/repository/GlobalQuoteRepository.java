@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface GlobalQuoteRepository extends JpaRepository<GlobalQuote,Long> {
     Optional<GlobalQuote> findFirstByTicker(String ticker);
+    Optional<GlobalQuote> findByTicker(String ticker);
+
 }

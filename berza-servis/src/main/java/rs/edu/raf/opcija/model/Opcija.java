@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 
-            //opcija je ugovor za vise akcija odnosno 1 opcija N akcija kompanije
+//opcija je ugovor za vise akcija odnosno 1 opcija N akcija kompanije
 
 //akcija je deo vlasnistva nad kompanijom
 //cena akcije se moze menjati vremenom
@@ -26,10 +26,10 @@ import java.util.Set;
 //profit od akcije moze biti kapitalni dobitak(prodaja akcija) ili dividende(profit firme koji se deli akcionarima)
 
 
-            //i sama opcija se kupuje,prodaje ili iskoriscava
-            //kada se opcija kupi to znaci da se broj akcija te opcije kupuje ili prodaje bilo kada do odredjenog datuma isteka opcije po dogovorenoj ceni
-            //ako je put opcija onda vlasnik put opcije mora imati u trenutku izvrsenja put opcije akcije koje prodaje po unapred dogovorenoj ceni
-            //ako je call opcija onda vlasnik call opcije mora platiti akcije u trenutku izvrsenja call opcije
+//i sama opcija se kupuje,prodaje ili iskoriscava
+//kada se opcija kupi to znaci da se broj akcija te opcije kupuje ili prodaje bilo kada do odredjenog datuma isteka opcije po dogovorenoj ceni
+//ako je put opcija onda vlasnik put opcije mora imati u trenutku izvrsenja put opcije akcije koje prodaje po unapred dogovorenoj ceni
+//ako je call opcija onda vlasnik call opcije mora platiti akcije u trenutku izvrsenja call opcije
 
 //call opcija treba da se izvrsava kada stvarna cena akcija poraste iznad cene izvrsenja akcija call opcije,pa kada se izvrsi onda se vlasnik da kupi akcije po nizoj ceni call opcije pa ce odmah da ih proda po stvarnoj
 public class Opcija{
@@ -56,7 +56,7 @@ public class Opcija{
     private double strikePrice;//cena izvrsenja opcije odnosno cena akcija opcije koja je dogovorena i nezavisna je od trenutnaCenaOsnovneAkcije
 
     private double impliedVolatility;
-    private Double openInterest;//koliko ih je zainteresovano za ovu opciju
+    private double openInterest;//koliko ih je zainteresovano za ovu opciju
     private LocalDateTime settlementDate;
 
     @Column(nullable = false)
@@ -107,9 +107,9 @@ public class Opcija{
         validateRequiredDataBeforeDeriving(this,validator);
 
         vrednostOpcijeBlackScholes = izvedeneVrednostiUtil.calculateBlackScholesValue(globalQuote.getPrice(),
-                                                                                            strikePrice,
-                                                                                            impliedVolatility,
-                                                                                            expiration);
+                strikePrice,
+                impliedVolatility,
+                expiration);
 
         marketCap = globalQuote.getPrice()*globalQuote.getSharesOutstanding();
         theta =  (optionType.equals(OpcijaTip.CALL)?izvedeneVrednostiUtil.calculateThetaCall((double) globalQuote.getPrice(), strikePrice, 0.05,impliedVolatility, (double) expiration):izvedeneVrednostiUtil.calculateThetaPut((double) globalQuote.getPrice(), strikePrice, 0.05,impliedVolatility, (double) expiration));
@@ -120,10 +120,10 @@ public class Opcija{
 
         Set<ConstraintViolation<Opcija>> violations;
 
-            violations = validator.validate(option);
-            if (!violations.isEmpty()) {
-                //throw new Exception("Validacija nije uspela: " + violations.toString());
-                //throw new RuntimeException("Validacija nije uspela: " + violations.toString());
+        violations = validator.validate(option);
+        if (!violations.isEmpty()) {
+            //throw new Exception("Validacija nije uspela: " + violations.toString());
+            //throw new RuntimeException("Validacija nije uspela: " + violations.toString());
         }
     }
 }
