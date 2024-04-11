@@ -45,9 +45,8 @@ services:
             - "8081:8081"
         container_name: berza-service
         restart: unless-stopped
-	networks:
-            - backend-network
-        
+        networks:
+            - backend-network    
 networks:
     backend-network:
         driver: bridge
