@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.model.dto.CreditRequestDto;
 import rs.edu.raf.model.dto.DetailedCreditDto;
 import rs.edu.raf.service.CreditService;
+import rs.edu.raf.service.CreditServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ public class CreditController {
     private final CreditService creditService;
 
     @Autowired
-    public CreditController(CreditService creditService) {
-        this.creditService = creditService;
+    public CreditController(CreditServiceImpl creditServiceImpl) {
+        this.creditService = creditServiceImpl;
     }
 
     @ApiOperation(value = "Podnosenje zahteva za kredit uz prosledjivanje parametara " +

@@ -3,13 +3,13 @@ package rs.edu.raf.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.model.dto.ExchangeRateResponseDto;
 import rs.edu.raf.service.ExchangeRateService;
+import rs.edu.raf.service.ExchangeRateServiceImpl;
 
 import java.util.List;
 
@@ -26,8 +26,8 @@ public class ExchangeController {
 
 
     @Autowired
-    public ExchangeController(ExchangeRateService exchangeRateService) {
-        this.exchangeRateService = exchangeRateService;
+    public ExchangeController(ExchangeRateServiceImpl exchangeRateServiceImpl) {
+        this.exchangeRateService = exchangeRateServiceImpl;
     }
 
     @ApiOperation(value = "Vraca kursnu listu. Dinar je glavna valuta (RSD).")

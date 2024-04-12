@@ -58,6 +58,7 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
                         .requestMatchers(HttpMethod.GET, "/card/block/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.edit_kartice + "')")
                         .requestMatchers(HttpMethod.POST, "/card/create", "/card/names").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.edit_kartice + "')")
                         .requestMatchers("/exchange", "/exchange/**", "/credit/apply").permitAll()
+                                .requestMatchers("/ws/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET,"/radnik","/radnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_radnika + "')")
 //                        .requestMatchers(HttpMethod.PUT,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.editovanje_radnika + "')")
 //                        .requestMatchers(HttpMethod.POST,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_radnika + "')")

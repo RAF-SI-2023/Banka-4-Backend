@@ -7,11 +7,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
 import rs.edu.raf.repository.transaction.*;
-import rs.edu.raf.service.ExchangeRateService;
+import rs.edu.raf.service.ExchangeRateServiceImpl;
 import rs.edu.raf.service.racun.RacunServis;
 import rs.edu.raf.model.entities.transaction.PrenosSredstava;
 import rs.edu.raf.model.entities.transaction.Status;
@@ -58,7 +60,7 @@ public class TransakcijaServisImplTest {
     private DevizniRacun devizniRacun;
 
     private PrenosSredstava prenosSredstava;
-    private ExchangeRateService exchangeRateService;
+    private ExchangeRateServiceImpl exchangeRateServiceImpl;
 
     private Uplata uplata;
 
@@ -73,8 +75,9 @@ public class TransakcijaServisImplTest {
                 pravniRacunRepository,
                 tekuciRacunRepository,
                 devizniRacunRepository,
-                exchangeRateService,
-                racunServis
+                exchangeRateServiceImpl,
+                racunServis,
+                Mockito.mock(SimpMessagingTemplate.class)
         ));
     }
 

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class OneTimePasswordService {
+public class OneTimePasswordServiceImpl {
     @Autowired
     private OneTimePasswordRepository oneTimePasswordRepository;
 

@@ -6,6 +6,8 @@ import rs.edu.raf.order.model.UserStock;
 public class UserStockMapper {
 
     public static UserStockDto toDto(UserStock userStock) {
+        if (userStock == null) return null;
+
         UserStockDto userStockDto = new UserStockDto();
         userStockDto.setTicker(userStock.getTicker());
         userStockDto.setQuantity(userStock.getQuantity());

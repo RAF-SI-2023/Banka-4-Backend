@@ -64,8 +64,11 @@ public class OrderServiceImpl implements OrderService {
 
             if (buyOrder.isAllOrNone() && buyOrder.getQuantity() > 0) {
                 if (buyOrder.getStop() == null) return null;
+
                 if (buyOrder.getType().equals(Type.LIMIT_ORDER)) buyOrder.setType(Type.STOP_LIMIT_ORDER);
                 else buyOrder.setType(Type.STOP_ORDER);
+
+                return null;
             }
 
             // future margin order check
@@ -97,7 +100,7 @@ public class OrderServiceImpl implements OrderService {
             else orderRepository.save(buyOrder);
         }
 
-        return null;
+        return OrderMapper.toDto(buyOrder);
     }
 
     private OrderDto placeSellOrder(Order sellOrder) {
@@ -109,9 +112,7 @@ public class OrderServiceImpl implements OrderService {
         userStockRequest.setTicker(sellOrder.getTicker());
         userStockRequest.setQuantity(-sellOrder.getQuantity());
         boolean success = userStockService.changeUserStockQuantity(userStockRequest);
-        if (!success) {
-            return null; // or throw an exception
-        }
+        if (!success) return null;
 
         if (sellOrder.getType().equals(Type.MARKET_ORDER) || sellOrder.getType().equals(Type.LIMIT_ORDER)) {
             List<Order> buyOrders = findAllBuyOrdersForTicker(sellOrder.getTicker());
@@ -136,8 +137,11 @@ public class OrderServiceImpl implements OrderService {
 
             if (sellOrder.isAllOrNone() && sellOrder.getQuantity() > 0) {
                 if (sellOrder.getStop() == null) return null;
+
                 if (sellOrder.getType().equals(Type.LIMIT_ORDER)) sellOrder.setType(Type.STOP_LIMIT_ORDER);
                 else sellOrder.setType(Type.STOP_ORDER);
+
+                return null;
             }
 
             // future margin order check
@@ -167,7 +171,7 @@ public class OrderServiceImpl implements OrderService {
             else orderRepository.save(sellOrder);
         }
 
-        return null;
+        return OrderMapper.toDto(sellOrder);
     }
 
     @Override

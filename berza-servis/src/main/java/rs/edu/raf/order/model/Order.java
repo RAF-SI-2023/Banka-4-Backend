@@ -30,6 +30,7 @@ public class Order {
     @Column(nullable = false)
     private Integer quantity;
 
+    @Column(name = "orderLimit")
     private BigDecimal limit;
 
     private BigDecimal stop;

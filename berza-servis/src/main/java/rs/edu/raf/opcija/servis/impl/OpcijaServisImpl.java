@@ -188,6 +188,22 @@ public class OpcijaServisImpl implements OpcijaServis {
 
         return opcijaStanje;
     }
+
+    @Override
+    public Map<String, List<OpcijaDto>> findPutsAndCallsByStockTicker(String ticker) {
+        return null;
+    }
+
+    @Override
+    public Map<String, List<OpcijaDto>> classifyOptions(String ticker) {
+        return null;
+    }
+
+    @Override
+    public Map<String, List<OpcijaDto>> findPutsAndCallsByStockTickerAndExpirationDate(String ticker, Date startOfDay, Date endOfDay) {
+        return null;
+    }
+
     @Override
     public OpcijaDto save(NovaOpcijaDto novaOpcijaDto) {
 

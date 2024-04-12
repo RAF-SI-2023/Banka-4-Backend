@@ -1,0 +1,100 @@
+package rs.edu.raf.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import rs.edu.raf.model.dto.ExchangeRateResponseDto;
+import rs.edu.raf.model.entities.ExchangeRate;
+import rs.edu.raf.model.mapper.ExchangeRateMapper;
+import rs.edu.raf.repository.ExchangeRateRepository;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@Service
+public class ExchangeRateServiceImpl implements ExchangeRateService{
+
+    private final ExchangeRateRepository exchangeRateRepository;
+    private final ExchangeRateMapper exchangeRateMapper;
+    private final String apiUrl = "https://v6.exchangerate-api.com/v6/4bf14e8ddbdbfe05d9022143/latest/EUR";
+    private final List<String> allowedCurrencies = List.of("RSD","EUR", "CHF", "USD", "GBP", "JPY", "CAD", "AUD");
+
+
+    @Autowired
+    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository, ExchangeRateMapper exchangeRateMapper){
+        this.exchangeRateRepository = exchangeRateRepository;
+        this.exchangeRateMapper = exchangeRateMapper;
+        init();
+    }
+
+    private void init(){
+        saveExchangeRates();
+    }
+
+
+
+    @Scheduled(cron = "0 5 8 * * *")
+    private void scheduledSaveExchange(){
+        saveExchangeRates();
+    }
+
+    public void saveExchangeRates(){
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> exchangeRatesResponse = restTemplate.getForObject(apiUrl, Map.class);
+
+        if(exchangeRatesResponse != null && exchangeRatesResponse.containsKey("conversion_rates")){
+            Map<String, Object> conversionRates = (Map<String, Object>) exchangeRatesResponse.get("conversion_rates");
+            saveRates(conversionRates);
+        }
+    }
+
+    private void saveRates(Map<String, Object> conversionRates){
+        conversionRates.forEach((currencyCode, rate) -> {
+            ExchangeRate exchangeRate = new ExchangeRate();
+            exchangeRate.setCurrencyCode(currencyCode);
+            exchangeRate.setRate(new BigDecimal(rate.toString()));
+            exchangeRateRepository.save(exchangeRate);
+            //System.out.println(exchangeRateRepository.save(exchangeRate));
+        });
+    }
+
+
+    public List<ExchangeRateResponseDto> getAllExchangeRates(){
+        List<ExchangeRate> exchangeRates = exchangeRateRepository.findAll();
+
+        return exchangeRates.stream().map(exchangeRateMapper::exchangeRateToExchangeRateResponseDto).toList();
+    }
+
+    private boolean isAllowedCurrency(String oldValuteCurrencyCode, String newValuteCurrencyCode){
+
+        if(!this.allowedCurrencies.contains(oldValuteCurrencyCode.toLowerCase())
+                || !this.allowedCurrencies.contains(newValuteCurrencyCode.toLowerCase())){
+            return false;
+        }
+
+        return true;
+    }
+
+    public BigDecimal convert(String oldValuteCurrencyCode, String newValuteCurrencyCode, BigDecimal oldValuteAmount){
+
+
+        if(!isAllowedCurrency(oldValuteCurrencyCode, newValuteCurrencyCode)){
+            return null;
+        }
+
+        Optional<ExchangeRate> oldOptionalExchangeRate = exchangeRateRepository.findByCurrencyCode(oldValuteCurrencyCode);
+        Optional<ExchangeRate> newOptionalExchangeRate = exchangeRateRepository.findByCurrencyCode(newValuteCurrencyCode);
+
+        BigDecimal oldAmount = oldOptionalExchangeRate.get().getRate();
+        BigDecimal newAmount = newOptionalExchangeRate.get().getRate();
+
+        BigDecimal provision = BigDecimal.valueOf(0.995);
+
+        BigDecimal finalAmount = oldValuteAmount.divide(oldAmount).multiply(newAmount).multiply(provision);
+
+        return finalAmount;
+    }
+}

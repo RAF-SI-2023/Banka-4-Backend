@@ -14,6 +14,7 @@ import rs.edu.raf.model.dto.CardNameDto;
 import rs.edu.raf.model.dto.CardResponseDto;
 import rs.edu.raf.model.dto.CreateCardDto;
 import rs.edu.raf.service.CardService;
+import rs.edu.raf.service.CardServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,8 @@ public class CardController {
     private final CardService cardService;
 
     @Autowired
-    public CardController(CardService cardService) {
-        this.cardService = cardService;
+    public CardController(CardServiceImpl cardServiceImpl) {
+        this.cardService = cardServiceImpl;
     }
 
     @ApiOperation(value = "blokiranje kartice po broju kartice")

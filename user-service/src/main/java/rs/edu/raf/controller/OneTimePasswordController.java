@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import rs.edu.raf.model.OneTimePassword;
-import rs.edu.raf.servis.impl.OneTimePasswordService;
+import rs.edu.raf.servis.impl.OneTimePasswordServiceImpl;
 
 @RestController
 @CrossOrigin(origins = "*")
 @SecurityRequirement(name = "jwt")
 public class OneTimePasswordController {
     @Autowired
-    private OneTimePasswordService oneTimePasswordService;
+    private OneTimePasswordServiceImpl oneTimePasswordService;
 
     @Operation(description = "Generiše OneTimePassword")
     @PostMapping("/generate-otp")

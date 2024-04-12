@@ -1,15 +1,20 @@
 package rs.edu.raf.servis.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
 import rs.edu.raf.repository.transaction.*;
+import rs.edu.raf.service.ExchangeRateServiceImpl;
 import rs.edu.raf.service.racun.RacunServis;
 import rs.edu.raf.model.dto.transaction.NovaUplataDTO;
 import rs.edu.raf.model.dto.transaction.NoviPrenosSredstavaDTO;
@@ -53,6 +58,22 @@ public class TransakcijaServisImplTest {
 
     @InjectMocks
     private TransakcijaServisImpl transakcijaServis;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        transakcijaServis = Mockito.spy(new TransakcijaServisImpl(
+                uplataRepository,
+                prenosSredstavaRepository,
+                Mockito.mock(SablonTransakcijeRepository.class),
+                pravniRacunRepository,
+                tekuciRacunRepository,
+                devizniRacunRepository,
+                Mockito.mock(ExchangeRateServiceImpl.class),
+                racunServis,
+                Mockito.mock(SimpMessagingTemplate.class)
+        ));
+    }
 
 
     @Test

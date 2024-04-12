@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import rs.edu.raf.stocks.StockServiceImpl;
+import rs.edu.raf.stocks.service.impl.StockServiceImpl;
 import rs.edu.raf.stocks.dto.StockDTO;
 import rs.edu.raf.stocks.exceptions.BadDateInputException;
 import rs.edu.raf.stocks.mapper.StockMapper;
