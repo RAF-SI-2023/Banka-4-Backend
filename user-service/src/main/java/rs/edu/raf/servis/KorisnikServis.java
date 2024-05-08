@@ -2,6 +2,7 @@ package rs.edu.raf.servis;
 
 import rs.edu.raf.dto.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -46,9 +47,10 @@ public interface KorisnikServis {
      * Creates a new worker.
      *
      * @param noviRadnikDTO The DTO containing information about the new worker.
+     * @param firmaId ID of the company
      * @return The created RadnikDTO object.
      */
-    RadnikDTO kreirajNovogRadnika(NoviRadnikDTO noviRadnikDTO);
+    RadnikDTO kreirajNovogRadnika(NoviRadnikDTO noviRadnikDTO, Long firmaId);
 
     /**
      * Edits a user.
@@ -128,4 +130,6 @@ public interface KorisnikServis {
      * @return True if the account is successfully added, otherwise false.
      */
     boolean addAccountToUser(Long userId, Long accountNumber);
+    RadnikDTO resetLimit(Long radnikId, Long id);
+    void updateDailySpent(Long id, BigDecimal price);
 }

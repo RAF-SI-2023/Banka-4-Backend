@@ -1,9 +1,10 @@
 package rs.edu.raf.dto;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class IzmenaRadnikaDTO {
@@ -31,4 +32,8 @@ public class IzmenaRadnikaDTO {
     private Long permisije;
 
     private Boolean aktivan;
+    private boolean approvalFlag;
+    @PositiveOrZero
+    private BigDecimal dailyLimit;
+    private boolean supervisor;
 }

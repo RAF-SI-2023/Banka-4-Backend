@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import rs.edu.raf.model.Korisnik;
 import rs.edu.raf.model.Radnik;
 
+import java.math.BigDecimal;
+
 @Component
 @AllArgsConstructor
 public class Seeder implements CommandLineRunner {
@@ -45,21 +47,44 @@ public class Seeder implements CommandLineRunner {
 //        korisnik2.setAktivan(true);
 //        korisnikRepository.save(korisnik2);
 //
-//        Radnik radnik = new Radnik();
-//        radnik.setIme("Petr");
-//        radnik.setPrezime("Stamenic");
-//        radnik.setJmbg(String.valueOf(1706999793421L));
-//        radnik.setDatumRodjenja(929631358000L);
-//        radnik.setPol("M");
-//        radnik.setEmail("pera@gmail.rs");
-//        radnik.setBrojTelefona("+381600176998");
-//        radnik.setAdresa("Moja adresa");
-//        radnik.setPozicija("PM");
-//        radnik.setDepartman("RAF");
-//        radnik.setPassword("$2a$12$LEajHsUJyFisGyUlZx7y0OX4Ue9uB99I/Uz9SxORXkyU7MAMcHPLa");
-//        radnik.setSaltPassword("S4lt");
-//        radnik.setPermisije(0b1111111111111111111111L);
-//        radnik.setAktivan(true);
-//        radnikRepository.save(radnik);
+        Radnik radnik = new Radnik();
+        radnik.setIme("Petr");
+        radnik.setPrezime("Stamenic");
+        radnik.setJmbg(String.valueOf(1706999793421L));
+        radnik.setDatumRodjenja(929631358000L);
+        radnik.setPol("M");
+        radnik.setEmail("pera@gmail.rs");
+        radnik.setBrojTelefona("+381600176998");
+        radnik.setAdresa("Moja adresa");
+        radnik.setPozicija("PM");
+        radnik.setDepartman("RAF");
+        radnik.setPassword("$2a$12$LEajHsUJyFisGyUlZx7y0OX4Ue9uB99I/Uz9SxORXkyU7MAMcHPLa");
+        radnik.setSaltPassword("S4lt");
+        radnik.setPermisije(0b1111111111111111111111L);
+        radnik.setAktivan(true);
+        radnik.setDailyLimit(BigDecimal.valueOf(5000.0));
+        radnik.setSupervisor(true);
+        radnik.setDailySpent(BigDecimal.ZERO);
+        radnikRepository.save(radnik);
+
+        Radnik radnik1 = new Radnik();
+        radnik1.setIme("Petr");
+        radnik1.setPrezime("Stamenic");
+        radnik1.setJmbg(String.valueOf(1706999793422L));
+        radnik1.setDatumRodjenja(929631358000L);
+        radnik1.setPol("M");
+        radnik1.setEmail("pera1@gmail.rs");
+        radnik1.setBrojTelefona("+381600176999");
+        radnik1.setAdresa("Moja adresa");
+        radnik1.setPozicija("PM");
+        radnik1.setDepartman("RAF");
+        radnik1.setPassword("$2a$12$LEajHsUJyFisGyUlZx7y0OX4Ue9uB99I/Uz9SxORXkyU7MAMcHPLa");
+        radnik1.setSaltPassword("S4lt");
+        radnik1.setPermisije(0b1111111111111111111111L);
+        radnik1.setAktivan(true);
+        radnik1.setDailyLimit(BigDecimal.valueOf(5000.0));
+        radnik1.setSupervisor(false);
+        radnik1.setDailySpent(BigDecimal.ZERO);
+        radnikRepository.save(radnik1);
     }
 }

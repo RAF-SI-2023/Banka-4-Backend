@@ -7,6 +7,7 @@ import rs.edu.raf.dto.*;
 import rs.edu.raf.exceptions.JMBGDateMismatchException;
 import rs.edu.raf.exceptions.UserNotFoundException;
 
+import rs.edu.raf.exceptions.WrongEmployeeException;
 import rs.edu.raf.mapper.KorisnikMapper;
 import rs.edu.raf.mapper.RadnikMapper;
 import rs.edu.raf.model.Korisnik;
@@ -16,6 +17,7 @@ import rs.edu.raf.repository.RadnikRepository;
 import rs.edu.raf.servis.KodServis;
 import rs.edu.raf.servis.KorisnikServis;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -109,9 +111,9 @@ public class KorisnikServisImpl implements KorisnikServis {
     }
 
     @Override
-    public RadnikDTO kreirajNovogRadnika(NoviRadnikDTO noviRadnikDTO) {
+    public RadnikDTO kreirajNovogRadnika(NoviRadnikDTO noviRadnikDTO, Long firmaId) {
 
-        Radnik radnik = radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO);
+        Radnik radnik = radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO,firmaId);
 
         LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.getDatumRodjenja()), ZoneOffset.systemDefault());
         if (radnik.getJmbg().toString().length() == 12) {
@@ -214,6 +216,9 @@ public class KorisnikServisImpl implements KorisnikServis {
                 radnik.get().setPermisije(izmenaRadnikaDTO.getPermisije());
             if(izmenaRadnikaDTO.getAdresa()!=null)
             radnik.get().setAktivan(izmenaRadnikaDTO.getAktivan());
+            radnik.get().setSupervisor(izmenaRadnikaDTO.isSupervisor());
+            radnik.get().setDailyLimit(izmenaRadnikaDTO.getDailyLimit());
+            radnik.get().setApprovalFlag(izmenaRadnikaDTO.isApprovalFlag());
 
             return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik.get()));
         }
@@ -296,6 +301,21 @@ public class KorisnikServisImpl implements KorisnikServis {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public RadnikDTO resetLimit(Long radnikId, Long id) {
+        Radnik radnik = radnikRepository.findById(radnikId).orElseThrow(()->new UserNotFoundException("Employee with id " + radnikId + " not found!"));
+        if(radnik.getFirmaId() != id) throw new WrongEmployeeException("That employee isn't in your company!");
+        radnik.setDailySpent(BigDecimal.ZERO);
+        return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik));
+    }
+
+    @Override
+    public void updateDailySpent(Long id, BigDecimal price) {
+        Radnik radnik = radnikRepository.findById(id).orElseThrow(()->new UserNotFoundException("Employee with id " + id + " not found!"));
+        radnik.setDailySpent(radnik.getDailySpent().add(price));
+        radnikRepository.save(radnik);
     }
 }
 

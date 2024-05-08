@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +48,11 @@ public class Radnik implements UserDetails {
     private Long permisije;
 
     private boolean aktivan;
-
+    private Long firmaId;
+    private BigDecimal dailyLimit;
+    private BigDecimal dailySpent;
+    private boolean approvalFlag;
+    private boolean supervisor;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
