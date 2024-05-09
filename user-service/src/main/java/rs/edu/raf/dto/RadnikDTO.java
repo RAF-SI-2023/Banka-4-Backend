@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class RadnikDTO {
 
@@ -44,4 +46,9 @@ public class RadnikDTO {
 
     @PositiveOrZero
     private Long permisije;
+    private Long firmaId;
+    private boolean approvalFlag;
+    private BigDecimal dailyLimit;
+    private BigDecimal dailySpent;
+    private boolean supervisor;
 }

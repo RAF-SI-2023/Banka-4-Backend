@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class NoviRadnikDTO {
 
@@ -47,4 +49,9 @@ public class NoviRadnikDTO {
     private Long permisije;
 
     private boolean aktivan;
+
+    @PositiveOrZero
+    private BigDecimal dailyLimit;
+    private boolean approvalFlag;
+    private boolean supervisor;
 }
