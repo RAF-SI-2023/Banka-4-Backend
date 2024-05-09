@@ -10,6 +10,8 @@ services:
             - POSTGRES_PASSWORD=123
             - POSTGRES_DB=moja_banka_db
         restart: unless-stopped
+        volumes:
+            - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
         networks:
             - backend-network
     
