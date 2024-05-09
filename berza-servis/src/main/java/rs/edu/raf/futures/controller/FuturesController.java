@@ -56,9 +56,9 @@ public class FuturesController {
         futuresService.denyRequest(id);
     }
 
-    @PostMapping("/buy/{id}")
+    @PostMapping("/buy/{id}/{racun}")
     @Operation(description = "Buy future contract")
-    public ResponseEntity<FuturesContractDto> buyFuture(@PathVariable("id") Long id, @RequestAttribute("userId") Long userId) {
-        return new ResponseEntity<>(futuresService.buy(id,userId,"444000000900000033"),HttpStatus.OK);
+    public ResponseEntity<FuturesContractDto> buyFuture(@PathVariable("id") Long id, @PathVariable("racun") String racun, @RequestAttribute("userId") Long userId) {
+        return new ResponseEntity<>(futuresService.buy(id,userId,racun),HttpStatus.OK);
     }
 }
