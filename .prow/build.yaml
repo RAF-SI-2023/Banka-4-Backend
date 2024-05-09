@@ -41,7 +41,7 @@ postsubmits:
         # koristite:
         #   - harbor.k8s.elab.rs/base-images/base:java-21-node-18-docker (Java 21)
         #   - harbor.k8s.elab.rs/base-images/base:java-17-node-18-docker (Java 17)
-        - image: harbor.k8s.elab.rs/base-images/base:java-21-node-18-docker
+        - image: harbor.k8s.elab.rs/base-images/base:java-17-node-18-docker
           command:
             - /bin/bash
             - -c
@@ -66,7 +66,7 @@ postsubmits:
               # PROMENITI PRI KOPIRANJU
               # for petlja koja se pokreće za svaki mikroservis.
               # Promeniti petlju tako sadrži sve mikroservise koje imate, npr:
-              for serviceName in user-service berza-service banka-service; do
+              for serviceName in user-service berza-servis banka-service; do
                 # Builduje Docker image sa "latest" tagom i nazivom takvim da možemo da pushujemo
                 # image na našu Harbor instancu.
                 docker build -t harbor.k8s.elab.rs/${TEAM_NAME}/${serviceName}:latest "$serviceName"
