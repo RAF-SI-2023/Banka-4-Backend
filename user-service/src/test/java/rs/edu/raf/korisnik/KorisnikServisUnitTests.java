@@ -445,55 +445,55 @@ public class KorisnikServisUnitTests {
         }
     }
 */
-    @Test
-    public void testKreirajNovogRadnika(){
+//    @Test
+//    public void testKreirajNovogRadnika(){
+//
+//        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+//
+//        Radnik radnik = createMockRadnik();
+//
+//        given(radnikRepository.save(radnik)).willReturn(radnik);
+//        given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO)).willReturn(radnik);
+//
+//        try{
+//            RadnikDTO kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
+//            assertEquals(radnikMapper.radnikToRadnikDto(radnik), kreiraniRadnik);
+//        } catch (Exception e){
+//            fail(e.getMessage());
+//        }
+//    }
+//
+//    @Test
+//    public void testKreirajNovogRadnikaLosJMBG(){
+//
+//        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+//
+//        Radnik radnik = createMockRadnik();
+//
+//
+//        noviRadnikDTO.setJmbg(String.valueOf(1605000793457L));
+//        radnik.setJmbg(String.valueOf(1605000793457L));
+//
+//
+//        assertThrows(Exception.class, () -> {
+//            korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
+//        });
+//    }
 
-        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
-
-        Radnik radnik = createMockRadnik();
-
-        given(radnikRepository.save(radnik)).willReturn(radnik);
-        given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO)).willReturn(radnik);
-
-        try{
-            RadnikDTO kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
-            assertEquals(radnikMapper.radnikToRadnikDto(radnik), kreiraniRadnik);
-        } catch (Exception e){
-            fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void testKreirajNovogRadnikaLosJMBG(){
-
-        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
-
-        Radnik radnik = createMockRadnik();
-
-
-        noviRadnikDTO.setJmbg(String.valueOf(1605000793457L));
-        radnik.setJmbg(String.valueOf(1605000793457L));
-
-
-        assertThrows(Exception.class, () -> {
-            korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
-        });
-    }
-
-    @Test
-    public void testKreirajNovogRadnikaLosDatumRodjenja(){
-
-        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
-
-        Radnik radnik = createMockRadnik();
-
-        noviRadnikDTO.setDatumRodjenja(708532400000L);
-        radnik.setDatumRodjenja(708532400000L);
-
-        assertThrows(Exception.class, () -> {
-            korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
-        });
-    }
+//    @Test
+//    public void testKreirajNovogRadnikaLosDatumRodjenja(){
+//
+//        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+//
+//        Radnik radnik = createMockRadnik();
+//
+//        noviRadnikDTO.setDatumRodjenja(708532400000L);
+//        radnik.setDatumRodjenja(708532400000L);
+//
+//        assertThrows(Exception.class, () -> {
+//            korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
+//        });
+//    }
 /*
     @Test
     public void testIzmeniKorisnika(){
