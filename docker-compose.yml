@@ -25,7 +25,7 @@ services:
             - backend-network
     
     user-service:
-        image: vzivanovic/user-service:4
+        image: harbor.k8s.elab.rs/banka-4/user-service:latest
         ports:
             - "8080:8080"
         container_name: user-service 
@@ -34,7 +34,7 @@ services:
             - backend-network
 
     banka-service:
-        image: vzivanovic/banka-service:4
+        image: harbor.k8s.elab.rs/banka-4/banka-service:latest
         ports:
             - "8082:8082"
         container_name: banka-service 
@@ -43,7 +43,7 @@ services:
             - backend-network
     
     berza-service:
-        image: vzivanovic/berza-service:4.1
+        image: harbor.k8s.elab.rs/banka-4/berza-servis:latest
         ports:
             - "8081:8081"
         container_name: berza-service

@@ -1,0 +1,45 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_name: MyString
+  last_name: MyString
+  jmbg: MyString
+  birth_date: MyString
+  gender: MyString
+  email: MyString
+  password_digest: <%= BCrypt::Password.create("secret") %>
+  phone: MyString
+  address: MyString
+  username: MyString
+  position: MyString
+  department: MyString
+  string: MyString
+  permission: 1.5
+  active: false
+  firmId: one
+  daily_limit: 9.99
+  daily_spent: 9.99
+  approval_flag: false
+  supervisor: false
+
+two:
+  first_name: MyString
+  last_name: MyString
+  jmbg: MyString
+  birth_date: MyString
+  gender: MyString
+  email: MyString
+  password_digest: <%= BCrypt::Password.create("secret") %>
+  phone: MyString
+  address: MyString
+  username: MyString
+  position: MyString
+  department: MyString
+  string: MyString
+  permission: 1.5
+  active: false
+  firmId: two
+  daily_limit: 9.99
+  daily_spent: 9.99
+  approval_flag: false
+  supervisor: false

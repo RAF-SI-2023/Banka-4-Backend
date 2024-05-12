@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  resources :favorite_users
+  resources :verification_codes
+  resources :payment_codes
+  resources :one_time_passwords
+  devise_for :workers
+  devise_for :users
+  resources :workers
   resources :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
