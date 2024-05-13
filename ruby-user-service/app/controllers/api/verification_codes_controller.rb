@@ -1,4 +1,4 @@
-class VerificationCodesController < ApplicationController
+class Api::VerificationCodesController < ApplicationController
   before_action :set_verification_code, only: %i[ show update destroy ]
 
   # GET /verification_codes

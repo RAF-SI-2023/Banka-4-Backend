@@ -1,4 +1,4 @@
-class OneTimePasswordsController < ApplicationController
+class Api::OneTimePasswordsController < ApplicationController
   before_action :set_one_time_password, only: %i[ show update destroy ]
 
   # GET /one_time_passwords

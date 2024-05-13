@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
-  resources :favorite_users
-  resources :verification_codes
-  resources :payment_codes
-  resources :one_time_passwords
-  devise_for :workers
-  devise_for :users
-  resources :workers
-  resources :users
+  namespace :api, path: "/api" do
+    resources :favorite_users
+    resources :verification_codes
+    resources :payment_codes
+    resources :one_time_passwords
+    resources :workers
+    resources :users, only: [:create]
+    namespace :registrations, path: "/registrations" do
+      devise_for :workers, controllers: { registrations: 'api/registrations' }
+      devise_for :users, controllers: { registrations: 'api/registrations' }
+    end
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

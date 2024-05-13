@@ -1,4 +1,4 @@
-class PaymentCodesController < ApplicationController
+class Api::PaymentCodesController < ApplicationController
   before_action :set_payment_code, only: %i[ show update destroy ]
 
   # GET /payment_codes

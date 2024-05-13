@@ -1,4 +1,4 @@
-class FavoriteUsersController < ApplicationController
+class Api::FavoriteUsersController < ApplicationController
   before_action :set_favorite_user, only: %i[ show update destroy ]
 
   # GET /favorite_users

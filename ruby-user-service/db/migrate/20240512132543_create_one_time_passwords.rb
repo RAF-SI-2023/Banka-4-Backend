@@ -3,7 +3,7 @@ class CreateOneTimePasswords < ActiveRecord::Migration[7.1]
     create_table :one_time_passwords do |t|
       t.string :email
       t.string :password_digest
-      t.Bigint :expiration
+      t.integer :expiration
 
       t.timestamps
     end
