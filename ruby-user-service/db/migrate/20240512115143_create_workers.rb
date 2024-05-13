@@ -6,8 +6,6 @@ class CreateWorkers < ActiveRecord::Migration[7.1]
       t.string :jmbg
       t.integer :birth_date
       t.string :gender
-      t.string :email
-      t.string :password_digest
       t.string :phone
       t.string :address
       t.string :username
@@ -25,7 +23,6 @@ class CreateWorkers < ActiveRecord::Migration[7.1]
       t.timestamps
     end
     add_index :workers, :jmbg, unique: true
-    add_index :workers, :email, unique: true
     add_index :workers, :phone, unique: true
   end
 end
