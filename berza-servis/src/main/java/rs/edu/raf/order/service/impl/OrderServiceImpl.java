@@ -274,34 +274,7 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
-    private String nadjiVrstuRacuna(Long BrojRacuna) {
-        if (BrojRacuna % 100 == 11) return "DevizniRacun";
-        if (BrojRacuna % 100 == 22) return "PravniRacun";
-        if (BrojRacuna % 100 == 33) return "TekuciRacun";
-        return null;
-    }
-
     private void modifyUserBalance(Long userId, BigDecimal valueChange) {
-//        String userServiceUrl = "http://localhost:8080/user-service/korisnik/id/" + userId;
-//        RestTemplate restTemplate = new RestTemplate();
-//        ResponseEntity<KorisnikDTO> response = restTemplate.getForEntity(userServiceUrl, KorisnikDTO.class);
-//        KorisnikDTO korisnikDTO = response.getBody();
-//
-//        if (korisnikDTO == null) return;
-//
-//        String[] racuni = korisnikDTO.getPovezaniRacuni().split(",");
-//        List<String> devizniRacuni = new ArrayList<>();
-//        List<String> pravniRacuni = new ArrayList<>();
-//        List<String> tekuciRacuni = new ArrayList<>();
-//
-//        for (String racun : racuni) {
-//            String vrstaRacuna = nadjiVrstuRacuna(Long.parseLong(racun));
-//            if (vrstaRacuna == null) continue;
-//            else if (vrstaRacuna.equals("DevizniRacun")) devizniRacuni.add(racun);
-//            else if (vrstaRacuna.equals("PravniRacun")) pravniRacuni.add(racun);
-//            else if (vrstaRacuna.equals("TekuciRacun")) tekuciRacuni.add(racun);
-//        }
-
 
     }
 
