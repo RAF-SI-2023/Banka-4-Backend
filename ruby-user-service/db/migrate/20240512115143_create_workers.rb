@@ -14,7 +14,7 @@ class CreateWorkers < ActiveRecord::Migration[7.1]
       t.string :string
       t.integer :permission
       t.boolean :active
-      t.integer :firmId
+      t.integer :firm_id
       t.decimal :daily_limit
       t.decimal :daily_spent
       t.boolean :approval_flag

@@ -24,7 +24,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_134223) do
 
   create_table "one_time_passwords", force: :cascade do |t|
     t.string "email"
-    t.string "password_digest"
+    t.string "one_time_password"
     t.integer "expiration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -43,14 +43,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_134223) do
     t.string "jmbg"
     t.integer "birth_date"
     t.string "gender"
-    t.string "email"
-    t.string "password_digest"
     t.string "phone"
     t.string "address"
     t.string "connected_accounts"
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
@@ -76,8 +75,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_134223) do
     t.string "jmbg"
     t.integer "birth_date"
     t.string "gender"
-    t.string "email"
-    t.string "password_digest"
     t.string "phone"
     t.string "address"
     t.string "username"
@@ -86,13 +83,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_134223) do
     t.string "string"
     t.integer "permission"
     t.boolean "active"
-    t.integer "firmId"
+    t.integer "firm_id"
     t.decimal "daily_limit"
     t.decimal "daily_spent"
     t.boolean "approval_flag"
     t.boolean "supervisor"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"

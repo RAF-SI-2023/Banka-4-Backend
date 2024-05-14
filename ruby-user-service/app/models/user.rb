@@ -6,6 +6,7 @@ class User < ApplicationRecord
   validates :first_name, presence: { message: "first name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "first name only allows letters" }
   validates :last_name, presence: { message: "last name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
 
+  validates :birth_date, presence: { message: "birth date can't be blank" }
   validates :jmbg, presence: { message: "jmbg can't be blank" }, uniqueness: { message: "jmbg has to be unique" }, length: { is: 13 }, format: { with: /\A[0-9]+\z/, message: "jmbg only allows numbers" }
   validate :validate_jmbg_last_3_digits
   validate :validate_jmbg_date
@@ -13,14 +14,10 @@ class User < ApplicationRecord
   validates :gender, presence: { message: "gender can't be blank" }, inclusion: { in: %w(M F), message: "only allows M/F" }
 
   validates :email, presence: { message: "email can't be blank" }, uniqueness: { message: "email has to be unique" }, format: { with: URI::MailTo::EMAIL_REGEXP }
-
   validates :phone, presence: { message: "phone can't be blank" }, uniqueness: { message: "phone has to be unique" }, format: { with: /\A\+?[0-9]+\z/, message: "phone number has to be numbers with an optional + in the start" }
-
   validates :address, presence: { message: "address can't be blank" }
 
   validates :connected_accounts, presence: { message: "connected accounts can't be blank" }
-
-  validates :active, presence: { message: "active can't be blank" }, inclusion: { in: [true, false] }
 
   validate :validate_password
 
@@ -35,8 +32,8 @@ class User < ApplicationRecord
   def validate_jmbg_last_3_digits
     return unless gender.present? && jmbg.present?
 
-    errors.add(:jmbg, "male jmbg ends with last 3 digits below 500") unless gender == "M" && jmbg[-3..-1].to_i < 500
-    errors.add(:jmbg, "female jmbg ends with last 3 digits above 499") unless gender == "F" && jmbg[-3..-1].to_i > 499
+    errors.add(:jmbg, "male jmbg ends with last 3 digits below 500") if gender == "M" && jmbg[-3..-1].to_i > 499
+    errors.add(:jmbg, "female jmbg ends with last 3 digits above 499") if gender == "F" && jmbg[-3..-1].to_i < 500
   end
 
   def validate_jmbg_date
@@ -45,7 +42,8 @@ class User < ApplicationRecord
     birth_time = Time.at(birth_date / 1000)
     birth_year = birth_time.year % 1000
     jmbg_prefix = jmbg[0..6]
-    errors.add(:jmbg, "JMBG and date do not match") unless jmbg_prefix == format("%02d02d03d", birth_time.day, birth_time.month, birth_year)
+
+    errors.add(:jmbg, "JMBG and date do not match") unless jmbg_prefix == format("%02d%02d%03d", birth_time.day, birth_time.month, birth_year)
   end
 
   def validate_password

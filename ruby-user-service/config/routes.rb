@@ -5,7 +5,10 @@ Rails.application.routes.draw do
     resources :payment_codes
     resources :one_time_passwords
     resources :workers
-    resources :users, only: [:create]
+    resources :users, only: [:create, :index, :update, :destroy]
+
+    post "users/register" => "users#register"
+
     namespace :registrations, path: "/registrations" do
       devise_for :workers, controllers: { registrations: 'api/registrations' }
       devise_for :users, controllers: { registrations: 'api/registrations' }
