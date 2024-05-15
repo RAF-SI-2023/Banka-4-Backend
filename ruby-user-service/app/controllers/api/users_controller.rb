@@ -1,78 +1,102 @@
 class Api::UsersController < ApplicationController
-  before_action :set_user, only: %i[update destroy ]
+  before_action :set_user, only: %i[update destroy]
+  before_action :authenticate_user, except: [:register]
 
-  # GET /api/users
   def index
     @users = User.all
-
     render json: @users
   end
 
-  # POST /api/users
   def create
-    @user = User.new(create_user_params)
+    actions = [:create_users]
+    render_unauthorized unless PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
 
+    @user = User.new(create_user_params)
     if @user.valid? && @user.save
       render json: @user, status: :ok
     else
-      render json: @user.errors, status: :bad_request
+      render_bad_request
     end
   end
 
-  # POST /api/users/register
   def register
     @user = User.find_by(email: register_user_params[:email])
-
-    if @user && @user.update(register_user_params)
+    if @user && @user.active
+      render_unauthorized
+    elsif @user && @user.update(register_user_params)
       render json: @user, status: :ok
     else
-      render json: @user.errors, status: :bad_request
+      render_bad_request
     end
   end
 
-  # PATCH/PUT /api/users/{id}
   def update
+    actions = [:edit_users]
+    render_unauthorized unless PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
+
     if @user.update(update_user_params)
       render json: @user, status: :ok
     else
-      render json: @user.errors, status: :bad_request
+      render_bad_request
     end
   end
 
-  # DELETE /api/users/{id}
   def destroy
+    actions = [:deactivate_users]
+    render_unauthorized unless PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
+
     @user.active = false
     if @user.save
-      render json: @user, status: :ok
+      render status: :ok
     else
-      render json: @user.errors, status: :bad_request
+      render_bad_request
     end
   end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_user
     @user = User.find(params[:id])
   end
 
-  # Only allow the following parameters when creating a user
   def create_user_params
     params.require(:user).permit(:first_name, :last_name, :jmbg, :birth_date, :gender, :email, :phone, :address, :connected_accounts, :active)
   end
 
-  # Only allow the following parameters when updating a user
   def update_user_params
     params.require(:user).permit(:last_name, :address, :phone, :password, :connected_accounts, :active)
   end
 
-  # Only allow the following parameters when register a user
   def register_user_params
     params.permit(:email, :password, :active)
   end
 
-  # Only allow a list of trusted parameters through.
   def user_params
     params.require(:user).permit(:first_name, :last_name, :jmbg, :birth_date, :gender, :email, :password, :password_confirmation, :phone, :address, :connected_accounts, :active)
+  end
+
+  def authenticate_user
+    token = request.headers['Authorization']&.split(' ')&.last
+    return render_unauthorized unless token
+
+    payload = decode_jwt(token)
+    return render_unauthorized unless payload
+
+    @current_user = User.find_by(id: payload['id'])
+    render_unauthorized unless @current_user
+  end
+
+  def decode_jwt(token)
+    JWT.decode(token, AuthServiceImpl::JWT_SECRET_KEY, true, algorithm: 'HS256').first
+  rescue JWT::DecodeError
+    nil
+  end
+
+  def render_unauthorized
+    render json: { error: 'Unauthorized' }, status: :unauthorized
+  end
+
+  def render_bad_request
+    render json: { error: 'Bad Request' }, status: :bad_request
   end
 end
