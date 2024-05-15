@@ -29,6 +29,7 @@ class AuthServiceImpl
   end
 
   def self.authenticate(entity, password)
+    return false unless entity
     PasswordEncryptor.matches?(entity.password_digest, password)
   end
 end
