@@ -19,15 +19,15 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  # POST /api/users/register
   def register
     @user = User.find_by(email: register_user_params[:email])
 
-    if @user.update(register_user_params)
+    if @user && @user.update(register_user_params)
       render json: @user, status: :ok
     else
       render json: @user.errors, status: :bad_request
     end
-
   end
 
   # PATCH/PUT /api/users/{id}
@@ -41,7 +41,12 @@ class Api::UsersController < ApplicationController
 
   # DELETE /api/users/{id}
   def destroy
-    @user.destroy!
+    @user.active = false
+    if @user.save
+      render json: @user, status: :ok
+    else
+      render json: @user.errors, status: :bad_request
+    end
   end
 
   private
@@ -61,8 +66,9 @@ class Api::UsersController < ApplicationController
     params.require(:user).permit(:last_name, :address, :phone, :password, :connected_accounts, :active)
   end
 
+  # Only allow the following parameters when register a user
   def register_user_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
+    params.permit(:email, :password, :active)
   end
 
   # Only allow a list of trusted parameters through.

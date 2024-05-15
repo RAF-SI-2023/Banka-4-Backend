@@ -1,43 +1,33 @@
 class Worker < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
-
   validates :first_name, presence: { message: "first name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "first name only allows letters" }
   validates :last_name, presence: { message: "last name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
   validates :username, presence: { message: "username can't be blank" }
-
   validates :birth_date, presence: { message: "birth date can't be blank" }
   validates :jmbg, presence: { message: "jmbg can't be blank" }, uniqueness: { message: "jmbg has to be unique" }, length: { is: 13 }, format: { with: /\A[0-9]+\z/, message: "jmbg only allows numbers" }
   validate :validate_jmbg_last_3_digits
   validate :validate_jmbg_date
-
   validates :gender, presence: { message: "gender can't be blank" }, inclusion: { in: %w(M F), message: "only allows M/F" }
-
   validates :email, presence: { message: "email can't be blank" }, uniqueness: { message: "email has to be unique" }, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :phone, presence: { message: "phone can't be blank" }, uniqueness: { message: "phone has to be unique" }, format: { with: /\A\+?[0-9]+\z/, message: "phone number has to be numbers with an optional + in the start" }
   validates :address, presence: { message: "address can't be blank" }
-
   validates :password, presence: { message: "password can't be blank" }
   validate :validate_password
-
   validates :position, presence: { message: "position can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
-
   validates :department, presence: { message: "department can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
-
   validates :firm_id, presence: { message: "firm_id can't be blank" }, format: { with: /\A[0-9]+\z/, message: "firm_id only allows numbers" }
-
   validates :daily_limit, presence: { message: "daily_limit can't be blank" }, numericality: { greater_than_or_equal_to: 0, message: "daily_limit must be greater than 0" }
-
   validates :daily_spent, numericality: { greater_than_or_equal_to: 0, message: "daily_spent must be greater than 0" }, if: :daily_spent_present?
+  validates :permissions, presence: { message: "permissions can't be blank" }
 
-  protected
-
-  def password_required?
-    super && (password.present? || password_confirmation.present?)
-  end
+  attr_accessor :password
+  before_save :encrypt_password
 
   private
+
+  def encrypt_password
+    return unless password.present?
+    self.password_digest = PasswordEncryptor.encrypt(password)
+  end
 
   def daily_spent_present?
     daily_spent.present?

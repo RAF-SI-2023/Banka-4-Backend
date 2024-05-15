@@ -1,33 +1,29 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
-
   validates :first_name, presence: { message: "first name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "first name only allows letters" }
   validates :last_name, presence: { message: "last name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
-
   validates :birth_date, presence: { message: "birth date can't be blank" }
   validates :jmbg, presence: { message: "jmbg can't be blank" }, uniqueness: { message: "jmbg has to be unique" }, length: { is: 13 }, format: { with: /\A[0-9]+\z/, message: "jmbg only allows numbers" }
   validate :validate_jmbg_last_3_digits
   validate :validate_jmbg_date
-
   validates :gender, presence: { message: "gender can't be blank" }, inclusion: { in: %w(M F), message: "only allows M/F" }
-
   validates :email, presence: { message: "email can't be blank" }, uniqueness: { message: "email has to be unique" }, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :phone, presence: { message: "phone can't be blank" }, uniqueness: { message: "phone has to be unique" }, format: { with: /\A\+?[0-9]+\z/, message: "phone number has to be numbers with an optional + in the start" }
   validates :address, presence: { message: "address can't be blank" }
-
   validates :connected_accounts, presence: { message: "connected accounts can't be blank" }
-
+  validates :active, inclusion: { in: [true, false], message: "active can't be blank" }
   validate :validate_password
 
-  protected
-
-  def password_required?
-    super && (password.present? || password_confirmation.present?)
-  end
+  attr_accessor :password
+  before_update :encrypt_password
 
   private
+
+  def encrypt_password
+    return unless password.present?
+    puts password
+    puts password_digest
+    self.password_digest = PasswordEncryptor.encrypt(password)
+  end
 
   def validate_jmbg_last_3_digits
     return unless gender.present? && jmbg.present?
@@ -47,12 +43,16 @@ class User < ApplicationRecord
   end
 
   def validate_password
-    return unless password.present?
+    if password.present?
+      errors.add(:password, "password has to contain at least 1 small letter") unless password.match?(/(?=.*[a-z])/)
+      errors.add(:password, "password has to contain at least 1 big letter") unless password.match?(/(?=.*[A-Z])/)
+      errors.add(:password, "password has to contain at least 1 number") unless password.match?(/(?=.*\d)/)
+      errors.add(:password, "password has to contain at least 1 special character") unless password.match?(/(?=.*[[:^alnum:]])/)
+      errors.add(:password, "password has to have between 8 and 32 characters") unless password.length.between?(8, 32)
+    else
+      errors.add(:password, "password can't be blank")
+    end
 
-    errors.add(:password, "password has to contain at least 1 small letter") unless password.match?(/(?=.*[a-z])/)
-    errors.add(:password, "password has to contain at least 1 big letter") unless password.match?(/(?=.*[A-Z])/)
-    errors.add(:password, "password has to contain at least 1 number") unless password.match?(/(?=.*\d)/)
-    errors.add(:password, "password has to contain at least 1 special character") unless password.match?(/(?=.*[[:^alnum:]])/)
-    errors.add(:password, "password has to have between 8 and 32 characters") unless password.length.between?(8, 32)
+    errors[:password].each { |error_message| self.errors.add(:password, error_message) }
   end
 end

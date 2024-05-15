@@ -5,14 +5,11 @@ Rails.application.routes.draw do
     resources :payment_codes
     resources :one_time_passwords
     resources :workers
-    resources :users, only: [:create, :index, :update, :destroy]
+    resources :users
 
-    post "users/register" => "users#register"
+    post "auth/login", to: "auth#login"
+    post "users/register", to: "users#register"
 
-    namespace :registrations, path: "/registrations" do
-      devise_for :workers, controllers: { registrations: 'api/registrations' }
-      devise_for :users, controllers: { registrations: 'api/registrations' }
-    end
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
