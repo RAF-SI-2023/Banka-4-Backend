@@ -13,7 +13,6 @@ class CreateWorkers < ActiveRecord::Migration[7.1]
       t.string :username
       t.string :position
       t.string :department
-      t.string :string
       t.integer :permissions
       t.boolean :active
       t.integer :firm_id
@@ -24,6 +23,7 @@ class CreateWorkers < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
+    add_index :workers, :username, unique: true
     add_index :workers, :email, unique: true
     add_index :workers, :jmbg, unique: true
     add_index :workers, :phone, unique: true

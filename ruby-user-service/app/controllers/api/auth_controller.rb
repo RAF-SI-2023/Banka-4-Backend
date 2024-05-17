@@ -1,7 +1,7 @@
 class Api::AuthController < ApplicationController
   # POST /api/authorization/login
   def login
-    @token = AuthServiceImpl.login(login_params[:email], login_params[:password])
+    @token = AuthService.login(login_params[:email], login_params[:password])
 
     if @token
       render json: @token, status: :ok

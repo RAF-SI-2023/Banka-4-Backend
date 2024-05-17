@@ -1,15 +1,28 @@
 class Api::UsersController < ApplicationController
-  before_action :set_user, only: %i[update destroy]
-  before_action :authenticate_user, except: [:register]
+  require_relative '../../utils/permission_checker'
+  require_relative '../../services/auth_service'
 
+  before_action :authenticate_user, except: %i[register]
+  before_action :wrap_params, except: %i[index destroy]
+
+  before_action :set_user, only: %i[show update destroy ]
+
+  # GET /api/users
   def index
-    @users = User.all
+    return render_unauthorized unless check_permissions?([:list_users])
+
+    @users = User.where(active: true)
     render json: @users
   end
 
+  # GET /api/users/1
+  def show
+    render json: @user
+  end
+
+  # POST /api/users/create
   def create
-    actions = [:create_users]
-    render_unauthorized unless PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
+    return render_unauthorized unless check_permissions?([:create_users])
 
     @user = User.new(create_user_params)
     if @user.valid? && @user.save
@@ -19,20 +32,25 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  # POST /api/users/register
   def register
     @user = User.find_by(email: register_user_params[:email])
-    if @user && @user.active
-      render_unauthorized
-    elsif @user && @user.update(register_user_params)
+
+    render_bad_request unless @user
+    render_unauthorized if @user.active
+    render_bad_request unless (@verification_code = VerificationCode.find_by(email: register_user_params[:email], code: register_user_params[:verification_code]))
+
+    if @user.update(register_user_params)
+      @verification_code.destroy!
       render json: @user, status: :ok
     else
       render_bad_request
     end
   end
 
+  # PATCH/PUT /api/users/id
   def update
-    actions = [:edit_users]
-    render_unauthorized unless PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
+    return render_unauthorized unless check_permissions?([:edit_users])
 
     if @user.update(update_user_params)
       render json: @user, status: :ok
@@ -41,9 +59,9 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  # DELETE /api/users/id
   def destroy
-    actions = [:deactivate_users]
-    render_unauthorized unless PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
+    return render_unauthorized unless check_permissions?([:deactivate_users])
 
     @user.active = false
     if @user.save
@@ -56,40 +74,41 @@ class Api::UsersController < ApplicationController
   private
 
   def set_user
-    @user = User.find(params[:id])
+    return if (@user = User.find(params[:id]))
+    return if (@user = User.find_by(search_email_params))
+    return if (@user = User.find_by(search_jmbg_params))
+
+    @user = User.find_by(search_phone_params)
   end
 
+  # Only allow select params when creating a user
   def create_user_params
     params.require(:user).permit(:first_name, :last_name, :jmbg, :birth_date, :gender, :email, :phone, :address, :connected_accounts, :active)
   end
 
+  # Only allow select params when updating a user
   def update_user_params
-    params.require(:user).permit(:last_name, :address, :phone, :password, :connected_accounts, :active)
+    params.require(:user).permit(:last_name, :address, :phone, :password, :connected_accounts)
   end
 
+  # Only allow select params when registering a user
   def register_user_params
-    params.permit(:email, :password, :active)
+    params.require(:user).permit(:email, :password, :active, :verification_code)
   end
 
-  def user_params
-    params.require(:user).permit(:first_name, :last_name, :jmbg, :birth_date, :gender, :email, :password, :password_confirmation, :phone, :address, :connected_accounts, :active)
+  # Only allow select params when searching for a user by email
+  def search_email_params
+    params.require(:user).permit(:email)
   end
 
-  def authenticate_user
-    token = request.headers['Authorization']&.split(' ')&.last
-    return render_unauthorized unless token
-
-    payload = decode_jwt(token)
-    return render_unauthorized unless payload
-
-    @current_user = User.find_by(id: payload['id'])
-    render_unauthorized unless @current_user
+  # Only allow select params when searching for a user by JMBG
+  def search_jmbg_params
+    params.require(:user).permit(:jmbg)
   end
 
-  def decode_jwt(token)
-    JWT.decode(token, AuthServiceImpl::JWT_SECRET_KEY, true, algorithm: 'HS256').first
-  rescue JWT::DecodeError
-    nil
+  # Only allow select params when searching for a user by phone
+  def search_phone_params
+    params.require(:user).permit(:phone)
   end
 
   def render_unauthorized
@@ -97,6 +116,35 @@ class Api::UsersController < ApplicationController
   end
 
   def render_bad_request
-    render json: { error: 'Bad Request' }, status: :bad_request
+    render json: @user.errors, status: :bad_request
+  end
+
+  def render_not_found
+    render json: { error: "Not found" }, status: :bad_request
+  end
+
+  def authenticate_user
+    authorization_header = request.headers['Authorization']
+    return render_unauthorized unless authorization_header && authorization_header.start_with?('Bearer ')
+
+    token = authorization_header.split(' ').last
+    return render_unauthorized unless token
+
+    @current_user = AuthService.authenticate_user(token)
+    render_unauthorized unless @current_user
+  end
+
+  def check_permissions?(actions)
+    unless @current_user && @current_user.respond_to?(:permissions)
+      return false
+    end
+
+    PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
+  end
+
+  def wrap_params
+    return if params[:user]
+
+    params[:user] = params.permit!.to_h
   end
 end

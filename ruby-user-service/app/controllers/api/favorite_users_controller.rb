@@ -8,11 +8,6 @@ class Api::FavoriteUsersController < ApplicationController
     render json: @favorite_users
   end
 
-  # GET /favorite_users/1
-  def show
-    render json: @favorite_user
-  end
-
   # POST /favorite_users
   def create
     @favorite_user = FavoriteUser.new(favorite_user_params)
@@ -39,13 +34,20 @@ class Api::FavoriteUsersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_favorite_user
-      @favorite_user = FavoriteUser.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def favorite_user_params
-      params.require(:favorite_user).permit(:userId, :sender_account_number, :sender_name, :sender_account_number, :number, :payment_code)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_favorite_user
+    @favorite_user = FavoriteUser.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def favorite_user_params
+    params.require(:favorite_user).permit(:userId, :sender_account_number, :sender_name, :sender_account_number, :number, :payment_code)
+  end
+
+  def wrap_params
+    return if params[:favorite_user]
+
+    params[:favorite_user] = params.permit!.to_h
+  end
 end

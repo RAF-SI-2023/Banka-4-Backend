@@ -91,6 +91,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_134223) do
     t.index ["email"], name: "index_workers_on_email", unique: true
     t.index ["jmbg"], name: "index_workers_on_jmbg", unique: true
     t.index ["phone"], name: "index_workers_on_phone", unique: true
+    t.index ["username"], name: "index_workers_on_username", unique: true
   end
 
 end

@@ -1,51 +1,55 @@
 class Api::VerificationCodesController < ApplicationController
-  before_action :set_verification_code, only: %i[ show update destroy ]
+  before_action :wrap_params
 
-  # GET /verification_codes
-  def index
-    @verification_codes = VerificationCode.all
+  # POST /api/verification_codes/register
+  def create_register_code
+    @verification_code = VerificationCode.new(create_verification_code_param) unless (@verification_code = VerificationCode.find_by_email(params[:email]))
+    generate_verification_code
+    @verification_code.reset = false
 
-    render json: @verification_codes
-  end
-
-  # GET /verification_codes/1
-  def show
-    render json: @verification_code
-  end
-
-  # POST /verification_codes
-  def create
-    @verification_code = VerificationCode.new(verification_code_params)
-
-    if @verification_code.save
-      render json: @verification_code, status: :created, location: @verification_code
+    if @verification_code.valid? && @verification_code.save
+      render json: @verification_code, status: :ok
     else
-      render json: @verification_code.errors, status: :unprocessable_entity
+      render_bad_request
     end
   end
 
-  # PATCH/PUT /verification_codes/1
-  def update
-    if @verification_code.update(verification_code_params)
-      render json: @verification_code
-    else
-      render json: @verification_code.errors, status: :unprocessable_entity
-    end
-  end
+  # POST /api/verification_codes/reset
+  def create_reset_code
+    @verification_code = VerificationCode.new(create_verification_code_param) unless (@verification_code = VerificationCode.find_by_email(params[:email]))
+    generate_verification_code
+    @verification_code.reset = true
 
-  # DELETE /verification_codes/1
-  def destroy
-    @verification_code.destroy!
+    if @verification_code.valid? && @verification_code.save
+      render json: @verification_code, status: :ok
+    else
+      render_bad_request
+    end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_verification_code
-      @verification_code = VerificationCode.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def verification_code_params
-      params.require(:verification_code).permit(:email, :code, :expiration, :reset)
-    end
+  # Only allow select params when creating a verification code
+  def create_verification_code_param
+    params.require(:verification_code).permit(:email)
+  end
+
+  def generate_verification_code
+    @verification_code.code = SecureRandom.uuid
+    @verification_code.expiration = (Time.now + 5.minutes).to_i * 1000
+  end
+
+  def render_bad_request
+    render json: @worker.errors, status: :bad_request
+  end
+
+  def set_verification_code
+    @verification_code = VerificationCode.find(params[:id])
+  end
+
+  def wrap_params
+    return if params[:verification_code]
+
+    params[:verification_code] = params.permit!.to_h
+  end
 end

@@ -22,7 +22,7 @@ class PermissionsChecker
     deactivate_bank_accounts: 0b100000000000000,
 
     list_credits: 0b1000000000000000,
-    accept_redits: 0b10000000000000000,
+    accept_credits: 0b10000000000000000,
     deny_credits: 0b100000000000000000,
 
     list_cards: 0b1000000000000000000,
@@ -44,6 +44,8 @@ class PermissionsChecker
 
   def self.can_perform_actions?(user_permissions, actions)
     required_permissions = actions.map { |action| PERMISSION_MAP[action.to_sym] }
-    (required_permissions - user_permissions).empty?
+    user_permissions_bits = PERMISSION_MAP.values.select { |perm| (user_permissions & perm) == perm }
+
+    (required_permissions - user_permissions_bits).empty?
   end
 end

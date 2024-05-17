@@ -11,18 +11,25 @@ class User < ApplicationRecord
   validates :address, presence: { message: "address can't be blank" }
   validates :connected_accounts, presence: { message: "connected accounts can't be blank" }
   validates :active, inclusion: { in: [true, false], message: "active can't be blank" }
-  validate :validate_password
+
+  validate :validate_password, on: :update, unless: :skip_password_validation?
 
   attr_accessor :password
-  before_update :encrypt_password
+  before_update :encrypt_password, if: :password_present?
 
   private
 
+  def password_present?
+    password.present?
+  end
+
   def encrypt_password
     return unless password.present?
-    puts password
-    puts password_digest
     self.password_digest = PasswordEncryptor.encrypt(password)
+  end
+
+  def skip_password_validation?
+    !active_changed? || !active
   end
 
   def validate_jmbg_last_3_digits
@@ -52,7 +59,5 @@ class User < ApplicationRecord
     else
       errors.add(:password, "password can't be blank")
     end
-
-    errors[:password].each { |error_message| self.errors.add(:password, error_message) }
   end
 end
