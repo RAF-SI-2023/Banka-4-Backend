@@ -78,7 +78,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_12_134223) do
     t.string "username"
     t.string "position"
     t.string "department"
-    t.string "string"
     t.integer "permissions"
     t.boolean "active"
     t.integer "firm_id"
