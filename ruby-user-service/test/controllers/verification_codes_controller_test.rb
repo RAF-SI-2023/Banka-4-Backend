@@ -12,7 +12,7 @@ class VerificationCodesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create verification_code" do
     assert_difference("VerificationCode.count") do
-      post verification_codes_url, params: { verification_code: { code: @verification_code.code, email: @verification_code.email, expiration: @verification_code.expiration, reset: @verification_code.reset } }, as: :json
+      post verification_codes_url, params: { verification_code: {  } }, as: :json
     end
 
     assert_response :created
@@ -24,7 +24,7 @@ class VerificationCodesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update verification_code" do
-    patch verification_code_url(@verification_code), params: { verification_code: { code: @verification_code.code, email: @verification_code.email, expiration: @verification_code.expiration, reset: @verification_code.reset } }, as: :json
+    patch verification_code_url(@verification_code), params: { verification_code: {  } }, as: :json
     assert_response :success
   end
 

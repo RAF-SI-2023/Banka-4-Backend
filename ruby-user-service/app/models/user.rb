@@ -40,7 +40,7 @@ class User < ApplicationRecord
   end
 
   def validate_jmbg_date
-    return unless birth_date.present?
+    return unless birth_date.present? && jmbg.present?
 
     birth_time = Time.at(birth_date / 1000)
     birth_year = birth_time.year % 1000

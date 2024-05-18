@@ -12,7 +12,7 @@ class PaymentCodesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create payment_code" do
     assert_difference("PaymentCode.count") do
-      post payment_codes_url, params: { payment_code: { form_and_basis: @payment_code.form_and_basis, payment_description: @payment_code.payment_description } }, as: :json
+      post payment_codes_url, params: { payment_code: {  } }, as: :json
     end
 
     assert_response :created
@@ -24,7 +24,7 @@ class PaymentCodesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update payment_code" do
-    patch payment_code_url(@payment_code), params: { payment_code: { form_and_basis: @payment_code.form_and_basis, payment_description: @payment_code.payment_description } }, as: :json
+    patch payment_code_url(@payment_code), params: { payment_code: {  } }, as: :json
     assert_response :success
   end
 

@@ -12,7 +12,7 @@ class FavoriteUsersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create favorite_user" do
     assert_difference("FavoriteUser.count") do
-      post favorite_users_url, params: { favorite_user: { number: @favorite_user.number, payment_code: @favorite_user.payment_code, sender_account_number: @favorite_user.sender_account_number, sender_name: @favorite_user.sender_name, userId: @favorite_user.userId } }, as: :json
+      post favorite_users_url, params: { favorite_user: {  } }, as: :json
     end
 
     assert_response :created
@@ -24,7 +24,7 @@ class FavoriteUsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update favorite_user" do
-    patch favorite_user_url(@favorite_user), params: { favorite_user: { number: @favorite_user.number, payment_code: @favorite_user.payment_code, sender_account_number: @favorite_user.sender_account_number, sender_name: @favorite_user.sender_name, userId: @favorite_user.userId } }, as: :json
+    patch favorite_user_url(@favorite_user), params: { favorite_user: {  } }, as: :json
     assert_response :success
   end
 

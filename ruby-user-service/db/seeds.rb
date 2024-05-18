@@ -27,6 +27,7 @@ users = [
     email: 'abuncic720rn@raf.rs',
     first_name: 'Aleksa',
     last_name: 'Buncic',
+    password_digest: '$2a$12$9t5ECvsI5S9r2MmYfMa8iu1Mz7WLQD8X9h0Wt2/6QzRGIr26tofz.',
     jmbg: '1602002710009',
     birth_date: 1013822400000,
     gender: 'M',

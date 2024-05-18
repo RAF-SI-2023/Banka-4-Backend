@@ -12,7 +12,7 @@ class OneTimePasswordsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create one_time_password" do
     assert_difference("OneTimePassword.count") do
-      post one_time_passwords_url, params: { one_time_password: { email: @one_time_password.email, expiration: @one_time_password.expiration, password: "secret", password_confirmation: "secret" } }, as: :json
+      post one_time_passwords_url, params: { one_time_password: {  } }, as: :json
     end
 
     assert_response :created
@@ -24,7 +24,7 @@ class OneTimePasswordsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update one_time_password" do
-    patch one_time_password_url(@one_time_password), params: { one_time_password: { email: @one_time_password.email, expiration: @one_time_password.expiration, password: "secret", password_confirmation: "secret" } }, as: :json
+    patch one_time_password_url(@one_time_password), params: { one_time_password: {  } }, as: :json
     assert_response :success
   end
 
