@@ -1,18 +1,22 @@
 Rails.application.routes.draw do
   namespace :api, path: "/api" do
-    resources :favorite_users
-    resources :verification_codes
-    resources :payment_codes
-    resources :one_time_passwords
+    resources :favorite_users, only: [:index, :create, :update, :destroy]
+    resources :payment_codes, only: [:index, :show]
+    resources :one_time_passwords, only: [:create]
     resources :workers
     resources :users
 
     post "auth/login", to: "auth#login"
+    post "auth/forgot_password", to: "auth#forgot_password"
+    post "auth/reset_password", to: "auth#reset_password"
 
     post "users/register", to: "users#register"
 
     post "verification_codes/register", to: "verification_codes#create_register_code"
     post "verification_codes/reset", to: "verification_codes#create_reset_code"
+
+    post "one_time_passwords/check", to: "one_time_passwords#check"
+
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

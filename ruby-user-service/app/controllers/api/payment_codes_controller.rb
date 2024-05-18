@@ -19,10 +19,4 @@ class Api::PaymentCodesController < ApplicationController
   def payment_code_params
     params.require(:payment_code).permit(:form_and_basis, :payment_description)
   end
-
-  def wrap_params
-    return if params[:payment_code]
-
-    params[:payment_code] = params.permit!.to_h
-  end
 end

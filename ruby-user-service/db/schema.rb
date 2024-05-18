@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema[7.1].define(version: 2024_05_12_134223) do
   create_table "favorite_users", force: :cascade do |t|
-    t.integer "userId"
+    t.integer "user_id"
     t.string "sender_account_number"
     t.string "sender_name"
     t.string "receiver_account_number"

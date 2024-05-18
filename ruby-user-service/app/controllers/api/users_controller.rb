@@ -3,7 +3,7 @@ class Api::UsersController < ApplicationController
   require_relative '../../services/auth_service'
 
   before_action :authenticate_user, except: %i[register]
-  before_action :wrap_params, except: %i[index destroy]
+  # before_action :wrap_params, except: %i[index destroy]
 
   before_action :set_user, only: %i[show update destroy ]
 
@@ -36,11 +36,12 @@ class Api::UsersController < ApplicationController
   def register
     @user = User.find_by(email: register_user_params[:email])
 
-    render_bad_request unless @user
-    render_unauthorized if @user.active
-    render_bad_request unless (@verification_code = VerificationCode.find_by(email: register_user_params[:email], code: register_user_params[:verification_code]))
+    return render_bad_request(error: "User not found") unless @user
+    return render_unauthorized if @user.active
+    return render_bad_request(error: "Verification code not given") unless params.key?(:verification_code)
+    return render_bad_request(error: "Verification code not requested or doesn't match") unless (@verification_code = VerificationCode.find_by(email: register_user_params[:email], code: register_user_params[:verification_code], reset: false))
 
-    if @user.update(register_user_params)
+    if @user.update(register_user_params.except(:verification_code))
       @verification_code.destroy!
       render json: @user, status: :ok
     else
@@ -88,12 +89,12 @@ class Api::UsersController < ApplicationController
 
   # Only allow select params when updating a user
   def update_user_params
-    params.require(:user).permit(:last_name, :address, :phone, :password, :connected_accounts)
+    params.permit(:last_name, :address, :phone, :password, :connected_accounts)
   end
 
   # Only allow select params when registering a user
   def register_user_params
-    params.require(:user).permit(:email, :password, :active, :verification_code)
+    params.permit(:email, :password, :active, :verification_code)
   end
 
   # Only allow select params when searching for a user by email
@@ -115,12 +116,9 @@ class Api::UsersController < ApplicationController
     render json: { error: 'Unauthorized' }, status: :unauthorized
   end
 
-  def render_bad_request
-    render json: @user.errors, status: :bad_request
-  end
-
-  def render_not_found
-    render json: { error: "Not found" }, status: :bad_request
+  def render_bad_request(error: nil)
+    error_message = error || @user.errors
+    render json: { error: error_message }, status: :bad_request
   end
 
   def authenticate_user
@@ -142,9 +140,9 @@ class Api::UsersController < ApplicationController
     PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
   end
 
-  def wrap_params
-    return if params[:user]
+  # def wrap_params
+  # return if params[:user]
 
-    params[:user] = params.permit!.to_h
-  end
+  # params[:user] = params.permit!.to_h
+  # end
 end
