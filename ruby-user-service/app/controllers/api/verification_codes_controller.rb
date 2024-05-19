@@ -1,6 +1,7 @@
 class Api::VerificationCodesController < ApplicationController
   # before_action :wrap_params
   before_action :authenticate_user
+  after_action :send_verification_email
 
   # POST /api/verification_codes/register
   def create_register_code
@@ -50,6 +51,10 @@ class Api::VerificationCodesController < ApplicationController
   def authenticate_user
     authorization_header = request.headers['Authorization']
     render_unauthorized if authorization_header && authorization_header.start_with?('Bearer ')
+  end
+
+  def send_verification_email
+    VerificationCodeMailer.with(verification_code: @verification_code).send_verification_code_email.deliver_later
   end
 
   # def wrap_params

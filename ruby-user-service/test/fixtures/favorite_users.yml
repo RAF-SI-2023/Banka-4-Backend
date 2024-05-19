@@ -2,16 +2,16 @@
 
 one:
   user_id: 1
-  sender_account_number: MyString
-  sender_name: MyString
-  receiver_account_number: MyString
-  number: 1
-  payment_code: MyString
+  sender_account_number: '123456789012345678'
+  sender_name: 'John Doe'
+  receiver_account_number: '987654321098765432'
+  number: 123
+  payment_code: 'PAY123'
 
 two:
-  user_id: 1
-  sender_account_number: MyString
-  sender_name: MyString
-  receiver_account_number: MyString
-  number: 1
-  payment_code: MyString
+  user_id: 2
+  sender_account_number: '987654321098765432'
+  sender_name: 'Jane Doe'
+  receiver_account_number: '123456789012345678'
+  number: 456
+  payment_code: 'PAY456'

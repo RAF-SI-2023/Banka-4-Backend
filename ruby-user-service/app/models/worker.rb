@@ -12,10 +12,10 @@ class Worker < ApplicationRecord
   validates :address, presence: { message: "address can't be blank" }
   validates :password, presence: { message: "password can't be blank" }
 
-  validate :validate_password, on: :update, unless: :skip_password_validation?
+  validate :validate_password
   validates :position, presence: { message: "position can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
   validates :department, presence: { message: "department can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
-  validates :firm_id, presence: { message: "firm_id can't be blank" }, format: { with: /\A[0-9]+\z/, message: "firm_id only allows numbers" }
+  validates :firm_id, presence: { message: "firm_id can't be blank" }, numericality: { only_integer: true, message: "firm_id only allows numbers" }
   validates :daily_limit, presence: { message: "daily_limit can't be blank" }, numericality: { greater_than_or_equal_to: 0, message: "daily_limit must be greater than 0" }
   validates :daily_spent, numericality: { greater_than_or_equal_to: 0, message: "daily_spent must be greater than 0" }, if: :daily_spent_present?
   validates :permissions, presence: { message: "permissions can't be blank" }
@@ -23,7 +23,7 @@ class Worker < ApplicationRecord
   validates :supervisor, inclusion: { in: [true, false], message: "supervisor can't be blank" }
 
   attr_accessor :password
-  before_save :encrypt_password, unless: :skip_password_validation?
+  before_save :encrypt_password
 
   private
 
@@ -36,10 +36,6 @@ class Worker < ApplicationRecord
     daily_spent.present?
   end
 
-  def skip_password_validation?
-    !active_changed? || (!active && !new_record?)
-  end
-
   def validate_jmbg_last_3_digits
     return unless gender.present? && jmbg.present?
 
@@ -48,7 +44,7 @@ class Worker < ApplicationRecord
   end
 
   def validate_jmbg_date
-    return unless birth_date.present?
+    return unless birth_date.present? && jmbg.present?
 
     birth_time = Time.at(birth_date / 1000)
     birth_year = birth_time.year % 1000
