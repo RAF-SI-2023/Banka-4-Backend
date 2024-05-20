@@ -4,6 +4,8 @@ class VerificationCodeMailer < ApplicationMailer
 
   def send_verification_code_email
     @verification_code = params[:verification_code]
+    return if @verification_code.blank? || @verification_code.email.blank?
+
     subject = @verification_code.reset ? "Reset Code" : "Verification Code"
 
     mail(to: @verification_code.email, subject: subject) do |format|

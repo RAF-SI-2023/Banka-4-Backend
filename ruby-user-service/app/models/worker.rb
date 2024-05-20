@@ -23,13 +23,17 @@ class Worker < ApplicationRecord
   validates :supervisor, inclusion: { in: [true, false], message: "supervisor can't be blank" }
 
   attr_accessor :password
-  before_save :encrypt_password
+  before_save :encrypt_password, unless: :skip_password_validation?
 
   private
 
   def encrypt_password
     return unless password.present?
     self.password_digest = PasswordEncryptor.encrypt(password)
+  end
+
+  def skip_password_validation?
+    !active_changed? || (!active && !new_record?)
   end
 
   def daily_spent_present?

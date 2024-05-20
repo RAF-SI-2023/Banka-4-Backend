@@ -21,7 +21,7 @@ class Api::WorkersController < ApplicationController
     @worker = Worker.new(create_worker_params)
 
     if @worker.valid? && @worker.save
-      render json: @worker, status: :created
+      render json: @worker, status: :ok
     else
       render_bad_request
     end
