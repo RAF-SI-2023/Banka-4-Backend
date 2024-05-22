@@ -21,10 +21,12 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SpringSecurityConfig implements WebSecurityCustomizer {
 
     private final JwtFilter jwtFilter;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public CustomPermissionEvaluator permissionEvaluator() {
         return new CustomPermissionEvaluator();
@@ -34,6 +36,7 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();//defaultni AuthenticationManager
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -41,22 +44,22 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
 //                .and()
                 .authorizeRequests(authorize -> authorize
 
-                        //vazi za sve putanje u /korisnik/ ali samo sa GET metodom
-                        //.requestMatchers(HttpMethod.GET,"/korisnik/**")
+                                //vazi za sve putanje u /korisnik/ ali samo sa GET metodom
+                                //.requestMatchers(HttpMethod.GET,"/korisnik/**")
 
-                        //vazi za sve putanje u /korisnik/ svih metoda
-                        //.requestMatchers("/korisnik/**")
+                                //vazi za sve putanje u /korisnik/ svih metoda
+                                //.requestMatchers("/korisnik/**")
 
-                        .requestMatchers("/swagger-ui/**","/api-docs/**","/swagger-resources/**").permitAll()
-                        .requestMatchers("/korisnik/login","/korisnik/generate-login","/korisnik/generate-reset","/korisnik/verifikacija","/korisnik/reset-password", "/korisnik/id/**", "/korisnik/addAccount/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT,"/korisnik","/korisnik/change-password").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/korisnik","/korisnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_korisnika + "')")
-                        .requestMatchers(HttpMethod.POST,"/korisnik/add").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_korisnika + "')")
-                        .requestMatchers(HttpMethod.GET,"/radnik","/radnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_radnika + "')")
-                        .requestMatchers(HttpMethod.PUT,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.editovanje_radnika + "')")
-                        .requestMatchers(HttpMethod.POST,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_radnika + "')")
+                                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-resources/**").permitAll()
+                                .requestMatchers("/korisnik/login", "/korisnik/generate-login", "/korisnik/generate-reset", "/korisnik/verifikacija", "/korisnik/reset-password", "/korisnik/id/**", "/korisnik/addAccount/**").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/korisnik", "/korisnik/change-password").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/korisnik", "/korisnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.list_users + "')")
+                                .requestMatchers(HttpMethod.POST, "/korisnik/add").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.create_users + "')")
+                                .requestMatchers(HttpMethod.GET, "/radnik", "/radnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.list_workers + "')")
+                                .requestMatchers(HttpMethod.PUT, "/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.edit_workers + "')")
+                                .requestMatchers(HttpMethod.POST, "/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.create_workers + "')")
 //                        .requestMatchers("/racuni/dodajDevizni","/racuni/dodajPravni","/racuni/dodajTekuci").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.kreiranje_racuna + "')")
-                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
                 )
                 .csrf().disable()
                 .addFilterBefore(this.jwtFilter, UsernamePasswordAuthenticationFilter.class);

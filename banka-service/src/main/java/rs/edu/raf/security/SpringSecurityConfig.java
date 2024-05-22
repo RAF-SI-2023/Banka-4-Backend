@@ -26,7 +26,7 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
     private final JwtFilter jwtFilter;
 
     @Autowired
-    public SpringSecurityConfig(JwtFilter jwtFilter){
+    public SpringSecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 
@@ -34,6 +34,7 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public CustomPermissionEvaluator permissionEvaluator() {
         return new CustomPermissionEvaluator();
@@ -43,27 +44,28 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
 //                .cors()
 //                .and()
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/swagger-ui/**","/api-docs/**","/swagger-resources/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-resources/**").permitAll()
 //                        .requestMatchers("/korisnik/login","/korisnik/generate-login","/korisnik/generate-reset","/korisnik/verifikacija","/korisnik/reset-password").permitAll()
 //                        .requestMatchers(HttpMethod.PUT,"/korisnik","/korisnik/change-password").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/racuni/izlistajSveFirme").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_korisnika + "')")
-                        .requestMatchers(HttpMethod.POST,"/racuni/kreirajFirmu").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_korisnika + "')")
-                        .requestMatchers(HttpMethod.GET, "/credit/deny/**", "/credit/approve/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.edit_kredita + "')")
-                        .requestMatchers(HttpMethod.GET, "/card/block/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.edit_kartice + "')")
-                        .requestMatchers(HttpMethod.POST, "/card/create", "/card/names").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.edit_kartice + "')")
-                        .requestMatchers("/exchange", "/exchange/**", "/credit/apply").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/racuni/izlistajSveFirme").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.list_users + "')")
+                                .requestMatchers(HttpMethod.POST, "/racuni/kreirajFirmu").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.create_users + "')")
+                                .requestMatchers(HttpMethod.GET, "/credit/deny/**", "/credit/approve/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.deny_credits + "')")
+                                .requestMatchers(HttpMethod.GET, "/card/block/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.block_cards + "')")
+                                .requestMatchers(HttpMethod.POST, "/card/create", "/card/names").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.create_cards + "')")
+                                .requestMatchers("/exchange", "/exchange/**", "/credit/apply").permitAll()
                                 .requestMatchers("/ws/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET,"/radnik","/radnik/**").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_radnika + "')")
 //                        .requestMatchers(HttpMethod.PUT,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.editovanje_radnika + "')")
 //                        .requestMatchers(HttpMethod.POST,"/radnik").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.dodavanje_radnika + "')")
 //                        .requestMatchers("/racuni/dodajDevizni","/racuni/dodajPravni","/racuni/dodajTekuci").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.kreiranje_racuna + "')")
-                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
                 )
                 .csrf().disable()
                 .addFilterBefore(this.jwtFilter, UsernamePasswordAuthenticationFilter.class);
