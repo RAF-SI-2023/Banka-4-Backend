@@ -43,7 +43,6 @@ public class CardController {
             case "blokirana" -> cardService.blockCard(cardNumber);
             default -> ResponseEntity.notFound().build();
         }
-        cardService.blockCard(cardNumber);
         return ResponseEntity.ok().build();
     }
 

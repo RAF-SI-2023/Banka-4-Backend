@@ -295,376 +295,376 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Prenos sredstava sa ID-om " + idPrenosaSredstava + " nije pronađen."));
     }
-
-    @Scheduled(cron = "0 */2 * * * *")
-    public void realizacijaTransakcijaZaPrenostSredstava() {
-        List<PrenosSredstava> prenosi = vratiPrenosSredstavaUObradi();
-
-        for (PrenosSredstava prenosSredstava : prenosi) {
-
-            RealizacijaTransakcije realizacijaTransakcijePosiljaoca = null;
-            RealizacijaTransakcije realizacijaTransakcijePrimaoca = null;
-            BigDecimal transferAmount;
-
-            switch (racunServis.nadjiVrstuRacuna(prenosSredstava.getRacunPosiljaoca())) {
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(pravniRacun.getId(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
-                }
-                case "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
-                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(tekuciRacun.getId(), tekuciRacun.getAktivan(), izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()), tekuciRacun.getCurrency(), "TekuciRacun", tekuciRacun.getStanje(), tekuciRacun.getVlasnik());
-                }
-            }
-
-            switch (racunServis.nadjiVrstuRacuna(prenosSredstava.getRacunPrimaoca())) {
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(pravniRacun.getId(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
-                }
-                case "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
-                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(tekuciRacun.getId(), tekuciRacun.getAktivan(), izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()), tekuciRacun.getCurrency(), "TekuciRacun", tekuciRacun.getStanje(), tekuciRacun.getVlasnik());
-                }
-            }
-
-            if (realizacijaTransakcijePosiljaoca == null || realizacijaTransakcijePrimaoca == null){
-                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.NEUSPELO, System.currentTimeMillis());
-                continue;
-            }
-
-            if(realizacijaTransakcijePosiljaoca.getIdKorisnika() != realizacijaTransakcijePrimaoca.getIdKorisnika()){
-                neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
-                continue;
-            }
-
-
-            if(!realizacijaTransakcijePosiljaoca.getAktivan() || !realizacijaTransakcijePrimaoca.getAktivan()){
-                neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
-                continue;
-            }
-            transferAmount = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), prenosSredstava.getIznos());
-
-            if(transferAmount == null){
-                transferAmount = BigDecimal.ZERO;
-            }
-
-            if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(prenosSredstava.getIznos()) < 0) {
-                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.NEUSPELO, System.currentTimeMillis());
-                continue;
-            }
-
-            boolean prosaoPrvi = false;
-            boolean prosaoDrugi = false;
-
-            switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                    pravniRacun.setStanje(pravniRacun.getStanje().subtract(prenosSredstava.getIznos()));
-                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(prenosSredstava.getIznos())) == 0){
-                        prosaoPrvi = true;
-                    }
-                }
-                case  "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                    devizniRacun.setStanje(devizniRacun.getStanje().subtract(prenosSredstava.getIznos()));
-                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(prenosSredstava.getIznos())) == 0){
-                        prosaoPrvi = true;
-                    }                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                    tekuciRacun.setStanje(tekuciRacun.getStanje().subtract(prenosSredstava.getIznos()));
-                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(prenosSredstava.getIznos())) == 0){
-                        prosaoPrvi = true;
-                    }
-                }
-            }
-
-            switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    pravniRacun.setStanje(pravniRacun.getStanje().add(transferAmount));
-                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(transferAmount));
-                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
-                        prosaoDrugi = true;
-                    }
-                }
-                case  "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    devizniRacun.setStanje(devizniRacun.getStanje().add(transferAmount));
-                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(transferAmount));
-                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
-                        prosaoDrugi = true;
-                    }
-
-                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(transferAmount));
-                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(transferAmount));
-                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
-                        prosaoDrugi = true;
-                    }
-                }
-            }
-
-            if(prosaoPrvi && prosaoDrugi){
-                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.REALIZOVANO, System.currentTimeMillis());
-            } else {
-
-                switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
-                    case "PravniRacun" -> {
-                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                        pravniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
-                        pravniRacunRepository.save(pravniRacun);
-                    }
-                    case  "DevizniRacun" -> {
-                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                        devizniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
-                        devizniRacunRepository.save(devizniRacun);
-                    }
-                    case "TekuciRacun" -> {
-                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
-                        tekuciRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
-                        tekuciRacunRepository.save(tekuciRacun);
-                    }
-                }
-
-                neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
-
-
-                switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
-                    case "PravniRacun" -> {
-                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                        pravniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
-                        pravniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
-                        pravniRacunRepository.save(pravniRacun);
-
-                    }
-                    case  "DevizniRacun" -> {
-                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                        devizniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
-                        devizniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
-                        devizniRacunRepository.save(devizniRacun);
-
-                    }
-                    case "TekuciRacun" -> {
-                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
-                        tekuciRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
-                        tekuciRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
-                        tekuciRacunRepository.save(tekuciRacun);
-                    }
-                }
-                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.REALIZOVANO, System.currentTimeMillis());
-            }
-        }
-
-
-    }
-
-    @Scheduled(cron = "0 */2 * * * *")
-    public void realizacijaTransakcijaZaUplatu() {
-        List<Uplata> uplate = vratiUplateUObradi();
-
-        for (Uplata uplata : uplate) {
-            RealizacijaTransakcije realizacijaTransakcijePosiljaoca = null;
-            RealizacijaTransakcije realizacijaTransakcijePrimaoca = null;
-            BigDecimal transferAmoun;
-
-            switch (racunServis.nadjiVrstuRacuna(uplata.getRacunPosiljaoca())) {
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca());
-                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(pravniRacun.getBrojRacuna(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
-                }
-                case "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca());
-                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije();
-                    realizacijaTransakcijePosiljaoca.setBrojRacuna(devizniRacun.getBrojRacuna());
-                    realizacijaTransakcijePosiljaoca.setAktivan(devizniRacun.getAktivan());
-                    realizacijaTransakcijePosiljaoca.setRezervisanaSredstva(izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()));
-                    realizacijaTransakcijePosiljaoca.setValute(devizniRacun.getDefaultCurrency());
-                    realizacijaTransakcijePosiljaoca.setTipRacuna("DevizniRacun");
-                    realizacijaTransakcijePosiljaoca.setPrethodnoStanje(devizniRacun.getStanje());
-                    realizacijaTransakcijePosiljaoca.setIdKorisnika(devizniRacun.getVlasnik());
-                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(uplata.getRacunPosiljaoca());
-                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije();
-                    realizacijaTransakcijePosiljaoca.setBrojRacuna(tekuciRacun.getBrojRacuna());
-                    realizacijaTransakcijePosiljaoca.setAktivan(tekuciRacun.getAktivan());
-                    realizacijaTransakcijePosiljaoca.setRezervisanaSredstva(izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()));
-                    realizacijaTransakcijePosiljaoca.setValute(tekuciRacun.getCurrency());
-                    realizacijaTransakcijePosiljaoca.setTipRacuna("TekuciRacun");
-                    realizacijaTransakcijePosiljaoca.setPrethodnoStanje(tekuciRacun.getStanje());
-                    realizacijaTransakcijePosiljaoca.setIdKorisnika(tekuciRacun.getVlasnik());
-                }
-            }
-
-            switch (racunServis.nadjiVrstuRacuna(uplata.getRacunPrimaoca())) {
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(pravniRacun.getBrojRacuna(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
-                }
-                case "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getBrojRacuna(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
-                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
-                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije();
-                    realizacijaTransakcijePrimaoca.setBrojRacuna(tekuciRacun.getBrojRacuna());
-                    realizacijaTransakcijePrimaoca.setAktivan(tekuciRacun.getAktivan());
-                    realizacijaTransakcijePrimaoca.setRezervisanaSredstva(izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()));
-                    realizacijaTransakcijePrimaoca.setValute(tekuciRacun.getCurrency());
-                    realizacijaTransakcijePrimaoca.setTipRacuna("TekuciRacun");
-                    realizacijaTransakcijePrimaoca.setPrethodnoStanje(tekuciRacun.getStanje());
-                    realizacijaTransakcijePrimaoca.setIdKorisnika(tekuciRacun.getVlasnik());                }
-            }
-
-            if (realizacijaTransakcijePosiljaoca == null || realizacijaTransakcijePrimaoca == null){
-                promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
-                continue;
-            }
-
-            if(!realizacijaTransakcijePosiljaoca.getAktivan() || !realizacijaTransakcijePrimaoca.getAktivan()){
-                neuspelaUplata(realizacijaTransakcijePosiljaoca.getTipRacuna(), uplata);
-                continue;
-            }
-
-            transferAmoun = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), uplata.getIznos());
-
-            if(transferAmoun == null){
-                transferAmoun = BigDecimal.ZERO;
-            }
-
-            if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(uplata.getIznos()) < 0) {
-                promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
-                continue;
-            }
-
-            boolean prosaoPrvi = false;
-            boolean prosaoDrugi = false;
-
-            switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
-                    pravniRacun.setStanje(pravniRacun.getStanje().subtract(uplata.getIznos()));
-                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(uplata.getIznos())) == 0){
-                        prosaoPrvi = true;
-                    }
-                }
-                case  "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
-                    devizniRacun.setStanje(devizniRacun.getStanje().subtract(uplata.getIznos()));
-                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(uplata.getIznos())) == 0){
-                        prosaoPrvi = true;
-                    }                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
-                    tekuciRacun.setStanje(tekuciRacun.getStanje().subtract(uplata.getIznos()));
-                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(uplata.getIznos())) == 0){
-                        prosaoPrvi = true;
-                    }
-                }
-            }
-
-            switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
-                case "PravniRacun" -> {
-                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                    pravniRacun.setStanje(pravniRacun.getStanje().add(transferAmoun));
-                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(transferAmoun));
-                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
-                        prosaoDrugi = true;
-                    }
-                }
-                case  "DevizniRacun" -> {
-                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                    devizniRacun.setStanje(devizniRacun.getStanje().add(transferAmoun));
-                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(transferAmoun));
-                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
-                        prosaoDrugi = true;
-                    }
-
-                }
-                case "TekuciRacun" -> {
-                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(transferAmoun));
-                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(transferAmoun));
-                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
-                    if(racun.getStanje().compareTo(realizacijaTransakcijePrimaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
-                        prosaoDrugi = true;
-                    }
-                }
-            }
-
-            if(prosaoPrvi && prosaoDrugi){
-                promeniStatusUplate(uplata.getId(), Status.REALIZOVANO, System.currentTimeMillis());
-            } else {
-
-                switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
-                    case "PravniRacun" -> {
-                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
-                        pravniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
-                        pravniRacunRepository.save(pravniRacun);
-                    }
-                    case  "DevizniRacun" -> {
-                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
-                        devizniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
-                        devizniRacunRepository.save(devizniRacun);
-                    }
-                    case "TekuciRacun" -> {
-                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
-                        tekuciRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
-                        tekuciRacunRepository.save(tekuciRacun);
-                    }
-                }
-
-                neuspelaUplata(realizacijaTransakcijePosiljaoca.getTipRacuna(), uplata);
-
-
-                switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
-                    case "PravniRacun" -> {
-                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                        pravniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
-                        pravniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
-                        pravniRacunRepository.save(pravniRacun);
-                    }
-                    case  "DevizniRacun" -> {
-                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                        devizniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
-                        devizniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
-                        devizniRacunRepository.save(devizniRacun);
-                    }
-                    case "TekuciRacun" -> {
-                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
-                        tekuciRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
-                        tekuciRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
-                        tekuciRacunRepository.save(tekuciRacun);
-                    }
-                }
-                promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
-            }
-        }
-    }
+//
+//    @Scheduled(cron = "0 */2 * * * *")
+//    public void realizacijaTransakcijaZaPrenostSredstava() {
+//        List<PrenosSredstava> prenosi = vratiPrenosSredstavaUObradi();
+//
+//        for (PrenosSredstava prenosSredstava : prenosi) {
+//
+//            RealizacijaTransakcije realizacijaTransakcijePosiljaoca = null;
+//            RealizacijaTransakcije realizacijaTransakcijePrimaoca = null;
+//            BigDecimal transferAmount;
+//
+//            switch (racunServis.nadjiVrstuRacuna(prenosSredstava.getRacunPosiljaoca())) {
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(pravniRacun.getId(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
+//                }
+//                case "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
+//                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(tekuciRacun.getId(), tekuciRacun.getAktivan(), izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()), tekuciRacun.getCurrency(), "TekuciRacun", tekuciRacun.getStanje(), tekuciRacun.getVlasnik());
+//                }
+//            }
+//
+//            switch (racunServis.nadjiVrstuRacuna(prenosSredstava.getRacunPrimaoca())) {
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(pravniRacun.getId(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
+//                }
+//                case "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getId(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
+//                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(tekuciRacun.getId(), tekuciRacun.getAktivan(), izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()), tekuciRacun.getCurrency(), "TekuciRacun", tekuciRacun.getStanje(), tekuciRacun.getVlasnik());
+//                }
+//            }
+//
+//            if (realizacijaTransakcijePosiljaoca == null || realizacijaTransakcijePrimaoca == null){
+//                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.NEUSPELO, System.currentTimeMillis());
+//                continue;
+//            }
+//
+//            if(realizacijaTransakcijePosiljaoca.getIdKorisnika() != realizacijaTransakcijePrimaoca.getIdKorisnika()){
+//                neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
+//                continue;
+//            }
+//
+//
+//            if(!realizacijaTransakcijePosiljaoca.getAktivan() || !realizacijaTransakcijePrimaoca.getAktivan()){
+//                neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
+//                continue;
+//            }
+//            transferAmount = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), prenosSredstava.getIznos());
+//
+//            if(transferAmount == null){
+//                transferAmount = BigDecimal.ZERO;
+//            }
+//
+//            if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(prenosSredstava.getIznos()) < 0) {
+//                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.NEUSPELO, System.currentTimeMillis());
+//                continue;
+//            }
+//
+//            boolean prosaoPrvi = false;
+//            boolean prosaoDrugi = false;
+//
+//            switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                    pravniRacun.setStanje(pravniRacun.getStanje().subtract(prenosSredstava.getIznos()));
+//                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(prenosSredstava.getIznos())) == 0){
+//                        prosaoPrvi = true;
+//                    }
+//                }
+//                case  "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                    devizniRacun.setStanje(devizniRacun.getStanje().subtract(prenosSredstava.getIznos()));
+//                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(prenosSredstava.getIznos())) == 0){
+//                        prosaoPrvi = true;
+//                    }                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                    tekuciRacun.setStanje(tekuciRacun.getStanje().subtract(prenosSredstava.getIznos()));
+//                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(prenosSredstava.getIznos())) == 0){
+//                        prosaoPrvi = true;
+//                    }
+//                }
+//            }
+//
+//            switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                    pravniRacun.setStanje(pravniRacun.getStanje().add(transferAmount));
+//                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(transferAmount));
+//                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
+//                        prosaoDrugi = true;
+//                    }
+//                }
+//                case  "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                    devizniRacun.setStanje(devizniRacun.getStanje().add(transferAmount));
+//                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(transferAmount));
+//                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
+//                        prosaoDrugi = true;
+//                    }
+//
+//                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(transferAmount));
+//                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(transferAmount));
+//                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmount)) == 0){
+//                        prosaoDrugi = true;
+//                    }
+//                }
+//            }
+//
+//            if(prosaoPrvi && prosaoDrugi){
+//                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.REALIZOVANO, System.currentTimeMillis());
+//            } else {
+//
+//                switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
+//                    case "PravniRacun" -> {
+//                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                        pravniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
+//                        pravniRacunRepository.save(pravniRacun);
+//                    }
+//                    case  "DevizniRacun" -> {
+//                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                        devizniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
+//                        devizniRacunRepository.save(devizniRacun);
+//                    }
+//                    case "TekuciRacun" -> {
+//                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPosiljaoca());
+//                        tekuciRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
+//                        tekuciRacunRepository.save(tekuciRacun);
+//                    }
+//                }
+//
+//                neuspeoPrenos(realizacijaTransakcijePosiljaoca.getTipRacuna(), prenosSredstava);
+//
+//
+//                switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
+//                    case "PravniRacun" -> {
+//                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                        pravniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
+//                        pravniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
+//                        pravniRacunRepository.save(pravniRacun);
+//
+//                    }
+//                    case  "DevizniRacun" -> {
+//                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                        devizniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
+//                        devizniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
+//                        devizniRacunRepository.save(devizniRacun);
+//
+//                    }
+//                    case "TekuciRacun" -> {
+//                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(prenosSredstava.getRacunPrimaoca());
+//                        tekuciRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
+//                        tekuciRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
+//                        tekuciRacunRepository.save(tekuciRacun);
+//                    }
+//                }
+//                promeniStatusPrenosaSredstava(prenosSredstava.getId(), Status.REALIZOVANO, System.currentTimeMillis());
+//            }
+//        }
+//
+//
+//    }
+//
+//    @Scheduled(cron = "0 */2 * * * *")
+//    public void realizacijaTransakcijaZaUplatu() {
+//        List<Uplata> uplate = vratiUplateUObradi();
+//
+//        for (Uplata uplata : uplate) {
+//            RealizacijaTransakcije realizacijaTransakcijePosiljaoca = null;
+//            RealizacijaTransakcije realizacijaTransakcijePrimaoca = null;
+//            BigDecimal transferAmoun;
+//
+//            switch (racunServis.nadjiVrstuRacuna(uplata.getRacunPosiljaoca())) {
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca());
+//                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije(pravniRacun.getBrojRacuna(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
+//                }
+//                case "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(uplata.getRacunPosiljaoca());
+//                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije();
+//                    realizacijaTransakcijePosiljaoca.setBrojRacuna(devizniRacun.getBrojRacuna());
+//                    realizacijaTransakcijePosiljaoca.setAktivan(devizniRacun.getAktivan());
+//                    realizacijaTransakcijePosiljaoca.setRezervisanaSredstva(izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()));
+//                    realizacijaTransakcijePosiljaoca.setValute(devizniRacun.getDefaultCurrency());
+//                    realizacijaTransakcijePosiljaoca.setTipRacuna("DevizniRacun");
+//                    realizacijaTransakcijePosiljaoca.setPrethodnoStanje(devizniRacun.getStanje());
+//                    realizacijaTransakcijePosiljaoca.setIdKorisnika(devizniRacun.getVlasnik());
+//                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(uplata.getRacunPosiljaoca());
+//                    realizacijaTransakcijePosiljaoca = new RealizacijaTransakcije();
+//                    realizacijaTransakcijePosiljaoca.setBrojRacuna(tekuciRacun.getBrojRacuna());
+//                    realizacijaTransakcijePosiljaoca.setAktivan(tekuciRacun.getAktivan());
+//                    realizacijaTransakcijePosiljaoca.setRezervisanaSredstva(izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()));
+//                    realizacijaTransakcijePosiljaoca.setValute(tekuciRacun.getCurrency());
+//                    realizacijaTransakcijePosiljaoca.setTipRacuna("TekuciRacun");
+//                    realizacijaTransakcijePosiljaoca.setPrethodnoStanje(tekuciRacun.getStanje());
+//                    realizacijaTransakcijePosiljaoca.setIdKorisnika(tekuciRacun.getVlasnik());
+//                }
+//            }
+//
+//            switch (racunServis.nadjiVrstuRacuna(uplata.getRacunPrimaoca())) {
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
+//                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(pravniRacun.getBrojRacuna(), pravniRacun.getAktivan(), izracunajRezervisanaSredstva(pravniRacun.getBrojRacuna()), pravniRacun.getCurrency(), "PravniRacun", pravniRacun.getStanje(), pravniRacun.getFirma());
+//                }
+//                case "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
+//                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije(devizniRacun.getBrojRacuna(), devizniRacun.getAktivan(), izracunajRezervisanaSredstva(devizniRacun.getBrojRacuna()), devizniRacun.getDefaultCurrency(), "DevizniRacun", devizniRacun.getStanje(), devizniRacun.getVlasnik());
+//                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(uplata.getRacunPrimaoca());
+//                    realizacijaTransakcijePrimaoca = new RealizacijaTransakcije();
+//                    realizacijaTransakcijePrimaoca.setBrojRacuna(tekuciRacun.getBrojRacuna());
+//                    realizacijaTransakcijePrimaoca.setAktivan(tekuciRacun.getAktivan());
+//                    realizacijaTransakcijePrimaoca.setRezervisanaSredstva(izracunajRezervisanaSredstva(tekuciRacun.getBrojRacuna()));
+//                    realizacijaTransakcijePrimaoca.setValute(tekuciRacun.getCurrency());
+//                    realizacijaTransakcijePrimaoca.setTipRacuna("TekuciRacun");
+//                    realizacijaTransakcijePrimaoca.setPrethodnoStanje(tekuciRacun.getStanje());
+//                    realizacijaTransakcijePrimaoca.setIdKorisnika(tekuciRacun.getVlasnik());                }
+//            }
+//
+//            if (realizacijaTransakcijePosiljaoca == null || realizacijaTransakcijePrimaoca == null){
+//                promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
+//                continue;
+//            }
+//
+//            if(!realizacijaTransakcijePosiljaoca.getAktivan() || !realizacijaTransakcijePrimaoca.getAktivan()){
+//                neuspelaUplata(realizacijaTransakcijePosiljaoca.getTipRacuna(), uplata);
+//                continue;
+//            }
+//
+//            transferAmoun = exchangeRateServiceImpl.convert(realizacijaTransakcijePosiljaoca.getValute(), realizacijaTransakcijePrimaoca.getValute(), uplata.getIznos());
+//
+//            if(transferAmoun == null){
+//                transferAmoun = BigDecimal.ZERO;
+//            }
+//
+//            if (realizacijaTransakcijePosiljaoca.getRezervisanaSredstva().compareTo(uplata.getIznos()) < 0) {
+//                promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
+//                continue;
+//            }
+//
+//            boolean prosaoPrvi = false;
+//            boolean prosaoDrugi = false;
+//
+//            switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
+//                    pravniRacun.setStanje(pravniRacun.getStanje().subtract(uplata.getIznos()));
+//                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(uplata.getIznos())) == 0){
+//                        prosaoPrvi = true;
+//                    }
+//                }
+//                case  "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
+//                    devizniRacun.setStanje(devizniRacun.getStanje().subtract(uplata.getIznos()));
+//                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(uplata.getIznos())) == 0){
+//                        prosaoPrvi = true;
+//                    }                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
+//                    tekuciRacun.setStanje(tekuciRacun.getStanje().subtract(uplata.getIznos()));
+//                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().subtract(uplata.getIznos())) == 0){
+//                        prosaoPrvi = true;
+//                    }
+//                }
+//            }
+//
+//            switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
+//                case "PravniRacun" -> {
+//                    PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
+//                    pravniRacun.setStanje(pravniRacun.getStanje().add(transferAmoun));
+//                    pravniRacun.setRaspolozivoStanje(pravniRacun.getRaspolozivoStanje().add(transferAmoun));
+//                    PravniRacun racun = pravniRacunRepository.save(pravniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
+//                        prosaoDrugi = true;
+//                    }
+//                }
+//                case  "DevizniRacun" -> {
+//                    DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
+//                    devizniRacun.setStanje(devizniRacun.getStanje().add(transferAmoun));
+//                    devizniRacun.setRaspolozivoStanje(devizniRacun.getRaspolozivoStanje().add(transferAmoun));
+//                    DevizniRacun racun = devizniRacunRepository.save(devizniRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePosiljaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
+//                        prosaoDrugi = true;
+//                    }
+//
+//                }
+//                case "TekuciRacun" -> {
+//                    TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
+//                    tekuciRacun.setStanje(tekuciRacun.getStanje().add(transferAmoun));
+//                    tekuciRacun.setRaspolozivoStanje(tekuciRacun.getRaspolozivoStanje().add(transferAmoun));
+//                    TekuciRacun racun = tekuciRacunRepository.save(tekuciRacun);
+//                    if(racun.getStanje().compareTo(realizacijaTransakcijePrimaoca.getPrethodnoStanje().add(transferAmoun)) == 0){
+//                        prosaoDrugi = true;
+//                    }
+//                }
+//            }
+//
+//            if(prosaoPrvi && prosaoDrugi){
+//                promeniStatusUplate(uplata.getId(), Status.REALIZOVANO, System.currentTimeMillis());
+//            } else {
+//
+//                switch (realizacijaTransakcijePosiljaoca.getTipRacuna()){
+//                    case "PravniRacun" -> {
+//                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
+//                        pravniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
+//                        pravniRacunRepository.save(pravniRacun);
+//                    }
+//                    case  "DevizniRacun" -> {
+//                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
+//                        devizniRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
+//                        devizniRacunRepository.save(devizniRacun);
+//                    }
+//                    case "TekuciRacun" -> {
+//                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePosiljaoca.getBrojRacuna());
+//                        tekuciRacun.setStanje(realizacijaTransakcijePosiljaoca.getPrethodnoStanje());
+//                        tekuciRacunRepository.save(tekuciRacun);
+//                    }
+//                }
+//
+//                neuspelaUplata(realizacijaTransakcijePosiljaoca.getTipRacuna(), uplata);
+//
+//
+//                switch (realizacijaTransakcijePrimaoca.getTipRacuna()){
+//                    case "PravniRacun" -> {
+//                        PravniRacun pravniRacun = racunServis.nadjiAktivanPravniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
+//                        pravniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
+//                        pravniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
+//                        pravniRacunRepository.save(pravniRacun);
+//                    }
+//                    case  "DevizniRacun" -> {
+//                        DevizniRacun devizniRacun = racunServis.nadjiAktivanDevizniRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
+//                        devizniRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
+//                        devizniRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
+//                        devizniRacunRepository.save(devizniRacun);
+//                    }
+//                    case "TekuciRacun" -> {
+//                        TekuciRacun tekuciRacun = racunServis.nadjiAktivanTekuciRacunPoBrojuRacuna(realizacijaTransakcijePrimaoca.getBrojRacuna());
+//                        tekuciRacun.setStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje());
+//                        tekuciRacun.setRaspolozivoStanje(realizacijaTransakcijePrimaoca.getPrethodnoStanje().subtract(realizacijaTransakcijePrimaoca.getRezervisanaSredstva()));
+//                        tekuciRacunRepository.save(tekuciRacun);
+//                    }
+//                }
+//                promeniStatusUplate(uplata.getId(), Status.NEUSPELO, System.currentTimeMillis());
+//            }
+//        }
+//    }
 
     public void neuspelaUplata(String tip, Uplata uplata){
         switch (tip){
