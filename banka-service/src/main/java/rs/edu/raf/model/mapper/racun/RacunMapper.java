@@ -57,11 +57,9 @@ public class RacunMapper {
         valute = valute.substring(0, valute.length() - 1);
         dr.setCurrency(valute);
 
-        dr.setDefaultCurrency(noviDevizniRacunDTO.getDefaultCurrency());
         dr.setAktivan(true);
         dr.setKamatnaStopa(new BigDecimal("1"));
         dr.setOdrzavanjeRacuna(new BigDecimal(100 * noviDevizniRacunDTO.getBrojDozvoljenihValuta()));
-        dr.setBrojDozvoljenihValuta(noviDevizniRacunDTO.getBrojDozvoljenihValuta());
 
         return dr;
     }
@@ -72,7 +70,7 @@ public class RacunMapper {
         Long id = pravniRacunRepository.findTop1ByOrderByIdDesc() * 100L;
         pr.setBrojRacuna(444000000000000022L + id); //444 sifra banke 0000 filial
 
-        pr.setFirma(noviPravniRacunDTO.getFirma());
+        pr.setVlasnik(noviPravniRacunDTO.getFirma());
         pr.setStanje(new BigDecimal("0"));
         pr.setRaspolozivoStanje(new BigDecimal("0"));
         pr.setZaposleni(noviPravniRacunDTO.getZaposleni());
@@ -130,7 +128,7 @@ public class RacunMapper {
         RacunDTO dto = new RacunDTO();
         dto.setId(pr.getId());
         dto.setBrojRacuna(pr.getBrojRacuna().toString());
-        dto.setVlasnik(pr.getFirma());
+        dto.setVlasnik(pr.getVlasnik());
         dto.setStanje(pr.getStanje());
         dto.setRaspolozivoStanje(pr.getRaspolozivoStanje());
         dto.setZaposleni(pr.getZaposleni());

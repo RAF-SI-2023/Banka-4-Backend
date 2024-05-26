@@ -308,11 +308,9 @@ public class RacunServisImplTests {
         dr.setRaspolozivoStanje(new BigDecimal("0"));
         dr.setZaposleni(22222L);
         dr.setCurrency("Srpski dinar,Americki dolar");
-        dr.setDefaultCurrency("Srpski dinar");
         dr.setAktivan(true);
         dr.setKamatnaStopa(new BigDecimal("1"));
         dr.setOdrzavanjeRacuna(new BigDecimal("200"));
-        dr.setBrojDozvoljenihValuta(2);
         return dr;
     }
 
@@ -326,7 +324,7 @@ public class RacunServisImplTests {
     private PravniRacun kreirajPravniRacun() {
         PravniRacun pr = new PravniRacun();
         pr.setBrojRacuna(444000000000011122L);
-        pr.setFirma(11111L);
+        pr.setVlasnik(11111L);
         pr.setStanje(new BigDecimal("0"));
         pr.setRaspolozivoStanje(new BigDecimal("0"));
         pr.setZaposleni(22222L);
@@ -420,7 +418,7 @@ public class RacunServisImplTests {
 
         dto.setId(pr.getId());
         dto.setBrojRacuna(pr.getBrojRacuna().toString());
-        dto.setVlasnik(pr.getFirma());
+        dto.setVlasnik(pr.getVlasnik());
         dto.setStanje(pr.getStanje());
         dto.setRaspolozivoStanje(pr.getRaspolozivoStanje());
         dto.setZaposleni(pr.getZaposleni());
