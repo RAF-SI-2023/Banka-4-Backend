@@ -70,4 +70,18 @@ public interface CreditService {
      * @return The DetailedCreditDto object representing detailed information about the credit.
      */
     public DetailedCreditDto getDetailedCredit(Long creditRequestId);
+
+
+    /**
+     * Deletes creditRequest by creditRequestId
+     *
+     * @param creditRequestId
+     */
+    public void deleteCreditRequest(Long creditRequestId);
+
+    public List<CreditRequest> getAllCreditRequestsRaw(String status);
+
+    public List<CreditRequest> getAllCreditRequestsForUserRaw(Long userId,String status);
+
+    public CreditRequest getCreditRequest(Long creditRequestId);
 }

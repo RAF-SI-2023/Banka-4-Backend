@@ -97,7 +97,7 @@ public class CardServiceImpl implements CardService{
 
         Card card = optionalCard.get();
         card.setBlocked(false);
-        card.setStatus("aktivna");
+        card.setStatus("active");
         cardRepository.save(card);
     }
 
@@ -108,7 +108,7 @@ public class CardServiceImpl implements CardService{
         }
 
         Card card = optionalCard.get();
-        card.setStatus("deaktivirana");
+        card.setStatus("inactive");
         cardRepository.save(card);
     }
     private String generateCardNumber(String type){
