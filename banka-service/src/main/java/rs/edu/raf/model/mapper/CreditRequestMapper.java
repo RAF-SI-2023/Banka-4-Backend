@@ -23,6 +23,9 @@ public class CreditRequestMapper {
         creditRequest.setPermanentEmployee(creditRequestDto.getPermanentEmployee());
         creditRequest.setCurrentEmploymentPeriod(creditRequestDto.getCurrentEmploymentPeriod());
 
+        System.out.println("crdTOcr CreditRequestDto BAN :" + creditRequestDto.getBankAccountNumber());
+        System.out.println("crdTOcr CreditRequest BAN: " + creditRequest.getBankAccountNumber());
+
         return creditRequest;
     }
 
@@ -39,6 +42,9 @@ public class CreditRequestMapper {
         creditRequestDto.setLoanTerm(creditRequest.getLoanTerm());
         creditRequestDto.setPermanentEmployee(creditRequest.getPermanentEmployee());
         creditRequestDto.setCurrentEmploymentPeriod(creditRequest.getCurrentEmploymentPeriod());
+
+        System.out.println("crTOcrd CreditRequestDto BAN :" + creditRequestDto.getBankAccountNumber());
+        System.out.println("crTOcrd CreditRequest BAN: " + creditRequest.getBankAccountNumber());
 
         return creditRequestDto;
     }

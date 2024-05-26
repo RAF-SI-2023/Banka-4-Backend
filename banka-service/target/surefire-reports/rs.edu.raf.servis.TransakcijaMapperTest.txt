@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: rs.edu.raf.servis.TransakcijaMapperTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 s - in rs.edu.raf.servis.TransakcijaMapperTest

@@ -14,7 +14,7 @@ services:
             - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
         networks:
             - backend-network
-    
+
     redis:
         image: 'redis:latest'
         container_name: rdb
@@ -23,33 +23,39 @@ services:
         restart: unless-stopped
         networks:
             - backend-network
-    
+
     user-service:
-        image: vzivanovic/user-service:4
+        image: commandlinefox/user-service:latest
+        environment:
+            - SPRING.DATASOURCE.URL=jdbc:postgresql://db:5432/moja_banka_db
         ports:
             - "8080:8080"
-        container_name: user-service 
+        container_name: user-service
         restart: unless-stopped
         networks:
             - backend-network
 
     banka-service:
-        image: vzivanovic/banka-service:4
+        image: vzivanovic/banka-service:8.5
+        environment:
+            - SPRING.DATASOURCE.URL=jdbc:postgresql://db:5432/moja_banka_db
         ports:
             - "8082:8082"
-        container_name: banka-service 
+        container_name: banka-service
         restart: unless-stopped
         networks:
             - backend-network
-    
+
     berza-service:
-        image: vzivanovic/berza-service:4.1
+        image: vzivanovic/berza-service:8.5
+        environment:
+            - SPRING.DATASOURCE.URL=jdbc:postgresql://db:5432/moja_banka_db
         ports:
             - "8081:8081"
         container_name: berza-service
         restart: unless-stopped
         networks:
-            - backend-network    
+            - backend-network
 networks:
     backend-network:
         driver: bridge

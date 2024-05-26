@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: rs.edu.raf.controller.RacunControllerTest
+-------------------------------------------------------------------------------
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 31.439 s - in rs.edu.raf.controller.RacunControllerTest

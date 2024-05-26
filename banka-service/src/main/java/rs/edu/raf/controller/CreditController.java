@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/credit")
-@Tag(name = "Kartice", description = "Operacije nad kreditima")
+@Tag(name = "Krediti", description = "Operacije nad kreditima")
 @SecurityRequirement(name = "jwt")
 @CrossOrigin(origins = "*")
 public class CreditController {

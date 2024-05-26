@@ -70,8 +70,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
 
     private boolean isAllowedCurrency(String oldValuteCurrencyCode, String newValuteCurrencyCode){
 
-        if(!this.allowedCurrencies.contains(oldValuteCurrencyCode.toLowerCase())
-                || !this.allowedCurrencies.contains(newValuteCurrencyCode.toLowerCase())){
+        if(!this.allowedCurrencies.contains(oldValuteCurrencyCode.toUpperCase())
+                || !this.allowedCurrencies.contains(newValuteCurrencyCode.toUpperCase())){
             return false;
         }
 
