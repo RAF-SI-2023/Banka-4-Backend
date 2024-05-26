@@ -112,11 +112,11 @@ public class RacunSeeder implements CommandLineRunner {
             firmaRepository.saveAll(firme);
 
             List<DevizniRacun> dRacuni = new ArrayList<>();
-            DevizniRacun dr1 = new DevizniRacun(444000000900000011L, 11111L, new BigDecimal("1000"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v1.getOznaka() + "," + v8.getOznaka(), v8.getOznaka(), true, new BigDecimal("1"), new BigDecimal(100 * 2), 2);
+            DevizniRacun dr1 = new DevizniRacun(444000000900000011L, 11111L, new BigDecimal("1000"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v8.getOznaka(), true, new BigDecimal("1"), new BigDecimal(100 * 2));
             dRacuni.add(dr1);
-            DevizniRacun dr2 = new DevizniRacun(444000000910000011L, 11111L, new BigDecimal("1000"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v4.getOznaka() + "," + v8.getOznaka(), v4.getOznaka(), true, new BigDecimal("1"), new BigDecimal(100 * 2), 2);
+            DevizniRacun dr2 = new DevizniRacun(444000000910000011L, 11111L, new BigDecimal("1000"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L,v4.getOznaka(), true, new BigDecimal("1"), new BigDecimal(100 * 2));
             dRacuni.add(dr2);
-            DevizniRacun dr3 = new DevizniRacun(444000000920000011L, 11111L, new BigDecimal("1000"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v5.getOznaka() + "," + v6.getOznaka() + "," + v8.getOznaka(), v8.getOznaka(), true, new BigDecimal("1"), new BigDecimal(100 * 3), 3);
+            DevizniRacun dr3 = new DevizniRacun(444000000920000011L, 11111L, new BigDecimal("1000"), new BigDecimal("0"), 22222L, TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()), TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) + 5*31536000L, v8.getOznaka(), true, new BigDecimal("1"), new BigDecimal(100 * 3));
             dRacuni.add(dr3);
             devizniRacunRepository.saveAll(dRacuni);
 
@@ -138,67 +138,67 @@ public class RacunSeeder implements CommandLineRunner {
             tRacuni.add(tr3);
             tekuciRacunRepository.saveAll(tRacuni);
 
-            NovaUplataDTO novaUplataDTO = new NovaUplataDTO();
-            novaUplataDTO.setIznos(new BigDecimal("10"));
-            novaUplataDTO.setNazivPrimaoca("pero");
-            novaUplataDTO.setRacunPrimaoca(444000000910000033L);
-            novaUplataDTO.setRacunPosiljaoca(444000000900000033L);
-            novaUplataDTO.setSifraPlacanja(121);
-            novaUplataDTO.setSvrhaPlacanja("moja svrha");
-            novaUplataDTO.setPozivNaBroj(97);
-            transakcijaServis.sacuvajUplatu(novaUplataDTO);
-
-            NovaUplataDTO novaUplataDTO2 = new NovaUplataDTO();
-            novaUplataDTO2.setIznos(new BigDecimal("100"));
-            novaUplataDTO2.setNazivPrimaoca("pero");
-            novaUplataDTO2.setRacunPrimaoca(444000000900000033L);
-            novaUplataDTO2.setRacunPosiljaoca(444000000910000033L);
-            novaUplataDTO2.setSifraPlacanja(121);
-            novaUplataDTO2.setSvrhaPlacanja("moja svrha");
-            novaUplataDTO2.setPozivNaBroj(97);
-            transakcijaServis.sacuvajUplatu(novaUplataDTO2);
-
-            NovaUplataDTO novaUplataDTO3 = new NovaUplataDTO();
-            novaUplataDTO3.setIznos(new BigDecimal("110"));
-            novaUplataDTO3.setNazivPrimaoca("pero");
-            novaUplataDTO3.setRacunPrimaoca(444000000900000033L);
-            novaUplataDTO3.setRacunPosiljaoca(444000000910000033L);
-            novaUplataDTO3.setSifraPlacanja(121);
-            novaUplataDTO3.setSvrhaPlacanja("moja svrha");
-            novaUplataDTO3.setPozivNaBroj(97);
-            transakcijaServis.sacuvajUplatu(novaUplataDTO3);
-
-            NovaUplataDTO novaUplataDTO4 = new NovaUplataDTO();
-            novaUplataDTO4.setIznos(new BigDecimal("130"));
-            novaUplataDTO4.setNazivPrimaoca("pero");
-            novaUplataDTO4.setRacunPrimaoca(444000000920000033L);
-            novaUplataDTO4.setRacunPosiljaoca(444000000910000033L);
-            novaUplataDTO4.setSifraPlacanja(121);
-            novaUplataDTO4.setSvrhaPlacanja("moja svrha");
-            novaUplataDTO4.setPozivNaBroj(97);
-            Uplata u = transakcijaServis.sacuvajUplatu(novaUplataDTO4);
-            System.out.println(u);
-
-
-            NoviPrenosSredstavaDTO noviPrenosSredstavaDTO = new NoviPrenosSredstavaDTO();
-            noviPrenosSredstavaDTO.setRacunPosiljaoca(444000000920000033L);
-            noviPrenosSredstavaDTO.setRacunPrimaoca(444000000900000033L);
-            noviPrenosSredstavaDTO.setIznos(new BigDecimal("51"));
-            transakcijaServis.sacuvajPrenosSredstava(noviPrenosSredstavaDTO);
-
-
-            NoviPrenosSredstavaDTO noviPrenosSredstavaDTO2 = new NoviPrenosSredstavaDTO();
-            noviPrenosSredstavaDTO2.setRacunPosiljaoca(444000000900000033L);
-            noviPrenosSredstavaDTO2.setRacunPrimaoca(444000000920000033L);
-            noviPrenosSredstavaDTO2.setIznos(new BigDecimal("113"));
-            transakcijaServis.sacuvajPrenosSredstava(noviPrenosSredstavaDTO2);
-
-
-            NoviPrenosSredstavaDTO noviPrenosSredstavaDTO3 = new NoviPrenosSredstavaDTO();
-            noviPrenosSredstavaDTO3.setRacunPosiljaoca(444000000920000033L);
-            noviPrenosSredstavaDTO3.setRacunPrimaoca(444000000900000033L);
-            noviPrenosSredstavaDTO3.setIznos(new BigDecimal("53"));
-            transakcijaServis.sacuvajPrenosSredstava(noviPrenosSredstavaDTO3);
+//            NovaUplataDTO novaUplataDTO = new NovaUplataDTO();
+//            novaUplataDTO.setIznos(new BigDecimal("10"));
+//            novaUplataDTO.setNazivPrimaoca("pero");
+//            novaUplataDTO.setRacunPrimaoca(444000000910000033L);
+//            novaUplataDTO.setRacunPosiljaoca(444000000900000033L);
+//            novaUplataDTO.setSifraPlacanja(121);
+//            novaUplataDTO.setSvrhaPlacanja("moja svrha");
+//            novaUplataDTO.setPozivNaBroj(97);
+//            transakcijaServis.sacuvajUplatu(novaUplataDTO);
+//
+//            NovaUplataDTO novaUplataDTO2 = new NovaUplataDTO();
+//            novaUplataDTO2.setIznos(new BigDecimal("100"));
+//            novaUplataDTO2.setNazivPrimaoca("pero");
+//            novaUplataDTO2.setRacunPrimaoca(444000000900000033L);
+//            novaUplataDTO2.setRacunPosiljaoca(444000000910000033L);
+//            novaUplataDTO2.setSifraPlacanja(121);
+//            novaUplataDTO2.setSvrhaPlacanja("moja svrha");
+//            novaUplataDTO2.setPozivNaBroj(97);
+//            transakcijaServis.sacuvajUplatu(novaUplataDTO2);
+//
+//            NovaUplataDTO novaUplataDTO3 = new NovaUplataDTO();
+//            novaUplataDTO3.setIznos(new BigDecimal("110"));
+//            novaUplataDTO3.setNazivPrimaoca("pero");
+//            novaUplataDTO3.setRacunPrimaoca(444000000900000033L);
+//            novaUplataDTO3.setRacunPosiljaoca(444000000910000033L);
+//            novaUplataDTO3.setSifraPlacanja(121);
+//            novaUplataDTO3.setSvrhaPlacanja("moja svrha");
+//            novaUplataDTO3.setPozivNaBroj(97);
+//            transakcijaServis.sacuvajUplatu(novaUplataDTO3);
+//
+//            NovaUplataDTO novaUplataDTO4 = new NovaUplataDTO();
+//            novaUplataDTO4.setIznos(new BigDecimal("130"));
+//            novaUplataDTO4.setNazivPrimaoca("pero");
+//            novaUplataDTO4.setRacunPrimaoca(444000000920000033L);
+//            novaUplataDTO4.setRacunPosiljaoca(444000000910000033L);
+//            novaUplataDTO4.setSifraPlacanja(121);
+//            novaUplataDTO4.setSvrhaPlacanja("moja svrha");
+//            novaUplataDTO4.setPozivNaBroj(97);
+//            Uplata u = transakcijaServis.sacuvajUplatu(novaUplataDTO4);
+//            System.out.println(u);
+//
+//
+//            NoviPrenosSredstavaDTO noviPrenosSredstavaDTO = new NoviPrenosSredstavaDTO();
+//            noviPrenosSredstavaDTO.setRacunPosiljaoca(444000000920000033L);
+//            noviPrenosSredstavaDTO.setRacunPrimaoca(444000000900000033L);
+//            noviPrenosSredstavaDTO.setIznos(new BigDecimal("51"));
+//            transakcijaServis.sacuvajPrenosSredstava(noviPrenosSredstavaDTO);
+//
+//
+//            NoviPrenosSredstavaDTO noviPrenosSredstavaDTO2 = new NoviPrenosSredstavaDTO();
+//            noviPrenosSredstavaDTO2.setRacunPosiljaoca(444000000900000033L);
+//            noviPrenosSredstavaDTO2.setRacunPrimaoca(444000000920000033L);
+//            noviPrenosSredstavaDTO2.setIznos(new BigDecimal("113"));
+//            transakcijaServis.sacuvajPrenosSredstava(noviPrenosSredstavaDTO2);
+//
+//
+//            NoviPrenosSredstavaDTO noviPrenosSredstavaDTO3 = new NoviPrenosSredstavaDTO();
+//            noviPrenosSredstavaDTO3.setRacunPosiljaoca(444000000920000033L);
+//            noviPrenosSredstavaDTO3.setRacunPrimaoca(444000000900000033L);
+//            noviPrenosSredstavaDTO3.setIznos(new BigDecimal("53"));
+//            transakcijaServis.sacuvajPrenosSredstava(noviPrenosSredstavaDTO3);
         }catch (Exception e){
             e.printStackTrace();
         }

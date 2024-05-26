@@ -77,7 +77,7 @@ public class RacunServisImpl implements RacunServis {
     public PravniRacun kreirajPravniRacun(NoviPravniRacunDTO noviPravniRacunDTO) {
         PravniRacun pr = racunMapper.noviPravniRacunDTOToPravniRacun(noviPravniRacunDTO);
         PravniRacun prRepo = this.pravniRacunRepository.save(pr);
-        Firma firma = firmaRepository.findById(prRepo.getFirma()).orElseThrow(()->new CompanyNotFoundException("Company with id " + prRepo.getFirma() + " doesn't exist!"));
+        Firma firma = firmaRepository.findById(prRepo.getVlasnik()).orElseThrow(()->new CompanyNotFoundException("Company with id " + prRepo.getVlasnik() + " doesn't exist!"));
         dodajPravniRacunFirmi(prRepo,firma);
         return prRepo;
     }
@@ -227,7 +227,7 @@ public class RacunServisImpl implements RacunServis {
 
     @Override
     public boolean dodajPravniRacunFirmi(PravniRacun pravniRacun, Firma firma) {
-        pravniRacun.setFirma(firma.getId());
+        pravniRacun.setVlasnik(firma.getId());
         if (firma.getPovezaniRacuni() == null) {
             firma.setPovezaniRacuni(pravniRacun.getBrojRacuna().toString());
         } else {

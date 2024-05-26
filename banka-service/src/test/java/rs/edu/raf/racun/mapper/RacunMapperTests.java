@@ -55,11 +55,9 @@ public class RacunMapperTests {
         dr.setRaspolozivoStanje(new BigDecimal("0"));
         dr.setZaposleni(22222L);
         dr.setCurrency("Srpski dinar,Americki dolar");
-        dr.setDefaultCurrency("Srpski dinar");
         dr.setAktivan(true);
         dr.setKamatnaStopa(new BigDecimal("1"));
         dr.setOdrzavanjeRacuna(new BigDecimal("200"));
-        dr.setBrojDozvoljenihValuta(2);
 
         given(drr.findTop1ByOrderByIdDesc()).willReturn(111L);
         DevizniRacun drRM = rm.noviDevizniRacunDTOToDevizniRacun(dto);
@@ -73,11 +71,9 @@ public class RacunMapperTests {
         System.out.println(new Date(drRM.getDatumKreiranja()));
         System.out.println(new Date(drRM.getDatumIsteka()));
         assertEquals(dr.getCurrency(), drRM.getCurrency());
-        assertEquals(dr.getDefaultCurrency(), drRM.getDefaultCurrency());
         assertEquals(dr.getAktivan(), drRM.getAktivan());
         assertEquals(dr.getKamatnaStopa(), drRM.getKamatnaStopa());
         assertEquals(dr.getOdrzavanjeRacuna(), drRM.getOdrzavanjeRacuna());
-        assertEquals(dr.getBrojDozvoljenihValuta(), drRM.getBrojDozvoljenihValuta());
     }
 
     @Test
@@ -88,7 +84,7 @@ public class RacunMapperTests {
 
         PravniRacun pr = new PravniRacun();
         pr.setBrojRacuna(444000000000011122L);
-        pr.setFirma(11111L);
+        pr.setVlasnik(11111L);
         pr.setStanje(new BigDecimal("0"));
         pr.setRaspolozivoStanje(new BigDecimal("0"));
         pr.setZaposleni(22222L);
@@ -100,7 +96,7 @@ public class RacunMapperTests {
 
         System.out.println(prRM.getId());
         assertEquals(pr.getBrojRacuna(), prRM.getBrojRacuna());
-        assertEquals(pr.getFirma(), prRM.getFirma());
+        assertEquals(pr.getVlasnik(), prRM.getVlasnik());
         assertEquals(pr.getStanje(), prRM.getStanje());
         assertEquals(pr.getRaspolozivoStanje(), prRM.getRaspolozivoStanje());
         assertEquals(pr.getZaposleni(), prRM.getZaposleni());
@@ -179,7 +175,7 @@ public class RacunMapperTests {
         PravniRacun pr = new PravniRacun();
         pr.setId(112L);
         pr.setBrojRacuna(444000000000011122L);
-        pr.setFirma(11111L);
+        pr.setVlasnik(11111L);
         pr.setStanje(new BigDecimal("0"));
         pr.setRaspolozivoStanje(new BigDecimal("0"));
         pr.setZaposleni(22222L);
@@ -192,7 +188,7 @@ public class RacunMapperTests {
 
         assertEquals(dto.getId(), pr.getId());
         assertEquals(dto.getBrojRacuna(), pr.getBrojRacuna());
-        assertEquals(dto.getVlasnik(), pr.getFirma());
+        assertEquals(dto.getVlasnik(), pr.getVlasnik());
         assertEquals(dto.getStanje(), pr.getStanje());
         assertEquals(dto.getRaspolozivoStanje(), pr.getRaspolozivoStanje());
         assertEquals(dto.getZaposleni(), pr.getZaposleni());
