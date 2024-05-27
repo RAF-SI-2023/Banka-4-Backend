@@ -3,7 +3,7 @@ class Api::WorkersController < ApplicationController
   require_relative '../../services/auth_service'
 
   before_action :set_worker, only: %i[ update destroy ]
-  # before_action :wrap_params, except: %i[ index destroy ]
+  before_action :wrap_params, except: %i[ index destroy ]
   before_action :authenticate_user, only: %i[ index create update destroy ]
 
   # GET /workers
@@ -59,12 +59,12 @@ class Api::WorkersController < ApplicationController
 
   # Only allow a list of trusted parameters when creating a worker
   def create_worker_params
-    params.permit(:first_name, :last_name, :jmbg, :birth_date, :gender, :email, :password, :phone, :address, :username, :position, :department, :permissions, :active, :firm_id, :daily_limit, :approval_flag, :supervisor)
+    params.require(:worker).permit(:first_name, :last_name, :jmbg, :birth_date, :gender, :email, :password, :phone, :address, :username, :position, :department, :permissions, :active, :firm_id, :daily_limit, :approval_flag, :supervisor)
   end
 
   # Only allow a list of trusted parameters when creating a worker
   def update_worker_params
-    params.permit(:last_name, :password, :phone, :address, :position, :department, :permissions, :firm_id, :daily_limit, :approval_flag, :supervisor)
+    params.require(:worker).permit(:id, :last_name, :password, :phone, :address, :position, :department, :permissions, :firm_id, :daily_limit, :approval_flag, :supervisor)
   end
 
   def render_unauthorized
@@ -94,9 +94,9 @@ class Api::WorkersController < ApplicationController
     PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
   end
 
-  # def wrap_params
-  #  return if params[:worker]
+  def wrap_params
+    return if params[:worker]
 
-  # params[:worker] = params.permit!.to_h
-  # end
+    params[:worker] = params.permit!.to_h
+  end
 end
