@@ -23,9 +23,9 @@ class CreateWorkers < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :workers, :username, unique: true
-    add_index :workers, :email, unique: true
-    add_index :workers, :jmbg, unique: true
-    add_index :workers, :phone, unique: true
+    #add_index :workers, :username, unique: true
+    #add_index :workers, :email, unique: true
+    #add_index :workers, :jmbg, unique: true
+    #add_index :workers, :phone, unique: true
   end
 end
