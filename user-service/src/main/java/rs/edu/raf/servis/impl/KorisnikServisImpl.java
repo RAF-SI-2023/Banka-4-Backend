@@ -289,6 +289,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
             if(korisnik.getPovezaniRacuni() == null){
                 korisnik.setPovezaniRacuni(accountNumber.toString());
+                korisnikRepository.save(korisnik);
                 return true;
             }
 
