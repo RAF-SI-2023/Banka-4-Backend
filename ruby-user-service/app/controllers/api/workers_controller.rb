@@ -97,6 +97,6 @@ class Api::WorkersController < ApplicationController
   def wrap_params
     return if params[:worker]
 
-    params[:worker] = params.permit!.to_h
+    params[:worker] = params.permit(:first_name, :last_name, :jmbg, :birth_date, :gender, :email, :password, :phone, :address, :username, :position, :department, :permissions, :active, :firm_id, :daily_limit, :approval_flag, :supervisor)
   end
 end

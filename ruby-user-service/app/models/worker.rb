@@ -1,14 +1,14 @@
 class Worker < ApplicationRecord
   validates :first_name, presence: { message: "first name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "first name only allows letters" }
   validates :last_name, presence: { message: "last name can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
-  validates :username, presence: { message: "username can't be blank" }
+  validates :username, presence: { message: "username can't be blank" }, uniqueness: { message: "username has to be unique" }
   validates :birth_date, presence: { message: "birth date can't be blank" }
-  validates :jmbg, presence: { message: "jmbg can't be blank" }, length: { is: 13 }, format: { with: /\A[0-9]+\z/, message: "jmbg only allows numbers" }
+  validates :jmbg, presence: { message: "jmbg can't be blank" }, uniqueness: { message: "jmbg has to be unique" }, length: { is: 13 }, format: { with: /\A[0-9]+\z/, message: "jmbg only allows numbers" }
   validate :validate_jmbg_last_3_digits
   validate :validate_jmbg_date
   validates :gender, presence: { message: "gender can't be blank" }, inclusion: { in: %w(M F), message: "only allows M/F" }
-  validates :email, presence: { message: "email can't be blank" }, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :phone, presence: { message: "phone can't be blank" }, format: { with: /\A\+?[0-9]+\z/, message: "phone number has to be numbers with an optional + in the start" }
+  validates :email, presence: { message: "email can't be blank" }, uniqueness: { message: "email has to be unique" }, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :phone, presence: { message: "phone can't be blank" }, uniqueness: { message: "phone has to be unique" }, format: { with: /\A\+?[0-9]+\z/, message: "phone number has to be numbers with an optional + in the start" }
   validates :address, presence: { message: "address can't be blank" }
   validates :position, presence: { message: "position can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
   validates :department, presence: { message: "department can't be blank" }, format: { with: /\A[a-zA-Z]+\z/, message: "last name only allows letters" }
@@ -19,14 +19,19 @@ class Worker < ApplicationRecord
   validates :active, inclusion: { in: [true, false], message: "active can't be blank" }
   validates :supervisor, inclusion: { in: [true, false], message: "supervisor can't be blank" }
 
-  attr_accessor :password
+  # attr_accessor :password
+  has_secure_password validations: false
 
-  validates :password, presence: { message: "password can't be blank" }
+  validates :password, presence: { message: "password can't be blank" }, if: :password_required?
   validate :validate_password
 
-  before_save :encrypt_password, unless: :skip_password_validation?
+  # before_save :encrypt_password, unless: :skip_password_validation?
 
   private
+
+  def password_required?
+    new_record? || password.present?
+  end
 
   def skip_password_validation?
     !active_changed? || (!active && !new_record?)
@@ -36,10 +41,10 @@ class Worker < ApplicationRecord
     daily_spent.present?
   end
 
-  def encrypt_password
-    return unless password.present?
-    self.password_digest = PasswordEncryptor.encrypt(password)
-  end
+  # def encrypt_password
+  #   return unless password.present?
+  #   self.password_digest = PasswordEncryptor.encrypt(password)
+  # end
 
   def validate_jmbg_last_3_digits
     return unless gender.present? && jmbg.present?

@@ -14,8 +14,10 @@ class User < ApplicationRecord
 
   validate :validate_password, on: :update, unless: :skip_password_validation?
 
-  attr_accessor :password
-  before_update :encrypt_password, if: :password_present?
+  # attr_accessor :password
+  has_secure_password validations: false
+
+  # before_update :encrypt_password, if: :password_present?
 
   private
 
@@ -23,10 +25,10 @@ class User < ApplicationRecord
     password.present?
   end
 
-  def encrypt_password
-    return unless password.present?
-    self.password_digest = PasswordEncryptor.encrypt(password)
-  end
+  # def encrypt_password
+  # return unless password.present?
+  # self.password_digest = PasswordEncryptor.encrypt(password)
+  # end
 
   def skip_password_validation?
     !active_changed? || !active

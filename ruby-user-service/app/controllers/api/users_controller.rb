@@ -3,7 +3,7 @@ class Api::UsersController < ApplicationController
   require_relative '../../services/auth_service'
 
   before_action :authenticate_user, except: %i[register]
-  # before_action :wrap_params, except: %i[index destroy]
+  before_action :wrap_params, except: %i[index destroy]
 
   before_action :set_user, only: %i[show update destroy ]
 
@@ -89,12 +89,12 @@ class Api::UsersController < ApplicationController
 
   # Only allow select params when updating a user
   def update_user_params
-    params.permit(:last_name, :address, :phone, :password, :connected_accounts)
+    params.require(:user).permit(:last_name, :address, :phone, :password, :connected_accounts)
   end
 
   # Only allow select params when registering a user
   def register_user_params
-    params.permit(:email, :password, :active, :verification_code)
+    params.require(:user).permit(:email, :password, :active, :verification_code)
   end
 
   # Only allow select params when searching for a user by email
@@ -140,9 +140,9 @@ class Api::UsersController < ApplicationController
     PermissionsChecker.can_perform_actions?(@current_user.permissions, actions)
   end
 
-  # def wrap_params
-  # return if params[:user]
+  def wrap_params
+    return if params[:user]
 
-  # params[:user] = params.permit!.to_h
-  # end
+    params[:user] = params.permit!.to_h
+  end
 end

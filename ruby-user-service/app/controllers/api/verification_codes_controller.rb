@@ -1,5 +1,5 @@
 class Api::VerificationCodesController < ApplicationController
-  # before_action :wrap_params
+  before_action :wrap_params
   before_action :authenticate_user
   after_action :send_verification_email
 
@@ -57,9 +57,9 @@ class Api::VerificationCodesController < ApplicationController
     VerificationCodeMailer.with(verification_code: @verification_code).send_verification_code_email.deliver_later
   end
 
-  # def wrap_params
-  # return if params[:verification_code]
+  def wrap_params
+    return if params[:verification_code]
 
-  # params[:verification_code] = params.permit!.to_h
-  # end
+    params[:verification_code] = params.permit!.to_h
+  end
 end
