@@ -24,6 +24,7 @@ public class MarzniRacunMapper {
         marzniRacun.setLiquidCash(BigDecimal.ZERO);
         marzniRacun.setLoanValue(BigDecimal.ZERO);
         marzniRacun.setMaintenanceMargin(marzniRacunCreateDTO.getMaintenanceMargin());
+        marzniRacun.setMarginCall(false);
         return marzniRacun;
     }
 

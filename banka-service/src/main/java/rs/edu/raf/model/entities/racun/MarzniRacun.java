@@ -3,24 +3,19 @@ package rs.edu.raf.model.entities.racun;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 public class MarzniRacun {
 
     @Id
     @Column(unique = true)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -50,7 +45,6 @@ public class MarzniRacun {
     @NotNull
     private BigDecimal maintenanceMargin;
 
-    @NotNull
     private Boolean marginCall;
 
     private Long maintenanceDeadline;
