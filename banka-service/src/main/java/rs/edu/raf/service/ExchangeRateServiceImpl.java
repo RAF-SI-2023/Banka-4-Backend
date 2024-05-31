@@ -70,8 +70,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
 
     private boolean isAllowedCurrency(String oldValuteCurrencyCode, String newValuteCurrencyCode){
 
-        if(!this.allowedCurrencies.contains(oldValuteCurrencyCode.toLowerCase())
-                || !this.allowedCurrencies.contains(newValuteCurrencyCode.toLowerCase())){
+        if(!this.allowedCurrencies.contains(oldValuteCurrencyCode.toUpperCase())
+                || !this.allowedCurrencies.contains(newValuteCurrencyCode.toUpperCase())){
             return false;
         }
 
@@ -79,11 +79,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
     }
 
     public BigDecimal convert(String oldValuteCurrencyCode, String newValuteCurrencyCode, BigDecimal oldValuteAmount){
-
-
-        if(!isAllowedCurrency(oldValuteCurrencyCode, newValuteCurrencyCode)){
-            return null;
-        }
 
         Optional<ExchangeRate> oldOptionalExchangeRate = exchangeRateRepository.findByCurrencyCode(oldValuteCurrencyCode);
         Optional<ExchangeRate> newOptionalExchangeRate = exchangeRateRepository.findByCurrencyCode(newValuteCurrencyCode);
@@ -96,5 +91,16 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
         BigDecimal finalAmount = oldValuteAmount.divide(oldAmount).multiply(newAmount).multiply(provision);
 
         return finalAmount;
+    }
+
+    public BigDecimal exchangeRate(String oldValuteCurrencyCode, String newValuteCurrencyCode){
+
+        Optional<ExchangeRate> oldOptionalExchangeRate = exchangeRateRepository.findByCurrencyCode(oldValuteCurrencyCode);
+        Optional<ExchangeRate> newOptionalExchangeRate = exchangeRateRepository.findByCurrencyCode(newValuteCurrencyCode);
+
+        BigDecimal oldAmount = oldOptionalExchangeRate.get().getRate();
+        BigDecimal newAmount = newOptionalExchangeRate.get().getRate();
+
+        return new BigDecimal("1.0").divide(oldAmount).multiply(newAmount);
     }
 }

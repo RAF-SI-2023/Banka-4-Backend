@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.edu.raf.futures.dto.FutureRequestDto;
 import rs.edu.raf.futures.service.FuturesService;
 import rs.edu.raf.futures.dto.FuturesContractDto;
 
@@ -37,9 +38,27 @@ public class FuturesController {
         return new ResponseEntity<>(futuresService.findByKupac(userId), HttpStatus.OK);
     }
 
-    @PostMapping("/buy/{id}")
+    @GetMapping("/request")
+    @Operation(description = "Get all requests for buying future contracts")
+    public ResponseEntity<List<FutureRequestDto>> allRequests(@RequestAttribute("userId") Long radnik_id) {
+        return new ResponseEntity<>(futuresService.allRequests(radnik_id),HttpStatus.OK);
+    }
+
+    @PutMapping("/approve/{id}")
+    @Operation(description = "Approve buying future contract")
+    public void approve(@PathVariable("id") Long id, @RequestAttribute("userId") Long supervisor_id) {
+        futuresService.approveRequest(id,supervisor_id);
+    }
+
+    @DeleteMapping("/deny/{id}")
+    @Operation(description = "Deny request for buying future contracts")
+    public void denyRequest(@PathVariable("id") Long id) {
+        futuresService.denyRequest(id);
+    }
+
+    @PostMapping("/buy/{id}/{racun}")
     @Operation(description = "Buy future contract")
-    public ResponseEntity<FuturesContractDto> buyFuture(@PathVariable("id") Long id, @RequestAttribute("userId") Long userId) {
-        return new ResponseEntity<>(futuresService.buy(id,userId),HttpStatus.OK);
+    public ResponseEntity<FuturesContractDto> buyFuture(@PathVariable("id") Long id, @PathVariable("racun") String racun, @RequestAttribute("userId") Long userId) {
+        return new ResponseEntity<>(futuresService.buy(id,userId,racun),HttpStatus.OK);
     }
 }

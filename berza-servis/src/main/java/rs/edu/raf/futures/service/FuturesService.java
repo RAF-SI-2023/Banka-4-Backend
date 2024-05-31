@@ -1,5 +1,6 @@
 package rs.edu.raf.futures.service;
 
+import rs.edu.raf.futures.dto.FutureRequestDto;
 import rs.edu.raf.futures.dto.FuturesContractDto;
 
 import java.util.List;
@@ -40,5 +41,8 @@ public interface FuturesService {
      * @param kupacId The ID of the buyer who is buying the futures contract.
      * @return The FuturesContractDto object representing the bought futures contract.
      */
-    FuturesContractDto buy(Long id, Long kupacId);
+    FuturesContractDto buy(Long id, Long kupacId, String racunId);
+    List<FutureRequestDto> allRequests(Long radnik_id);
+    void denyRequest(Long id);
+    void approveRequest(Long id, Long supervisor_id);
 }

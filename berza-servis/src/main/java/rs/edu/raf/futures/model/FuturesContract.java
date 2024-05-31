@@ -29,6 +29,7 @@ public class FuturesContract {
     private String type;
     private boolean bought;
     private Long kupacId;
+    private Long racunId;
 
     public FuturesContract(String name, Integer contractSize, String contractUnit, Double maintenanceMargin, String type) {
         this.name = name;

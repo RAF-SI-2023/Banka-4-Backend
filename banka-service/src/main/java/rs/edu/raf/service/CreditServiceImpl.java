@@ -59,6 +59,7 @@ public class CreditServiceImpl implements CreditService{
 
         CreditRequest creditRequest = optionalCreditRequest.get();
         creditRequest.setStatus("approved");
+        creditRequestRepository.save(creditRequest);
 
 
         //TODO kreirati kredit(Credit, ne CreditRequest)
@@ -94,23 +95,34 @@ public class CreditServiceImpl implements CreditService{
 
         CreditRequest creditRequest = optionalCreditRequest.get();
         creditRequest.setStatus("denied");
+        creditRequestRepository.save(creditRequest);
 
         message = "Odbijen je zahtev za kredit";
         return message;
     }
 
     public List<CreditRequestDto> getAllCreditRequests(String status){
-       List<CreditRequest> creditRequests = creditRequestRepository.findAllByStatus(status);
+        List<CreditRequest> creditRequests = creditRequestRepository.findAllByStatus(status);
 
-       return creditRequests.stream()
-               .map(creditRequestMapper::creditRequestToCreditRequestDto)
-               .collect(Collectors.toList());
+        System.out.println(creditRequests);
+
+        return creditRequests.stream()
+                .map(creditRequestMapper::creditRequestToCreditRequestDto)
+                .collect(Collectors.toList());
     }
 
+    public List<CreditRequest> getAllCreditRequestsRaw(String status){
+        return creditRequestRepository.findAllByStatus(status);
+    }
+
+    public List<CreditRequest> getAllCreditRequestsForUserRaw(Long userId,String status){
+        return creditRequestRepository.findAllCreditRequestsForUser(userId, status);
+    }
 
     public List<CreditRequestDto> getAllCreditRequestForUser(Long userId, String status){
-        List<CreditRequest> deniedCreditRequests = creditRequestRepository.findAllCreditRequestsForUser(userId, status);
-        return deniedCreditRequests.stream()
+        List<CreditRequest> creditRequests = creditRequestRepository.findAllCreditRequestsForUser(userId, status);
+        System.out.println(creditRequests);
+        return creditRequests.stream()
                 .map(creditRequestMapper::creditRequestToCreditRequestDto)
                 .collect(Collectors.toList());
     }
@@ -171,6 +183,22 @@ public class CreditServiceImpl implements CreditService{
         DetailedCreditDto detailedCreditDto = creditRequestMapper.creditToDetailedCreditDto(credit);
 
         return detailedCreditDto;
+    }
+
+    public void deleteCreditRequest(Long creditRequestId){
+        Optional<CreditRequest> creditRequestOptional = creditRequestRepository.findById(creditRequestId);
+
+        if(!creditRequestOptional.isPresent()){
+            return;
+        }
+
+        CreditRequest creditRequest = creditRequestOptional.get();
+
+        creditRequestRepository.delete(creditRequest);
+    }
+
+    public CreditRequest getCreditRequest(Long creditRequestId){
+        return creditRequestRepository.findById(creditRequestId).orElse(null);
     }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
+import rs.edu.raf.repository.racun.InvoiceRepository;
 import rs.edu.raf.repository.transaction.*;
 import rs.edu.raf.service.ExchangeRateServiceImpl;
 import rs.edu.raf.service.racun.RacunServis;
@@ -56,6 +57,12 @@ public class TransakcijaServisImplTest {
     @Mock
     private DevizniRacunRepository devizniRacunRepository;
 
+    @Mock
+    private RacunRepository racunRepository;
+
+    @Mock
+    private InvoiceRepository invoiceRepository;
+
     @InjectMocks
     private TransakcijaServisImpl transakcijaServis;
 
@@ -71,6 +78,8 @@ public class TransakcijaServisImplTest {
                 devizniRacunRepository,
                 Mockito.mock(ExchangeRateServiceImpl.class),
                 racunServis,
+                racunRepository,
+                invoiceRepository,
                 Mockito.mock(SimpMessagingTemplate.class)
         ));
     }

@@ -10,7 +10,7 @@ import rs.edu.raf.model.Radnik;
 @AllArgsConstructor
 public class RadnikMapper {
 
-    public Radnik noviRadnikDtoToRadnik(NoviRadnikDTO noviRadnikDTO){
+    public Radnik noviRadnikDtoToRadnik(NoviRadnikDTO noviRadnikDTO,Long firmaId){
         Radnik radnik = new Radnik();
 
         radnik.setId(null);
@@ -29,7 +29,10 @@ public class RadnikMapper {
         radnik.setDepartman(noviRadnikDTO.getDepartman());
         radnik.setPermisije(noviRadnikDTO.getPermisije());
         radnik.setAktivan(noviRadnikDTO.isAktivan());
-
+        radnik.setFirmaId(firmaId);
+        radnik.setApprovalFlag(noviRadnikDTO.isApprovalFlag());
+        radnik.setDailyLimit(noviRadnikDTO.getDailyLimit());
+        radnik.setSupervisor(noviRadnikDTO.isSupervisor());
         return radnik;
     }
 
@@ -49,7 +52,11 @@ public class RadnikMapper {
         radnikDTO.setPozicija(radnik.getPozicija());
         radnikDTO.setDepartman(radnik.getDepartman());
         radnikDTO.setPermisije(radnik.getPermisije());
-
+        radnikDTO.setFirmaId(radnik.getFirmaId());
+        radnikDTO.setDailyLimit(radnik.getDailyLimit());
+        radnikDTO.setApprovalFlag(radnik.isApprovalFlag());
+        radnikDTO.setSupervisor(radnik.isSupervisor());
+        radnikDTO.setDailySpent(radnik.getDailySpent());
         return radnikDTO;
     }
 }
