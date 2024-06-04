@@ -5,6 +5,8 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import rs.edu.raf.dto.*;
 import rs.edu.raf.mapper.KorisnikMapper;
 import rs.edu.raf.mapper.RadnikMapper;
@@ -36,6 +38,9 @@ public class KorisnikServisUnitTests {
 
     @Mock
     private RadnikMapper radnikMapper;
+
+    @Mock
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @InjectMocks
     private KorisnikServisImpl korisnikServis;
@@ -418,83 +423,83 @@ public class KorisnikServisUnitTests {
             korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
         });
     }
-/*
-    @Test
-    public void testRegistrujNovogKorisnika(){
 
-        RegistrujKorisnikDTO registrujKorisnikDTO = new RegistrujKorisnikDTO();
-
-        registrujKorisnikDTO.setEmail("pera.petrovic@gmail.com");
-        registrujKorisnikDTO.setBrojTelefona("0641234567");
-        registrujKorisnikDTO.setPassword("pera123");
-        registrujKorisnikDTO.setBrojRacuna("2312");
-        registrujKorisnikDTO.setCode("kod");
-
-        Korisnik korisnik = createMockKorisnik();
-
-        korisnik.setPassword("pera123");
-
-        given(korisnikRepository.save(korisnik)).willReturn(korisnik);
-        given(korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail())).willReturn(Optional.of(korisnik));
-
-        try{
-            KorisnikDTO kreiraniKorisnik = korisnikServis.registrujNovogKorisnika(registrujKorisnikDTO);
-            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), kreiraniKorisnik);
-        } catch (Exception e){
-            fail(e.getMessage());
-        }
-    }
-*/
 //    @Test
-//    public void testKreirajNovogRadnika(){
+//    public void testRegistrujNovogKorisnika(){
 //
-//        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+//        RegistrujKorisnikDTO registrujKorisnikDTO = new RegistrujKorisnikDTO();
 //
-//        Radnik radnik = createMockRadnik();
+//        registrujKorisnikDTO.setEmail("pera.petrovic@gmail.com");
+//        registrujKorisnikDTO.setBrojTelefona("0641234567");
+//        registrujKorisnikDTO.setPassword("pera123");
+//        registrujKorisnikDTO.setBrojRacuna("2312");
+//        registrujKorisnikDTO.setCode("kod");
 //
-//        given(radnikRepository.save(radnik)).willReturn(radnik);
-//        given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO)).willReturn(radnik);
+//        Korisnik korisnik = createMockKorisnik();
+//
+//        korisnik.setPassword("pera123");
+//
+//        given(korisnikRepository.save(korisnik)).willReturn(korisnik);
+//        given(korisnikRepository.findByEmailAndAktivanIsTrue(registrujKorisnikDTO.getEmail())).willReturn(Optional.of(korisnik));
 //
 //        try{
-//            RadnikDTO kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
-//            assertEquals(radnikMapper.radnikToRadnikDto(radnik), kreiraniRadnik);
+//            KorisnikDTO kreiraniKorisnik = korisnikServis.registrujNovogKorisnika(registrujKorisnikDTO);
+//            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), kreiraniKorisnik);
 //        } catch (Exception e){
 //            fail(e.getMessage());
 //        }
 //    }
-//
-//    @Test
-//    public void testKreirajNovogRadnikaLosJMBG(){
-//
-//        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
-//
-//        Radnik radnik = createMockRadnik();
-//
-//
-//        noviRadnikDTO.setJmbg(String.valueOf(1605000793457L));
-//        radnik.setJmbg(String.valueOf(1605000793457L));
-//
-//
-//        assertThrows(Exception.class, () -> {
-//            korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
-//        });
-//    }
 
-//    @Test
-//    public void testKreirajNovogRadnikaLosDatumRodjenja(){
-//
-//        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
-//
-//        Radnik radnik = createMockRadnik();
-//
-//        noviRadnikDTO.setDatumRodjenja(708532400000L);
-//        radnik.setDatumRodjenja(708532400000L);
-//
-//        assertThrows(Exception.class, () -> {
-//            korisnikServis.kreirajNovogRadnika(noviRadnikDTO);
-//        });
-//    }
-/*
+    @Test
+    public void testKreirajNovogRadnika(){
+
+        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+        given(radnikRepository.save(radnik)).willReturn(radnik);
+        given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO, -1L)).willReturn(radnik);
+
+        try{
+            RadnikDTO kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO, -1L);
+            assertEquals(radnikMapper.radnikToRadnikDto(radnik), kreiraniRadnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testKreirajNovogRadnikaLosJMBG(){
+
+        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+
+        noviRadnikDTO.setJmbg(String.valueOf(1605000793457L));
+        radnik.setJmbg(String.valueOf(1605000793457L));
+
+
+        assertThrows(Exception.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO, -1L);
+        });
+    }
+
+    @Test
+    public void testKreirajNovogRadnikaLosDatumRodjenja(){
+
+        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+        noviRadnikDTO.setDatumRodjenja(708532400000L);
+        radnik.setDatumRodjenja(708532400000L);
+
+        assertThrows(Exception.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO, -1L);
+        });
+    }
+
     @Test
     public void testIzmeniKorisnika(){
         IzmenaKorisnikaDTO izmenaKorisnikaDTO = createMockIzmenaKorisnikDTO();
@@ -503,6 +508,7 @@ public class KorisnikServisUnitTests {
 
         given(korisnikRepository.save(korisnik)).willReturn(korisnik);
         given(korisnikRepository.findById(izmenaKorisnikaDTO.getId())).willReturn(Optional.of(korisnik));
+
 
         try{
             KorisnikDTO izmenjenKorisnik = korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
@@ -529,7 +535,7 @@ public class KorisnikServisUnitTests {
             fail(e.getMessage());
         }
     }
-*/
+
     @Test
     public void testIzlistajSveAktivneRadnike(){
 

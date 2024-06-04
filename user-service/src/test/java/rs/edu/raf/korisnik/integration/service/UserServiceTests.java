@@ -15,10 +15,10 @@ import static io.cucumber.core.options.Constants.GLUE_PROPERTY_NAME;
 //  - @ConfigurationParameter - koristimo ovu anotaciju da naznacimo u kom paketu se nalazi Glue kod (obicno je to ovaj
 //    isti paket)
 
-//@Disabled
-//@Suite
-//@IncludeEngines("cucumber")
-//@SelectClasspathResource("features/korisnik/integration/service")
-//@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.korisnik.integration")
+@Disabled
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("features/korisnik/integration/service")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "rs.edu.raf.korisnik.integration")
 public class UserServiceTests {
 }

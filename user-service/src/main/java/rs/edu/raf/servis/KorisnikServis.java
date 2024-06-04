@@ -122,6 +122,8 @@ public interface KorisnikServis {
      */
     KorisnikDTO findUserById(Long id);
 
+    RadnikDTO findWorkerById(Long id);
+
     /**
      * Adds an account to a user.
      *
