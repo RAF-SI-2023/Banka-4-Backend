@@ -272,20 +272,8 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
         if (!(marzniRacun.getMarginCall() && marzniRacunUpdateDTO.getAmount().compareTo(marzniRacun.getMaintenanceMargin().subtract(marzniRacun.getUlozenaSredstva().add(marzniRacun.getLiquidCash()))) >= 0))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Margin call is not set or the amount is small and can't cover the maintenance margin.");
 
-        // TODO POPRAVITI trenutno skine pare i doda na isti racun, treba samo da skine pare
-        // Oduzmi sa standardnog racuna preko transakcije.
-        NoviPrenosSredstavaDTO prenosNaMarzniRacun = new NoviPrenosSredstavaDTO();
-        prenosNaMarzniRacun.setRacunPrimaoca(marzniRacun.getBrojRacuna());
-        prenosNaMarzniRacun.setRacunPosiljaoca(marzniRacun.getBrojRacuna());
-        prenosNaMarzniRacun.setIznos(marzniRacunUpdateDTO.getAmount());
-        transakcijaServis.sacuvajPrenosSredstava(prenosNaMarzniRacun);
-
-        // Dodaj istu kolicinu na marzni racun.
-        BigDecimal newBalance = marzniRacun.getUlozenaSredstva().add(marzniRacunUpdateDTO.getAmount());
-        marzniRacun.setUlozenaSredstva(newBalance);
-        marzniRacun.setMarginCall(false);
-
-        marzniRacunRepository.save(marzniRacun);
-        return ResponseEntity.ok().build();
+        if(marzniRacunRepository.prebaciNaMarzni(marzniRacunUpdateDTO.getAmount(),marzniRacun.getBrojRacuna(),marzniRacun.getId()))
+            return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nedovoljno sredstava za izmirenje margin call-a");
     }
 }

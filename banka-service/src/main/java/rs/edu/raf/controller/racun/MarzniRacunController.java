@@ -56,6 +56,6 @@ public class MarzniRacunController {
 
     @PutMapping("/addFunds")
     public ResponseEntity<?> addFundsToMarzniRacun(@RequestBody MarzniRacunUpdateDTO marzniRacunUpdateDTO) {
-        return marzniRacunService.changeMaintenanceMargin(marzniRacunUpdateDTO);
+        return marzniRacunService.addFundsToMarzniRacun(marzniRacunUpdateDTO);
     }
 }
