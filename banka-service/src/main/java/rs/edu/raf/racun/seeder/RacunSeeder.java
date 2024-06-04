@@ -1,7 +1,9 @@
 package rs.edu.raf.racun.seeder;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import rs.edu.raf.model.entities.racun.*;
@@ -11,7 +13,10 @@ import rs.edu.raf.repository.racun.ZemljaRepository;
 import rs.edu.raf.repository.transaction.*;
 import rs.edu.raf.service.transaction.TransakcijaServis;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +24,9 @@ import java.util.List;
 
 @Component
 public class RacunSeeder implements CommandLineRunner {
+
+    @Autowired
+    private DataSource dataSource;
 
     private final ZemljaRepository zemljaRepository;
     private final ValuteRepository valuteRepository;
@@ -57,6 +65,11 @@ public class RacunSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         try {
+
+            uplataRepository.deleteAll();
+            uplataRepository.findAll().forEach(System.out::println);
+            prenosSredstavaRepository.deleteAll();
+            prenosSredstavaRepository.findAll().forEach(System.out::println);
 
             List<Zemlja> zemlje = new ArrayList<>();
             Zemlja z1 = new Zemlja("Švajcarska Konfederacija");
@@ -185,10 +198,89 @@ public class RacunSeeder implements CommandLineRunner {
 
             tekuciRacunRepository.saveAll(tRacuni);
 
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
+    @Scheduled(initialDelay = 60000)
+    public void init(){
+        try(Connection connection = dataSource.getConnection();
+            Statement statement = connection.createStatement()) {
+            String sql = "CREATE OR REPLACE FUNCTION obrada_transakcije(brojRacunaUplatioca BIGINT, brojRacunaPrimaoca BIGINT, iznosUplate NUMERIC, iznosPrimaocu NUMERIC) RETURNS BOOLEAN AS $$\n" +
+                    "DECLARE\n" +
+                    "  aktivan_uplatilac BOOLEAN;\n" +
+                    "  aktivan_primalac BOOLEAN;\n" +
+                    "  rezervisanaSredstva NUMERIC;\n" +
+                    "  valuta_uplatilac VARCHAR;\n" +
+                    "  valuta_primalac VARCHAR;\n" +
+                    "  stanjeMenjacnicaPrimalac NUMERIC;\n" +
+                    "  postojiValutaUplatilac VARCHAR;\n" +
+                    "  postojiValutaPrimalac VARCHAR;\n" +
+                    "BEGIN\n" +
+                    "  SELECT aktivan, currency, stanje - raspolozivo_stanje \n" +
+                    "  INTO aktivan_uplatilac, valuta_uplatilac, rezervisanaSredstva\n" +
+                    "  FROM banka_schema.racun\n" +
+                    "  WHERE \"broj_racuna\" = brojRacunaUplatioca FOR UPDATE;\n" +
+                    "\n" +
+                    "  SELECT aktivan, currency\n" +
+                    "  INTO aktivan_primalac, valuta_primalac\n" +
+                    "  FROM banka_schema.racun\n" +
+                    "  WHERE \"broj_racuna\" = brojRacunaPrimaoca FOR UPDATE;\n" +
+                    "\n" +
+                    "  IF(aktivan_uplatilac IS FALSE OR aktivan_primalac IS FALSE) THEN\n" +
+                    "    RETURN FALSE;\n" +
+                    "  END IF;\n" +
+                    "  IF(rezervisanaSredstva < iznosUplate) THEN\n" +
+                    "    RETURN FALSE;\n" +
+                    "  END IF;\n" +
+                    "  IF(valuta_uplatilac = valuta_primalac) THEN\n" +
+                    "    UPDATE banka_schema.racun SET \"stanje\" = \"stanje\" - iznosUplate \n" +
+                    "    WHERE \"broj_racuna\" = brojRacunaUplatioca;\n" +
+                    "\n" +
+                    "    UPDATE banka_schema.racun SET \"stanje\" = \"stanje\" + iznosUplate,\n" +
+                    "    \"raspolozivo_stanje\" = \"raspolozivo_stanje\" + iznosUplate \n" +
+                    "    WHERE \"broj_racuna\" = brojRacunaPrimaoca;\n" +
+                    "    RETURN TRUE;\n" +
+                    "  END IF;\n" +
+                    "\n" +
+                    "  SELECT currency INTO postojiValutaUplatilac FROM banka_schema.exchange_account \n" +
+                    "  WHERE \"currency\" = valuta_uplatilac FOR UPDATE;\n" +
+                    "  IF(postojiValutaUplatilac IS NULL) THEN\n" +
+                    "    RETURN FALSE;\n" +
+                    "  END IF;\n" +
+                    "\n" +
+                    "  SELECT currency, stanje INTO postojiValutaPrimalac, stanjeMenjacnicaPrimalac FROM banka_schema.exchange_account\n" +
+                    "  WHERE \"currency\" = valuta_primalac FOR UPDATE;\n" +
+                    "  IF(postojiValutaPrimalac IS NULL OR stanjeMenjacnicaPrimalac < iznosPrimaocu) THEN\n" +
+                    "    RETURN FALSE;\n" +
+                    "  END IF;\n" +
+                    "\n" +
+                    "  UPDATE banka_schema.racun SET \"stanje\" = \"stanje\" - iznosUplate \n" +
+                    "  WHERE \"broj_racuna\" = brojRacunaUplatioca;\n" +
+                    "\n" +
+                    "  UPDATE banka_schema.racun SET \"stanje\" = \"stanje\" + iznosPrimaocu,\n" +
+                    "  \"raspolozivo_stanje\" = \"raspolozivo_stanje\" + iznosPrimaocu \n" +
+                    "  WHERE \"broj_racuna\" = brojRacunaPrimaoca;\n" +
+                    "\n" +
+                    "  UPDATE banka_schema.exchange_account SET \"stanje\" = \"stanje\" + iznosUplate \n" +
+                    "  WHERE \"currency\" = valuta_uplatilac;\n" +
+                    "\n" +
+                    "  UPDATE banka_schema.exchange_account SET \"stanje\" = \"stanje\" - iznosPrimaocu \n" +
+                    "  WHERE \"currency\" = valuta_primalac;\n" +
+                    "\n" +
+                    "  RETURN TRUE;\n" +
+                    "END $$ LANGUAGE plpgsql;";
+
+            statement.execute(sql);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 
 }
