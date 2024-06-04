@@ -63,6 +63,7 @@ public class Seeder implements CommandLineRunner {
             radnik.setEmail("pera@gmail.rs");
             radnik.setBrojTelefona("+381600176998");
             radnik.setAdresa("Moja adresa");
+            radnik.setFirmaId(-1L);
             radnik.setPozicija("PM");
             radnik.setDepartman("RAF");
             radnik.setPassword("$2a$12$LEajHsUJyFisGyUlZx7y0OX4Ue9uB99I/Uz9SxORXkyU7MAMcHPLa");
@@ -76,6 +77,7 @@ public class Seeder implements CommandLineRunner {
             Radnik radnik1 = new Radnik();
             radnik1.setIme("Petr");
             radnik1.setPrezime("Stamenic");
+            radnik.setFirmaId(-1L);
             radnik1.setJmbg(String.valueOf(1706999793422L));
             radnik1.setDatumRodjenja(929631358000L);
             radnik1.setPol("M");
