@@ -35,6 +35,9 @@ public class RacunSeeder implements CommandLineRunner {
     private final DevizniRacunRepository devizniRacunRepository;
     private final PravniRacunRepository pravniRacunRepository;
 
+
+    private final MarzniRacunRepository marzniRacunRepository;
+
     private final TekuciRacunRepository tekuciRacunRepository;
     //private final KorisnikRepository korisnikRepository;
     //private final RadnikRepository radnikRepository;
@@ -47,7 +50,7 @@ public class RacunSeeder implements CommandLineRunner {
     private final TransakcijaServis transakcijaServis;
 
     @Autowired
-    public RacunSeeder(ZemljaRepository zemljaRepository, ValuteRepository valuteRepository, FirmaRepository firmaRepository, DevizniRacunRepository devizniRacunRepository, PravniRacunRepository pravniRacunRepository, TekuciRacunRepository tekuciRacunRepository, UplataRepository uplataRepository, PrenosSredstavaRepository prenosSredstavaRepository, BCryptPasswordEncoder bCryptPasswordEncoder, TransakcijaServis transakcijaServis) {
+    public RacunSeeder(ZemljaRepository zemljaRepository, ValuteRepository valuteRepository, FirmaRepository firmaRepository, DevizniRacunRepository devizniRacunRepository, PravniRacunRepository pravniRacunRepository, TekuciRacunRepository tekuciRacunRepository, UplataRepository uplataRepository, PrenosSredstavaRepository prenosSredstavaRepository, BCryptPasswordEncoder bCryptPasswordEncoder, TransakcijaServis transakcijaServis, MarzniRacunRepository marzniRacunRepository) {
         this.zemljaRepository = zemljaRepository;
         this.valuteRepository = valuteRepository;
         this.firmaRepository = firmaRepository;
@@ -58,6 +61,7 @@ public class RacunSeeder implements CommandLineRunner {
         //this.radnikRepository = radnikRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.transakcijaServis = transakcijaServis;
+        this.marzniRacunRepository = marzniRacunRepository;
     }
 
     //automatski se izvrsava pri pokretanju spring boota za dodavanje entiteta u bazu
@@ -112,6 +116,9 @@ public class RacunSeeder implements CommandLineRunner {
             valute.add(v8);
             if(valuteRepository.findAll().isEmpty())
                 valuteRepository.saveAll(valute);
+
+            MarzniRacun marzniRacun = new MarzniRacun(-1L, -1L, 444000000000000022L, "RSD", "STOCKS", new BigDecimal(10000000), new BigDecimal(10000000), new BigDecimal(500), new BigDecimal(50), false, null);
+            marzniRacunRepository.save(marzniRacun);
 
             List<Firma> firme = new ArrayList<>();
             Firma f1 = new Firma(-1L, "Nasa banka", "444000000000000022,444000000000000122,444000000000000222"

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @NoArgsConstructor
@@ -17,7 +18,11 @@ public class Firma {
 
     @Id
     @Column(unique = true)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "negative_id_generator")
+    @GenericGenerator(
+            name = "negative_id_generator",
+            strategy = "rs.edu.raf.model.entities.racun.NegativeIdGenerator"
+    )
     @NotNull
     private Long id;
 
