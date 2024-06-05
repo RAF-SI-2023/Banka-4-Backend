@@ -18,6 +18,8 @@ public class Seeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         try{
+            korisnikRepository.deleteAll();
+            
             Korisnik korisnik = new Korisnik();
             korisnik.setIme("Petar");
             korisnik.setPrezime("Stamenic");
@@ -29,7 +31,7 @@ public class Seeder implements CommandLineRunner {
             korisnik.setAdresa("Moja adresa");
             korisnik.setPassword("$2a$12$LEajHsUJyFisGyUlZx7y0OX4Ue9uB99I/Uz9SxORXkyU7MAMcHPLa");
             korisnik.setSaltPassword("S4lt");
-            korisnik.setPovezaniRacuni("444000000000000033,4440000000000000233");
+            korisnik.setPovezaniRacuni("444000000000000033,4440000000000000233,444000000000000011,444000000000000211");
             korisnik.setAktivan(true);
             if(!(korisnikRepository.findByBrojTelefonaAndAktivanIsTrue(korisnik.getBrojTelefona()).isPresent()
                     || korisnikRepository.findByEmailAndAktivanIsTrue(korisnik.getEmail()).isPresent()
@@ -47,7 +49,7 @@ public class Seeder implements CommandLineRunner {
             korisnik2.setAdresa("Moja adresa");
             korisnik2.setPassword("$2a$12$LEajHsUJyFisGyUlZx7y0OX4Ue9uB99I/Uz9SxORXkyU7MAMcHPLa");
             korisnik2.setSaltPassword("S4lt");
-            korisnik2.setPovezaniRacuni("444000000000000133");
+            korisnik2.setPovezaniRacuni("444000000000000133,444000000000000111");
             korisnik2.setAktivan(true);
             if(!(korisnikRepository.findByBrojTelefonaAndAktivanIsTrue(korisnik2.getBrojTelefona()).isPresent()
                     || korisnikRepository.findByEmailAndAktivanIsTrue(korisnik2.getEmail()).isPresent()
