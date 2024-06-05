@@ -70,8 +70,6 @@ public class RacunSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         try {
-            if(!reseed)
-                return;
 /*
             uplataRepository.deleteAll();
             uplataRepository.findAll().forEach(System.out::println);
@@ -98,7 +96,8 @@ public class RacunSeeder implements CommandLineRunner {
             Zemlja z9 = new Zemlja("Republika Srbija");
             zemlje.add(z9);
             if(zemljaRepository.findAll().isEmpty())
-                this.zemljaRepository.saveAll(zemlje);
+                if(reseed)
+                    this.zemljaRepository.saveAll(zemlje);
 
             List<Valute> valute = new ArrayList<>();
             Valute v1 = new Valute("Švajcarski franak", "CHF", "fr.", z1.getNaziv());
@@ -118,7 +117,8 @@ public class RacunSeeder implements CommandLineRunner {
             Valute v8 = new Valute("Srpski dinar", "RSD", "дин.", z9.getNaziv());
             valute.add(v8);
             if(valuteRepository.findAll().isEmpty())
-                valuteRepository.saveAll(valute);
+                if(reseed)
+                    valuteRepository.saveAll(valute);
 
 
 
@@ -135,8 +135,9 @@ public class RacunSeeder implements CommandLineRunner {
                     , "0112030403", "0112030402", 101017533, 17328905
                     , 6102, 130501701);
             firme.add(f3);
-            if(firmaRepository.findAll().isEmpty())
-                firmaRepository.saveAll(firme);
+            if(firmaRepository.findAll().isEmpty()) 
+                if(reseed)
+                    firmaRepository.saveAll(firme);
 
             List<DevizniRacun> dRacuni = new ArrayList<>();
             DevizniRacun dr1 = new DevizniRacun(444000000000000011L, 1L, new BigDecimal("10000")
@@ -157,8 +158,10 @@ public class RacunSeeder implements CommandLineRunner {
                     , true, new BigDecimal("1"), new BigDecimal(100 * 3));
             dRacuni.add(dr3);
 
-            devizniRacunRepository.deleteAll();
-            devizniRacunRepository.saveAll(dRacuni);
+            if(reseed){
+                devizniRacunRepository.deleteAll();
+                devizniRacunRepository.saveAll(dRacuni);
+            }
 
             List<PravniRacun> pRacuni = new ArrayList<>();
             PravniRacun pr1 = new PravniRacun(444000000000000022L, -1L, new BigDecimal("10000")
@@ -176,8 +179,10 @@ public class RacunSeeder implements CommandLineRunner {
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v3.getOznaka(), true);
             pRacuni.add(pr3);
 
-            pravniRacunRepository.deleteAll();
-            pravniRacunRepository.saveAll(pRacuni);
+            if(reseed){
+                pravniRacunRepository.deleteAll();
+                pravniRacunRepository.saveAll(pRacuni);
+            }
 
             List<TekuciRacun> tRacuni = new ArrayList<>();
             TekuciRacun tr1 = new TekuciRacun(444000000000000033L, 1L, new BigDecimal("10000")
@@ -198,12 +203,14 @@ public class RacunSeeder implements CommandLineRunner {
                     , true, "Studentski", new BigDecimal("0"), new BigDecimal("200"));
             tRacuni.add(tr3);
 
-            tekuciRacunRepository.deleteAll();
-            tekuciRacunRepository.saveAll(tRacuni);
-
+            if(reseed){
+                tekuciRacunRepository.deleteAll();
+                tekuciRacunRepository.saveAll(tRacuni);
+            }
             MarzniRacun marzniRacun = new MarzniRacun(-1L, -1L, 444000000000000022L, "RSD", "STOCKS", new BigDecimal(10000000), new BigDecimal(10000000), new BigDecimal(500), new BigDecimal(50), false, null);
             if(marzniRacunRepository.findAll().isEmpty())
-                marzniRacunRepository.save(marzniRacun);
+                if(reseed)
+                    marzniRacunRepository.save(marzniRacun);
 
         }catch (Exception e){
             e.printStackTrace();
