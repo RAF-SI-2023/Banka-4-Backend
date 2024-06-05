@@ -68,8 +68,8 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         if(kodServis.dobarKod(registrujKorisnikDTO.getEmail(),registrujKorisnikDTO.getCode(),false)) {
 
-                                                //DtoToNekiEntity ili NoviDtoToNekiEntity radimo kada ocemo da vrsimo neke operacije nad bazom za konkretan Dto sa fronta
-                                                //NekiEntityToDto kada saljemo frontu
+            //DtoToNekiEntity ili NoviDtoToNekiEntity radimo kada ocemo da vrsimo neke operacije nad bazom za konkretan Dto sa fronta
+            //NekiEntityToDto kada saljemo frontu
             Korisnik korisnik = korisnikMapper.registrujKorisnikDtoToKorisnik(registrujKorisnikDTO);
             if(korisnik == null){
                 Radnik radnik = korisnikMapper.registrujRadnikDtoToRadnik(registrujKorisnikDTO);
@@ -206,7 +206,6 @@ public class KorisnikServisImpl implements KorisnikServis {
                 radnik.get().setPol(izmenaRadnikaDTO.getPol());
             if(izmenaRadnikaDTO.getBrojTelefona()!=null && !izmenaRadnikaDTO.getBrojTelefona().equals(""))
                 radnik.get().setBrojTelefona(izmenaRadnikaDTO.getBrojTelefona());
-            radnik.get().setAdresa(izmenaRadnikaDTO.getAdresa());
             if(izmenaRadnikaDTO.getPassword()!=null && !izmenaRadnikaDTO.getPassword().equals(""))
                 radnik.get().setPassword(bCryptPasswordEncoder.encode(izmenaRadnikaDTO.getPassword()));
             radnik.get().setPozicija(izmenaRadnikaDTO.getPozicija());
@@ -215,6 +214,7 @@ public class KorisnikServisImpl implements KorisnikServis {
             if(izmenaRadnikaDTO.getPermisije()!=null)
                 radnik.get().setPermisije(izmenaRadnikaDTO.getPermisije());
             if(izmenaRadnikaDTO.getAdresa()!=null)
+                radnik.get().setAdresa(izmenaRadnikaDTO.getAdresa());
             radnik.get().setAktivan(izmenaRadnikaDTO.getAktivan());
             radnik.get().setSupervisor(izmenaRadnikaDTO.isSupervisor());
             radnik.get().setDailyLimit(izmenaRadnikaDTO.getDailyLimit());
@@ -280,6 +280,10 @@ public class KorisnikServisImpl implements KorisnikServis {
         return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.findKorisnikByIdAndAktivanIsTrue(id).orElse(null)) ;
     }
 
+    public RadnikDTO findWorkerById(Long id){
+        return radnikMapper.radnikToRadnikDto(radnikRepository.findById(id).orElse(null));
+    }
+
     @Override
     public boolean addAccountToUser(Long userId, Long accountNumber) {
         Optional<Korisnik> optionalKorisnik = korisnikRepository.findKorisnikByIdAndAktivanIsTrue(userId);
@@ -289,6 +293,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
             if(korisnik.getPovezaniRacuni() == null){
                 korisnik.setPovezaniRacuni(accountNumber.toString());
+                korisnikRepository.save(korisnik);
                 return true;
             }
 

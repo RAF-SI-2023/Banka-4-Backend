@@ -1,10 +1,12 @@
 package rs.edu.raf.order.service.impl;
 
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
+import rs.edu.raf.order.dto.PairDTO;
 import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.Enums.Action;
 import rs.edu.raf.order.model.Enums.Status;
@@ -16,6 +18,10 @@ import rs.edu.raf.order.service.UserStockService;
 import rs.edu.raf.order.service.mapper.OrderMapper;
 
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.*;
 
 @Data
@@ -307,6 +313,25 @@ public class OrderServiceImpl implements OrderService {
 
     private void modifyUserBalance(Long userId, BigDecimal valueChange) {
 
+        String marzniRacunUpdateFundsEndpoint = "localhost:8082/api/marzniRacuni/updateBalance";
+        Gson gson = new Gson();
+
+        PairDTO pair = new PairDTO();
+        pair.setValueChange(valueChange);
+        pair.setUserId(userId);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest stocksRequest = HttpRequest.newBuilder()
+                .uri(URI.create(marzniRacunUpdateFundsEndpoint))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(pair)))
+                .build();
+
+        try {
+            HttpResponse<String> stocksResponse = client.send(stocksRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            System.out.println("Failed to send balance update to MarniRacunController: " + e);
+        }
     }
 
 }

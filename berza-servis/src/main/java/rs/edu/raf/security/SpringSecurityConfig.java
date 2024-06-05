@@ -49,6 +49,9 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
                 .authorizeRequests(authorize -> authorize
                         .requestMatchers("/swagger-ui/**","/api-docs/**","/swagger-resources/**").permitAll()
                         .requestMatchers("/futures/name/**","/futures/type/**").permitAll()
+                        .requestMatchers("/offer/place-offer").permitAll()
+                        .requestMatchers("/offer/accept-our-offer").permitAll()
+                        .requestMatchers("/user-stocks/get-our-banks-stocks").permitAll()
 //                        .requestMatchers(HttpMethod.GET,"/racuni/izlistajSveFirme").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_korisnika + "')")
                         .anyRequest().authenticated()
                 )

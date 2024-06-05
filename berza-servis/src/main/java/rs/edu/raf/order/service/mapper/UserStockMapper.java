@@ -1,8 +1,10 @@
 package rs.edu.raf.order.service.mapper;
 
+import org.springframework.stereotype.Component;
 import rs.edu.raf.order.dto.UserStockDto;
 import rs.edu.raf.order.model.UserStock;
 
+@Component
 public class UserStockMapper {
 
     public static UserStockDto toDto(UserStock userStock) {

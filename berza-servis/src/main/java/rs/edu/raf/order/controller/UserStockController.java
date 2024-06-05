@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.edu.raf.order.dto.Banka3StockDTO;
 import rs.edu.raf.order.dto.UserStockDto;
 import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.Order;
@@ -27,7 +28,7 @@ public class UserStockController {
     private final UserStockService userStockService;
     private final OrderService orderService;
 
-    @ApiOperation(value = "Returns user stock.")
+    @ApiOperation(value = "Returns user or firm stock.")
     @GetMapping("/{userId}/{ticker}")
     public ResponseEntity<UserStockDto> getUserStock(@PathVariable Long userId, @PathVariable String ticker) {
         UserStockDto userStockDto = userStockService.getUserStock(userId, ticker);
@@ -45,7 +46,13 @@ public class UserStockController {
         return new ResponseEntity<>(userStockDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Returns user stocks.")
+    @ApiOperation(value = "Returns our banks stocks.")
+    @GetMapping("/get-our-banks-stocks")
+    public ResponseEntity<List<Banka3StockDTO>> getOurBanksStocks() {
+        return new ResponseEntity<>(userStockService.getUserStocks(-1L).stream().map(o->new Banka3StockDTO(o.getQuantity(), o.getTicker())).toList(), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Returns user or firm stocks.")
     @GetMapping("/{userId}")
     public ResponseEntity<List<UserStockDto>> getUserStocks(@PathVariable Long userId) {
         List<UserStockDto> userStockDtos = userStockService.getUserStocks(userId);
@@ -65,7 +72,7 @@ public class UserStockController {
         return new ResponseEntity<>(userStockDtos, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Changes user stock quantity.")
+    @ApiOperation(value = "Changes user or firm stock quantity.")
     @PutMapping
     public ResponseEntity<Boolean> changeUserStockQuantity(@RequestBody UserStockRequest userStockRequest) {
         boolean success = userStockService.changeUserStockQuantity(userStockRequest);

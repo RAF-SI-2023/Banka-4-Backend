@@ -58,6 +58,12 @@ public class RadnikController {
         return new ResponseEntity<>(korisnikServis.nadjiAktivnogRadnikaPoEmail(email),HttpStatus.OK);
     }
 
+    @GetMapping("/id/{id}")
+    @Operation(description = "Podaci o radniku koji ima email")
+    public ResponseEntity<RadnikDTO> nadjiRadnikaPoId(@PathVariable("id") @Parameter(description = "id radnika") Long id) {
+        return new ResponseEntity<>(korisnikServis.findWorkerById(id),HttpStatus.OK);
+    }
+
     @PutMapping("/reset-limit/{id}")
     @Operation(description = "Resetovanje limita za zaposlenog")
     public ResponseEntity<RadnikDTO> resetLimit(@PathVariable("id") Long radnikId) {

@@ -1,38 +1,29 @@
 Feature: Stock controller
   Preko ovog kontrolera se dohvataju stock api podaci
 
-  Scenario: Pozivam daily stock history endpoint
-    When pozovem daily history endpoint sa "IBM"
-    Then dobijem daily stock history podatke
+  Scenario: Radnik dodaje novi stock u bazu ako ne postoji ili ga brise i dodaje iznova
+    Given radnik se uspesno ulogovao, ima jwt token i dodaje stock sa tickerom "IBM" u bazu ako ne postoji vec
+    When radnik doda novi stock sa tickerom "IBM"
+    Then stock sa tickerom "IBM" se uspesno dodao u bazu
 
-  Scenario: Pozivam weekly stock history endpoint
-    When pozovem weekly history endpoint sa "IBM"
-    Then dobijem weekly stock history podatke
+  Scenario: Radnik pokusa da doda stock sa pogresnim, nepostojecim tickerom
+    Given radnik se uspesno ulogovao, ima jwt token
+    When radnik pokusa da doda novi stock sa tickerom "HGJ"
+    Then stock se nije dodao u bazu i radnik je obavesten o gresci
 
-  Scenario: Pozivam monthly stock history endpoint
-    When pozovem monthly history endpoint sa "IBM"
-    Then dobijem monthly stock history podatke
+  Scenario: Radnik pokusa da doda stock koji je vec dodat u bazu
+    Given radnik se uspesno ulogovao, ima jwt token i u bazi postoji stock sa tickeorm "IBM"
+    When radnik pokusa da doda vec postojeci stock u bazu sa tickerom "IBM"
+    Then radnik ce biti obavesten o gresci i stock nece biti dodat iznova
 
-  Scenario: Pozivam endpoint da dodam stock sa tickerom "SONY"
-    When pozovem endpoint za dodavanje stocka sa tickerom "SONY"
-    Then stock "SONY" je dodat u bazu
+  Scenario: Radnik izlistava stock preko tickera, exchangea i lastRefresha, potom ga brise
+    Given radnik se uspesno ulogovao, ima jwt token i dodao je u bazu stock sa tickerom "IBM"
+    When radnik trazi stockove preko tickera, exchangea i lastRefresha tog stocka, a potom obrise taj stock
+    Then bice izlistan taj stock svaki put za ta tri poziva
+    And potom uspesno obrisan
 
-  Scenario: Pozivam endpoint da izlistam sve stockove iz baze
-    When pozovem endpoint za listanje svih stockova
-    Then dobijem listu svih stockova iz baze sa "SONY" stockom
-
-  Scenario: Pozivam endpoint da dohvatim stock sa tickerom "SONY"
-    When pozovem endpoint za dohvat stocka sa tickerom "SONY"
-    Then dobijem stock sa tickerom "SONY"
-
-  Scenario: Pozivam endpoint da izlistam stockove sa last refreshom
-    When pozovem endpoint za listanje stockova sa last refreshom
-    Then dobijem listu stockova sa last refreshom
-
-  Scenario: Pozivam endpoint da izlistam stockove sa exchangeom "NYSE"
-    When pozovem endpoint za listanje stockova sa exchangeom "NYSE"
-    Then dobijem listu stockova sa exchangeom "NYSE"
-
-  Scenario: Pozivam endpoint da izbrisem stock sa tickerom "SONY"
-    When pozovem endpoint za brisanje stocka sa tickerom "SONY"
-    Then stock "SONY" je izbrisan iz baze
+  Scenario: Radnik dodaje stockove, potom ih izlistava i trazi dnevne, nedeljne i mesecne podatke za njih
+    Given radnik se uspesno ulogovao, ima jwt token i stockovi sa sledecim tickerima "NFLX", "AAPL", "SONY" su u bazi, u suprotnom ih radnik dodaje
+    When radnik izlista sve stockove i trazi dnevne, nedeljne i mesecne podatke za tickere "NFLX", "AAPL", "SONY"
+    Then stockovi sa sledecim tickerima "NFLX", "AAPL", "SONY" su izlistani
+    And dnevni, nedeljni i mesecni podaci su dohvaceni

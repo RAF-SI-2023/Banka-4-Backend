@@ -5,9 +5,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.edu.raf.model.dto.PairDTO;
 import rs.edu.raf.model.dto.racun.MarzniRacunCreateDTO;
 import rs.edu.raf.model.dto.racun.MarzniRacunUpdateDTO;
 import rs.edu.raf.service.MarzniRacunService;
+
+import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/marzniRacuni")
@@ -43,5 +46,16 @@ public class MarzniRacunController {
     @PutMapping("/maintenanceMargin")
     public ResponseEntity<?> changeMaintenanceMargin(@RequestBody MarzniRacunUpdateDTO marzniRacunUpdateDTO) {
         return marzniRacunService.changeMaintenanceMargin(marzniRacunUpdateDTO);
+    }
+
+    // Ovo treba zastiti tako da moze samo OrderServiceImpl da ga zove
+    @PutMapping("/updateBalance")
+    public ResponseEntity<?> updateBalanceFromSoldStocks(@RequestBody PairDTO pairDTO) {
+        return marzniRacunService.changeFundsFromOrder(pairDTO);
+    }
+
+    @PutMapping("/addFunds")
+    public ResponseEntity<?> addFundsToMarzniRacun(@RequestBody MarzniRacunUpdateDTO marzniRacunUpdateDTO) {
+        return marzniRacunService.addFundsToMarzniRacun(marzniRacunUpdateDTO);
     }
 }
