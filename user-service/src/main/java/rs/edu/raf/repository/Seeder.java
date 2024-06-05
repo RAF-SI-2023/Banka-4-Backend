@@ -14,10 +14,11 @@ public class Seeder implements CommandLineRunner {
 
     KorisnikRepository korisnikRepository;
     RadnikRepository radnikRepository;
-    boolean reseed = false;
 
     @Override
     public void run(String... args) throws Exception {
+        
+    boolean reseed = false;
         try{
             if(!reseed)
                 return;
