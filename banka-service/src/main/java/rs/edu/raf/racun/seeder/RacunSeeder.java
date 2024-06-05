@@ -27,7 +27,7 @@ public class RacunSeeder implements CommandLineRunner {
 
     @Autowired
     private DataSource dataSource;
-    boolean reseed = true;
+    boolean reseed = false;
 
     private final ZemljaRepository zemljaRepository;
     private final ValuteRepository valuteRepository;
