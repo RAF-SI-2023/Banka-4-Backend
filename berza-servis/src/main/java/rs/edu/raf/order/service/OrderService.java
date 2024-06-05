@@ -23,6 +23,22 @@ public interface OrderService {
     OrderDto placeOrder(OrderRequest orderRequest);
 
     /**
+     * Rejects an order based on the provided order ID.
+     *
+     * @param orderId The ID of the order to reject.
+     * @return An OrderDto object representing the rejected order.
+     */
+    OrderDto rejectOrder(Long orderId);
+
+    /**
+     * Accepts an order based on the provided order ID.
+     *
+     * @param orderId The ID of the order to accept.
+     * @return An OrderDto object representing the accepted order.
+     */
+    OrderDto acceptOrder(Long orderId);
+
+    /**
      * Approximates the value of an order based on the order request.
      *
      * @param order The order request to approximate.
