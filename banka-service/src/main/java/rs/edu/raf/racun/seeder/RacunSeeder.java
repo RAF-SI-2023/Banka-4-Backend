@@ -120,7 +120,7 @@ public class RacunSeeder implements CommandLineRunner {
             if(valuteRepository.findAll().isEmpty())
                 valuteRepository.saveAll(valute);
 
-            
+
 
             List<Firma> firme = new ArrayList<>();
             Firma f1 = new Firma(-1L, "Nasa banka", "444000000000000022,444000000000000122,444000000000000222"
@@ -180,19 +180,19 @@ public class RacunSeeder implements CommandLineRunner {
             pravniRacunRepository.saveAll(pRacuni);
 
             List<TekuciRacun> tRacuni = new ArrayList<>();
-            TekuciRacun tr1 = new TekuciRacun(444000000900000033L, 1L, new BigDecimal("10000")
+            TekuciRacun tr1 = new TekuciRacun(444000000000000033L, 1L, new BigDecimal("10000")
                     , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v8.getOznaka()
                     , true, "Studentski", new BigDecimal("0.5"), new BigDecimal("0"));
             tRacuni.add(tr1);
 
-            TekuciRacun tr2 = new TekuciRacun(444000000910000033L, 2L, new BigDecimal("11000")
+            TekuciRacun tr2 = new TekuciRacun(444000000000000133L, 2L, new BigDecimal("11000")
                     , new BigDecimal("11000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v8.getOznaka()
                     , true, "Studentski", new BigDecimal("0"), new BigDecimal("300"));
             tRacuni.add(tr2);
 
-            TekuciRacun tr3 = new TekuciRacun(444000000920000033L, 1L, new BigDecimal("1000")
+            TekuciRacun tr3 = new TekuciRacun(444000000000000233L, 1L, new BigDecimal("1000")
                     , new BigDecimal("1000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v8.getOznaka()
                     , true, "Studentski", new BigDecimal("0"), new BigDecimal("200"));
