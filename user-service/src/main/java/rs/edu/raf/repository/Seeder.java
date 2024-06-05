@@ -31,7 +31,7 @@ public class Seeder implements CommandLineRunner {
             korisnik.setAdresa("Moja adresa");
             korisnik.setPassword("$2a$12$LEajHsUJyFisGyUlZx7y0OX4Ue9uB99I/Uz9SxORXkyU7MAMcHPLa");
             korisnik.setSaltPassword("S4lt");
-            korisnik.setPovezaniRacuni("444000000000000033,4440000000000000233,444000000000000011,444000000000000211");
+            korisnik.setPovezaniRacuni("444000000000000033,444000000000000233,444000000000000011,444000000000000211");
             korisnik.setAktivan(true);
             if(!(korisnikRepository.findByBrojTelefonaAndAktivanIsTrue(korisnik.getBrojTelefona()).isPresent()
                     || korisnikRepository.findByEmailAndAktivanIsTrue(korisnik.getEmail()).isPresent()
