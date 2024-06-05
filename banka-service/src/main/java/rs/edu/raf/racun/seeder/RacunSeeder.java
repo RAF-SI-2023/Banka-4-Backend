@@ -140,19 +140,19 @@ public class RacunSeeder implements CommandLineRunner {
 
             List<DevizniRacun> dRacuni = new ArrayList<>();
             DevizniRacun dr1 = new DevizniRacun(444000000000000011L, 1L, new BigDecimal("10000")
-                    , new BigDecimal("0"), 22222L, System.currentTimeMillis()
+                    , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v2.getOznaka()
                     , true, new BigDecimal("1"), new BigDecimal(100 * 2));
             dRacuni.add(dr1);
 
             DevizniRacun dr2 = new DevizniRacun(444000000000000111L, 2L, new BigDecimal("10000")
-                    , new BigDecimal("0"), 22222L, System.currentTimeMillis()
+                    , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L,v2.getOznaka()
                     , true, new BigDecimal("1"), new BigDecimal(100 * 2));
             dRacuni.add(dr2);
 
             DevizniRacun dr3 = new DevizniRacun(444000000000000211L, 1L, new BigDecimal("10000")
-                    , new BigDecimal("0"), 22222L, System.currentTimeMillis()
+                    , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v3.getOznaka()
                     , true, new BigDecimal("1"), new BigDecimal(100 * 3));
             dRacuni.add(dr3);
