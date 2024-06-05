@@ -69,12 +69,12 @@ public class RacunSeeder implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         try {
-
+/*
             uplataRepository.deleteAll();
             uplataRepository.findAll().forEach(System.out::println);
             prenosSredstavaRepository.deleteAll();
             prenosSredstavaRepository.findAll().forEach(System.out::println);
-
+*/
             List<Zemlja> zemlje = new ArrayList<>();
             Zemlja z1 = new Zemlja("Švajcarska Konfederacija");
             zemlje.add(z1);
@@ -118,7 +118,8 @@ public class RacunSeeder implements CommandLineRunner {
                 valuteRepository.saveAll(valute);
 
             MarzniRacun marzniRacun = new MarzniRacun(-1L, -1L, 444000000000000022L, "RSD", "STOCKS", new BigDecimal(10000000), new BigDecimal(10000000), new BigDecimal(500), new BigDecimal(50), false, null);
-            marzniRacunRepository.save(marzniRacun);
+            if(marzniRacunRepository.findAll().isEmpty())
+                marzniRacunRepository.save(marzniRacun);
 
             List<Firma> firme = new ArrayList<>();
             Firma f1 = new Firma(-1L, "Nasa banka", "444000000000000022,444000000000000122,444000000000000222"
@@ -141,21 +142,21 @@ public class RacunSeeder implements CommandLineRunner {
                     , new BigDecimal("0"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v2.getOznaka()
                     , true, new BigDecimal("1"), new BigDecimal(100 * 2));
-            if(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr1.getBrojRacuna()).isPresent())
+            if(!(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr1.getBrojRacuna()).isPresent()))
                 dRacuni.add(dr1);
 
             DevizniRacun dr2 = new DevizniRacun(444000000000000111L, 2L, new BigDecimal("10000")
                     , new BigDecimal("0"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L,v2.getOznaka()
                     , true, new BigDecimal("1"), new BigDecimal(100 * 2));
-            if(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr2.getBrojRacuna()).isPresent())
+            if(!(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr2.getBrojRacuna()).isPresent()))
                 dRacuni.add(dr2);
 
             DevizniRacun dr3 = new DevizniRacun(444000000000000211L, 1L, new BigDecimal("10000")
                     , new BigDecimal("0"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v3.getOznaka()
                     , true, new BigDecimal("1"), new BigDecimal(100 * 3));
-            if(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr3.getBrojRacuna()).isPresent())
+            if(!(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr3.getBrojRacuna()).isPresent()))
                 dRacuni.add(dr3);
 
             devizniRacunRepository.saveAll(dRacuni);
@@ -164,19 +165,19 @@ public class RacunSeeder implements CommandLineRunner {
             PravniRacun pr1 = new PravniRacun(444000000000000022L, -1L, new BigDecimal("10000")
                     , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v8.getOznaka(), true);
-            if(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr1.getBrojRacuna()).isPresent())
+            if(!(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr1.getBrojRacuna()).isPresent()))
                 pRacuni.add(pr1);
 
             PravniRacun pr2 = new PravniRacun(444000000000000122L, -1L, new BigDecimal("10000")
                     , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v2.getOznaka(), true);
-            if(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr2.getBrojRacuna()).isPresent())
+            if(!(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr2.getBrojRacuna()).isPresent()))
                 pRacuni.add(pr2);
 
             PravniRacun pr3 = new PravniRacun(444000000000000222L, -1L, new BigDecimal("10000")
                     , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v3.getOznaka(), true);
-            if(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr3.getBrojRacuna()).isPresent())
+            if(!(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr3.getBrojRacuna()).isPresent()))
                 pRacuni.add(pr3);
 
             pravniRacunRepository.saveAll(pRacuni);
@@ -186,21 +187,21 @@ public class RacunSeeder implements CommandLineRunner {
                     , new BigDecimal("10000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v8.getOznaka()
                     , true, "Studentski", new BigDecimal("0.5"), new BigDecimal("0"));
-            if(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr1.getBrojRacuna()).isPresent())
+            if(!(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr1.getBrojRacuna()).isPresent()))
                 tRacuni.add(tr1);
 
             TekuciRacun tr2 = new TekuciRacun(444000000910000033L, 2L, new BigDecimal("11000")
                     , new BigDecimal("11000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v8.getOznaka()
                     , true, "Studentski", new BigDecimal("0"), new BigDecimal("300"));
-            if(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr2.getBrojRacuna()).isPresent())
+            if(!(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr2.getBrojRacuna()).isPresent()))
                 tRacuni.add(tr2);
 
             TekuciRacun tr3 = new TekuciRacun(444000000920000033L, 1L, new BigDecimal("1000")
                     , new BigDecimal("1000"), 22222L, System.currentTimeMillis()
                     , System.currentTimeMillis() + 5*365*24*60*60*1000L, v8.getOznaka()
                     , true, "Studentski", new BigDecimal("0"), new BigDecimal("200"));
-            if(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr3.getBrojRacuna()).isPresent())
+            if(!(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr3.getBrojRacuna()).isPresent()))
                 tRacuni.add(tr3);
 
             tekuciRacunRepository.saveAll(tRacuni);

@@ -120,13 +120,13 @@ public class RacunServisImpl implements RacunServis {
             for (String r : racuni) {
                 String vrsta = nadjiVrstuRacuna(Long.parseLong(r));
                 if (Objects.equals(vrsta, "DevizniRacun")) {
-                    DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElseThrow(()->new BankAccountNotFoundException("Bank account " + r + " not found!"));
+                    DevizniRacun dr = this.devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
                     if (dr != null) {
                         dto = racunMapper.devizniRacunToRacunDTO(dr);
                         racunDTOs.add(dto);
                     }
                 } else if (Objects.equals(vrsta, "TekuciRacun")) {
-                    TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElseThrow(()->new BankAccountNotFoundException("Bank account " + r + " not found!"));
+                    TekuciRacun tr = this.tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
                     if (tr != null) {
                         dto = racunMapper.tekuciRacunToRacunDTO(tr);
                         racunDTOs.add(dto);
@@ -139,7 +139,7 @@ public class RacunServisImpl implements RacunServis {
                 RacunDTO dto;
                 List<String> racuni = List.of(f.getPovezaniRacuni().split(","));
                 for (String r : racuni) {
-                    PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElseThrow(()->new BankAccountNotFoundException("Bank account " + r + " not found!"));
+                    PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
                     if (pr != null) {
                         dto = racunMapper.pravniRacunToRacunDTO(pr);
                         racunDTOs.add(dto);
