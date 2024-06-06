@@ -9,6 +9,7 @@ import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.dto.PairDTO;
 import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.Enums.Action;
+import rs.edu.raf.order.model.Enums.Status;
 import rs.edu.raf.order.model.Enums.Type;
 import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.repository.OrderRepository;
@@ -34,8 +35,38 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto placeOrder(OrderRequest orderRequest) {
+        return OrderMapper.toDto(orderRepository.save(OrderMapper.mapOrderRequestToOrder(orderRequest)));
+//        return (orderRequest.getAction().equals(Action.BUY)) ? placeBuyOrder(OrderMapper.mapOrderRequestToOrder(orderRequest)) : placeSellOrder(OrderMapper.mapOrderRequestToOrder(orderRequest));
+    }
 
-        return (orderRequest.getAction().equals(Action.BUY)) ? placeBuyOrder(OrderMapper.mapOrderRequestToOrder(orderRequest)) : placeSellOrder(OrderMapper.mapOrderRequestToOrder(orderRequest));
+    @Override
+    public OrderDto rejectOrder(Long orderId) {
+        OrderDto result = null;
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            if (order.getStatus().equals("PENDING")) {
+                order.setStatus("REJECTED");
+                result = OrderMapper.toDto(orderRepository.save(order));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public OrderDto acceptOrder(Long orderId) {
+        OrderDto result = null;
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            if (order.getStatus().equals("PENDING")) {
+                order.setStatus("ACCEPTED");
+                if (order.getAction().equals(Action.BUY)) placeBuyOrder(order);
+                else placeSellOrder(order);
+                result = OrderMapper.toDto(orderRepository.save(order));
+            }
+        }
+        return result;
     }
 
     private OrderDto placeBuyOrder(Order buyOrder) {

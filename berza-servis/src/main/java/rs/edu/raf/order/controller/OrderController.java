@@ -88,4 +88,16 @@ public class OrderController {
         return new ResponseEntity<>(orderService.approximateOrderValue(order), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Rejects order.")
+    @PostMapping("/reject/{orderId}")
+    public ResponseEntity<OrderDto> rejectOrder(@PathVariable Long orderId) {
+        return new ResponseEntity<>(orderService.rejectOrder(orderId), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Accepts order.")
+    @PostMapping("/approve/{orderId}")
+    public ResponseEntity<OrderDto> acceptOrder(@PathVariable Long orderId) {
+        return new ResponseEntity<>(orderService.acceptOrder(orderId), HttpStatus.OK);
+    }
+
 }

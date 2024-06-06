@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 @Data
 public class OrderDto {
 
+    private Long id;
+
     private String ticker;
 
     private Integer quantity;

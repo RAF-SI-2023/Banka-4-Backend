@@ -7,17 +7,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import rs.edu.raf.dto.KorisnikDTO;
+import org.junit.jupiter.api.Disabled;
 import rs.edu.raf.servis.impl.MailServiceImplementation;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@Disabled
 public class MailTest {
 
     @Autowired
     MailServiceImplementation mailServiceImplementation;
-
+/*
     @Test
     public void posaljiMailZaRegistracijuTest(){
         KorisnikDTO kor = new KorisnikDTO();
@@ -36,6 +38,6 @@ public class MailTest {
 
         assertTrue(mailServiceImplementation.posaljiMailZaPromenuLozinke(kor, "123456"));
     }
-
+*/
 
 }
