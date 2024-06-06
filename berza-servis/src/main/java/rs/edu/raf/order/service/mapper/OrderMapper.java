@@ -1,11 +1,13 @@
 package rs.edu.raf.order.service.mapper;
 
+import org.springframework.stereotype.Component;
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.model.Enums.Status;
 import rs.edu.raf.order.model.Enums.Type;
 import rs.edu.raf.order.model.Order;
 
+@Component
 public class OrderMapper {
 
     public static Order mapOrderRequestToOrder(OrderRequest orderRequest) {
@@ -30,6 +32,7 @@ public class OrderMapper {
 
     public static OrderDto toDto(Order order) {
         return OrderDto.builder()
+                .id(order.getId())
                 .ticker(order.getTicker())
                 .quantity(order.getQuantity())
                 .limit(order.getLimit())
