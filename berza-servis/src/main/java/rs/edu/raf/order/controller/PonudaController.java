@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.order.dto.Banka3StockDTO;
+import rs.edu.raf.order.dto.DodajPonuduDto;
 import rs.edu.raf.order.dto.PonudaDTO;
 import rs.edu.raf.order.model.StranaPonudaDTO;
 import rs.edu.raf.order.service.PonudaService;
@@ -17,7 +18,6 @@ import java.util.List;
 @RequestMapping("/offer")
 @Tag(name = "Offers", description = "Operations related to offers.")
 @AllArgsConstructor
-@SecurityRequirement(name = "jwt")
 @CrossOrigin(origins = "*")
 public class PonudaController {
 
@@ -25,6 +25,7 @@ public class PonudaController {
 
     @ApiOperation(value = "Get all available stocks from Banka 3.")
     @GetMapping("/see-stocks-from-banka3")
+    @SecurityRequirement(name = "jwt")
     public ResponseEntity<?> getStocksFromBanka3() {
         List<Banka3StockDTO> res = ponudaService.dohvatiStokoveBanke3();
         if (res == null){
@@ -33,29 +34,38 @@ public class PonudaController {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Get all available stocks from Banka 3.")
+    @GetMapping("/banka3-offers")
+    @SecurityRequirement(name = "jwt")
+    public ResponseEntity<?> getAllOfers() {
+        return new ResponseEntity<>(ponudaService.svePonude(), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Place your offer here.")
     @PostMapping("/place-offer")
-    public ResponseEntity<?> placeOffer(@RequestBody PonudaDTO ponudaDTO) {
-        ponudaService.dodajPonudu(ponudaDTO);
+    public ResponseEntity<?> placeOffer(@RequestBody DodajPonuduDto dodajPonuduDto) {
+        ponudaService.dodajPonudu(dodajPonuduDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Accept our offer.")
-    @PostMapping("/accept-our-offer")
+    @PostMapping("/accept-our-offer/{id}")
     public ResponseEntity<?> receiveOffer(@RequestBody StranaPonudaDTO stranaPonudaDTO) {
         ponudaService.potvrdiNasuPonudu(stranaPonudaDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Accept banka's 3 offer.")
-    @PostMapping("/accept-foreign-offer")
+    @PostMapping("/accept-foreign-offer/{id}")
+    @SecurityRequirement(name = "jwt")
     public ResponseEntity<?> acceptOffer(@PathVariable Long id) {
         ponudaService.prihvati(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "Decline banka's 3 offer.")
-    @PostMapping("/decline-foreign-offer")
+    @PostMapping("/decline-foreign-offer/{id}")
+    @SecurityRequirement(name = "jwt")
     public ResponseEntity<?> declineOffer(@PathVariable Long id) {
         ponudaService.odbij(id);
         return new ResponseEntity<>(HttpStatus.OK);

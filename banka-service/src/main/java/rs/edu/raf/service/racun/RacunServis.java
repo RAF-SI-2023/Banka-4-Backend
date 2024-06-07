@@ -6,6 +6,7 @@ import rs.edu.raf.model.entities.racun.Firma;
 import rs.edu.raf.model.entities.racun.PravniRacun;
 import rs.edu.raf.model.entities.racun.TekuciRacun;
 
+import java.math.BigDecimal;
 import java.util.List;
 /**
  * Service interface for managing accounts.
@@ -42,7 +43,7 @@ public interface RacunServis {
      * @param idKorisnika The ID of the user.
      * @return A list of account DTOs belonging to the user.
      */
-    List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika);
+    List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika, String token);
 
     /**
      * Finds an active account by its ID.
@@ -171,5 +172,7 @@ public interface RacunServis {
      * @return The account object if found, otherwise null.
      */
     Object nadjiRacunPoBrojuRacuna(Long brojRacuna);
+
+    boolean bankomat(Long brojRacuna, BigDecimal stanje);
 }
 

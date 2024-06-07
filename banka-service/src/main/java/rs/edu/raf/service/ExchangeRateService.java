@@ -1,6 +1,7 @@
 package rs.edu.raf.service;
 
 import rs.edu.raf.model.dto.ExchangeRateResponseDto;
+import rs.edu.raf.model.entities.racun.ExchangeInvoice;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,4 +28,5 @@ public interface ExchangeRateService {
      */
     public BigDecimal convert(String oldValuteCurrencyCode, String newValuteCurrencyCode, BigDecimal oldValuteAmount);
 
+    List<ExchangeInvoice> listInvoicesByCurrency(String currency);
 }
