@@ -256,7 +256,7 @@ public class TransakcijaServisImplTest {
         Long idUplate = 1L;
         String newStatus = "REALIZOVANO";
         Uplata expected = new Uplata();
-        expected.setId(String.valueOf(idUplate));
+        expected.setId(idUplate);
         expected.setStatus(newStatus);
         when(uplataRepository.findById(String.valueOf(idUplate))).thenReturn(Optional.of(new Uplata()));
         when(uplataRepository.save(any(Uplata.class))).thenReturn(expected);
@@ -271,7 +271,7 @@ public class TransakcijaServisImplTest {
         Long idPrenosaSredstava = 1L;
         String newStatus = "REALIZOVANO";
         PrenosSredstava expected = new PrenosSredstava();
-        expected.setId(String.valueOf(idPrenosaSredstava));
+        expected.setId(idPrenosaSredstava);
         expected.setStatus(newStatus);
         when(prenosSredstavaRepository.findById(String.valueOf(idPrenosaSredstava))).thenReturn(Optional.of(new PrenosSredstava()));
         when(prenosSredstavaRepository.save(any(PrenosSredstava.class))).thenReturn(expected);
