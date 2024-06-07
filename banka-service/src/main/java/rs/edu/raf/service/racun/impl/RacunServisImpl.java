@@ -1,6 +1,8 @@
 package rs.edu.raf.service.racun.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,20 +12,19 @@ import rs.edu.raf.exceptions.BankAccountNotFoundException;
 import rs.edu.raf.exceptions.CompanyNotFoundException;
 import rs.edu.raf.model.dto.KorisnikDTO;
 import rs.edu.raf.model.dto.racun.*;
+import rs.edu.raf.model.entities.racun.*;
 import rs.edu.raf.model.mapper.racun.FirmaMapper;
 import rs.edu.raf.model.mapper.racun.RacunMapper;
-import rs.edu.raf.model.entities.racun.DevizniRacun;
-import rs.edu.raf.model.entities.racun.Firma;
-import rs.edu.raf.model.entities.racun.PravniRacun;
-import rs.edu.raf.model.entities.racun.TekuciRacun;
 import rs.edu.raf.repository.racun.FirmaRepository;
 import rs.edu.raf.repository.transaction.DevizniRacunRepository;
 import rs.edu.raf.repository.transaction.PravniRacunRepository;
+import rs.edu.raf.repository.transaction.RacunRepository;
 import rs.edu.raf.repository.transaction.TekuciRacunRepository;
 import okhttp3.*;
 import rs.edu.raf.service.racun.RacunServis;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -37,9 +38,10 @@ public class RacunServisImpl implements RacunServis {
     private RacunMapper racunMapper;
     private FirmaMapper firmaMapper;
     private RestTemplate restTemplate;
+    private RacunRepository racunRepository;
 
     @Autowired
-    public RacunServisImpl(DevizniRacunRepository devizniRacunRepository, PravniRacunRepository pravniRacunRepository, TekuciRacunRepository tekuciRacunRepository, RestTemplate restTemplate, FirmaRepository firmaRepository, RacunMapper racunMapper, FirmaMapper firmaMapper) {
+    public RacunServisImpl(DevizniRacunRepository devizniRacunRepository, PravniRacunRepository pravniRacunRepository, TekuciRacunRepository tekuciRacunRepository, RestTemplate restTemplate, FirmaRepository firmaRepository, RacunMapper racunMapper, FirmaMapper firmaMapper, RacunRepository racunRepository) {
         this.devizniRacunRepository = devizniRacunRepository;
         this.pravniRacunRepository = pravniRacunRepository;
         this.tekuciRacunRepository = tekuciRacunRepository;
@@ -47,6 +49,7 @@ public class RacunServisImpl implements RacunServis {
         this.racunMapper = racunMapper;
         this.firmaMapper = firmaMapper;
         this.restTemplate = restTemplate;
+        this.racunRepository = racunRepository;
     }
 
     @Override
@@ -106,11 +109,17 @@ public class RacunServisImpl implements RacunServis {
     }
 
     @Override
-    public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika) {
+    public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika, String token) {
 
 
 
-        ResponseEntity<KorisnikDTO> response = restTemplate.exchange("/korisnik/id/" + idKorisnika, HttpMethod.GET, null, KorisnikDTO.class);
+//        ResponseEntity<KorisnikDTO> response = restTemplate.exchange("/korisnik/id/" + idKorisnika, HttpMethod.GET, null, KorisnikDTO.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+
+        // Kreirajte HttpEntity sa HttpHeaders
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<KorisnikDTO> response = restTemplate.exchange("/korisnik/id/" + idKorisnika, HttpMethod.GET,entity,KorisnikDTO.class);
         KorisnikDTO korisnikDTO = response.getBody();
 
         List<RacunDTO> racunDTOs = new ArrayList<>();
@@ -340,5 +349,15 @@ public class RacunServisImpl implements RacunServis {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean bankomat(Long brojRacuna, BigDecimal stanje) {
+        Racun racun = racunRepository.findByBrojRacuna(brojRacuna).orElseThrow(()->
+                new BankAccountNotFoundException("Racun sa brojem " + brojRacuna + " ne postoji!"));
+        if(racun.getStanje().add(stanje).compareTo(BigDecimal.ZERO) < 0) return false;
+        racun.setStanje(racun.getStanje().add(stanje));
+        racunRepository.save(racun);
+        return true;
     }
 }

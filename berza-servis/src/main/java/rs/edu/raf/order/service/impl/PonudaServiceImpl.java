@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.order.dto.Banka3StockDTO;
+import rs.edu.raf.order.dto.DodajPonuduDto;
 import rs.edu.raf.order.dto.PonudaDTO;
 import rs.edu.raf.order.model.Ponuda;
 import rs.edu.raf.order.model.StranaPonudaDTO;
@@ -60,7 +61,7 @@ public class PonudaServiceImpl implements PonudaService {
     }
 
     @Override
-    public void dodajPonudu(PonudaDTO ponudaDTO) {
+    public void dodajPonudu(DodajPonuduDto ponudaDTO) {
         ponudaRepository.save(ponudaMapper.ponudaDTOToPonuda(ponudaDTO));
     }
 
@@ -73,15 +74,17 @@ public class PonudaServiceImpl implements PonudaService {
     @Override
     public boolean prihvati(Long idPonude) {
 
-        Optional<Ponuda> ponuda =  ponudaRepository.findById(idPonude);
-        ponuda.get().getAmountOffered();
-
-        ponudaRepository.deleteById(idPonude);
+        ponudaRepository.prihvatiPonudu(idPonude);
         return true;
     }
 
     @Override
     public void odbij(Long idPonude) {
         ponudaRepository.deleteById(idPonude);
+    }
+
+    @Override
+    public List<PonudaDTO> svePonude() {
+        return ponudaRepository.findAll().stream().map(ponudaMapper::ponudaToPonudaDto).toList();
     }
 }

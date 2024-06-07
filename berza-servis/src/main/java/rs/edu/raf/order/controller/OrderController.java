@@ -49,7 +49,7 @@ public class OrderController {
 
     @ApiOperation(value = "Places order for a firma by a radnik.")
     @PostMapping("/place-order-by-radnik")
-    public ResponseEntity<OrderDto> placeOrderByRadnikForFirma(@RequestBody @Validated OrderRequest order) {
+    public ResponseEntity<OrderDto> placeOrderByRadnikForFirma(@RequestBody @Validated OrderRequest order, @RequestHeader("Authorization") String token) {
 
         String getRadnikByIdEndpoint = "https://banka-4-dev.si.raf.edu.rs/user-service/api/radnik/id/" + order.getUserId();
 
@@ -59,6 +59,7 @@ public class OrderController {
         HttpRequest radnikRequest = HttpRequest.newBuilder()
                 .uri(URI.create(getRadnikByIdEndpoint))
                 .header("Content-Type", "application/json")
+                .headers("Authorization",token)
                 .GET()
                 .build();
 

@@ -9,8 +9,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PonudaDTO {
-    private Long id;
+public class DodajPonuduDto {
     private String ticker;
 
     private Integer quantity;
