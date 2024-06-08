@@ -50,7 +50,7 @@ public class FuturesController {
         futuresService.approveRequest(id,supervisor_id);
     }
 
-    @DeleteMapping("/deny/{id}")
+    @PutMapping("/deny/{id}")
     @Operation(description = "Deny request for buying future contracts")
     public void denyRequest(@PathVariable("id") Long id) {
         futuresService.denyRequest(id);

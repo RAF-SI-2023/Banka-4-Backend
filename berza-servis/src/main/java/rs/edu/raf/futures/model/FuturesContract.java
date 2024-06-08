@@ -38,6 +38,6 @@ public class FuturesContract {
         this.maintenanceMargin = maintenanceMargin;
         this.type = type;
         this.price = new BigDecimal(ThreadLocalRandom.current().nextDouble(1500.0,3000.0));
-        this.settlementDate = ThreadLocalRandom.current().nextLong(1713211958000L,1715803958000L);
+        this.settlementDate = ThreadLocalRandom.current().nextLong(1717207348000L,1718385308000L);
     }
 }
