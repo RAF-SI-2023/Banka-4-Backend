@@ -17,4 +17,7 @@ public interface FuturesContractRepository extends JpaRepository<FuturesContract
     @Transactional
     @Query(value = "SELECT kupi_future_contract(:radnik_id,:future_contract_id,:broj_racuna_id);",nativeQuery = true)
     void kupi_future_contract(@Param("radnik_id")Long radnikId, @Param("future_contract_id")Long id, @Param("broj_racuna_id")Long racun_id);
+    @Transactional
+    @Query(value = "SELECT confirmFuture()",nativeQuery = true)
+    void confirmFuture();
 }

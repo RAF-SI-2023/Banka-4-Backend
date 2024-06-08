@@ -1,6 +1,7 @@
 package rs.edu.raf.futures.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,8 @@ public interface FutureContractRequestRepository extends JpaRepository<FutureCon
     List<FutureContractRequest> allRequests(@Param("id") Long radnik_id);
     @Query(value = "SELECT approve(:id,:supervisor_id)",nativeQuery = true)
     void approve_request(@Param("id") Long id, @Param("supervisor_id") Long supervisor_id);
+
+    @Query(value = "UPDATE FutureContractRequest f SET f.requestStatus='DENIED' WHERE f.id = :id")
+    @Modifying
+    void deny_request(@Param("id") Long id);
 }
