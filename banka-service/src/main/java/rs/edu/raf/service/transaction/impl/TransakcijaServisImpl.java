@@ -343,7 +343,9 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     e.printStackTrace();
                     p.setStatus(Status.NEUSPELO);
                     p.setVremeIzvrsavanja(System.currentTimeMillis());
+//                    e.getMessage()ovo se posalje preko socketa
                     prenosSredstavaRepository.save(p);
+                    webSockerPrenosSredstava(p);
                 }
             }
             for (Uplata p : uplataRepository.findAllByStatus(Status.U_OBRADI)) {
@@ -386,17 +388,23 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                     e.printStackTrace();
                     p.setStatus(Status.NEUSPELO);
                     p.setVremeIzvrsavanja(System.currentTimeMillis());
+                    //e.getMessage treba ubaciti u socket
                     uplataRepository.save(p);
+                    webSocketUplata(p);
                 }
             }
     }
 
     private void webSocketUplata(Uplata uplata) {
         System.out.println(uplata + " web socket");
+        messagingTemplate.convertAndSend("/topic/uplata-posiljaoca/" + uplata.getRacunPosiljaoca(), TransakcijaMapper.PlacanjeToDto(uplata));
+        messagingTemplate.convertAndSend("/topic/uplata-primaoca/" + uplata.getRacunPrimaoca(), TransakcijaMapper.PlacanjeToDto(uplata));
     }
 
     private void webSockerPrenosSredstava(PrenosSredstava prenosSredstava) {
         System.out.println(prenosSredstava + " web socket");
+        messagingTemplate.convertAndSend("/topic/prenos-sredstava-posiljaoca/" + prenosSredstava.getRacunPosiljaoca(), TransakcijaMapper.PrenosSredstavaToDto(prenosSredstava));
+        messagingTemplate.convertAndSend("/topic/prenos-sredstava-primaoca/" + prenosSredstava.getRacunPrimaoca(), TransakcijaMapper.PrenosSredstavaToDto(prenosSredstava));
     }
 
 
