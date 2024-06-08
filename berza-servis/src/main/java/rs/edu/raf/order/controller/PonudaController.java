@@ -49,7 +49,7 @@ public class PonudaController {
     }
 
     @ApiOperation(value = "Accept our offer.")
-    @PostMapping("/accept-our-offer/{id}")
+    @PostMapping("/accept-our-offer")
     public ResponseEntity<?> receiveOffer(@RequestBody StranaPonudaDTO stranaPonudaDTO) {
         ponudaService.potvrdiNasuPonudu(stranaPonudaDTO);
         return new ResponseEntity<>(HttpStatus.OK);
