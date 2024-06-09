@@ -38,10 +38,10 @@ public class FuturesController {
         return new ResponseEntity<>(futuresService.findByKupac(id), HttpStatus.OK);
     }
 
-    @GetMapping("/request")
+    @GetMapping("/request/{id}")
     @Operation(description = "Get all requests for buying future contracts")
-    public ResponseEntity<List<FutureRequestDto>> allRequests(@RequestAttribute("userId") Long radnik_id) {
-        return new ResponseEntity<>(futuresService.allRequests(radnik_id),HttpStatus.OK);
+    public ResponseEntity<List<FutureRequestDto>> allRequests(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(futuresService.allRequests(id),HttpStatus.OK);
     }
 
     @PutMapping("/approve/{id}")

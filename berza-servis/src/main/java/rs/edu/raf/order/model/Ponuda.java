@@ -23,4 +23,5 @@ public class Ponuda {
 
     @ManyToOne
     private UserStock userStock;
+    private Long banka3Id;
 }
