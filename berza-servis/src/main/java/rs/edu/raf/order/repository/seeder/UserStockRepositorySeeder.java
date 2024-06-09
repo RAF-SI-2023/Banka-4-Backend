@@ -17,6 +17,7 @@ public class UserStockRepositorySeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // User stockovi za nasu banku Banka4
+        userStockRepository.deleteAll();
         UserStock newUserStock = new UserStock();
         newUserStock.setUserId(-1L);
         newUserStock.setTicker("AAPL");
