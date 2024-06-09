@@ -357,7 +357,7 @@ public class RacunServisImpl implements RacunServis {
                 new BankAccountNotFoundException("Racun sa brojem " + brojRacuna + " ne postoji!"));
         if(racun.getRaspolozivoStanje().add(stanje).compareTo(BigDecimal.ZERO) < 0) return false;
         racun.setStanje(racun.getStanje().add(stanje));
-        racun.setRaspolozivoStanje(racun.getStanje().add(stanje));
+        racun.setRaspolozivoStanje(racun.getRaspolozivoStanje().add(stanje));
         racunRepository.save(racun);
         return true;
     }
