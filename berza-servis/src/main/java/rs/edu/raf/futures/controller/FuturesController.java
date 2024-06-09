@@ -32,10 +32,10 @@ public class FuturesController {
         return new ResponseEntity<>(futuresService.findByName(name),HttpStatus.OK);
     }
 
-    @GetMapping("/kupac")
+    @GetMapping("/kupac/{id}")
     @Operation(description = "Get all future contracts for user")
-    public ResponseEntity<List<FuturesContractDto>> allFuturesForUser(@RequestAttribute("userId") Long userId) {
-        return new ResponseEntity<>(futuresService.findByKupac(userId), HttpStatus.OK);
+    public ResponseEntity<List<FuturesContractDto>> allFuturesForUser(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(futuresService.findByKupac(id), HttpStatus.OK);
     }
 
     @GetMapping("/request")
