@@ -16,7 +16,7 @@ public interface ExchangeRateService {
      *
      * @return A list of ExchangeRateResponseDto objects representing all exchange rates.
      */
-    public List<ExchangeRateResponseDto> getAllExchangeRates();
+    List<ExchangeRateResponseDto> getAllExchangeRates();
 
     /**
      * Converts an amount from one currency to another.
@@ -26,7 +26,13 @@ public interface ExchangeRateService {
      * @param oldValuteAmount       The amount to convert.
      * @return The converted amount as a BigDecimal.
      */
-    public BigDecimal convert(String oldValuteCurrencyCode, String newValuteCurrencyCode, BigDecimal oldValuteAmount);
+    BigDecimal convert(String oldValuteCurrencyCode, String newValuteCurrencyCode, BigDecimal oldValuteAmount);
 
+    /**
+     * Retrieves a list of exchange invoices filtered by currency.
+     *
+     * @param currency the currency code to filter the invoices
+     * @return a list of exchange invoices that match the specified currency
+     */
     List<ExchangeInvoice> listInvoicesByCurrency(String currency);
 }

@@ -18,7 +18,7 @@ public interface CreditService {
      * @param creditRequestDto The DTO containing information to apply for credit.
      * @return The credit request ID.
      */
-    public String applyForCredit(CreditRequestDto creditRequestDto);
+    String applyForCredit(CreditRequestDto creditRequestDto);
 
     /**
      * Approves a credit request.
@@ -26,7 +26,7 @@ public interface CreditService {
      * @param id The ID of the credit request to approve.
      * @return A message indicating the result of the operation.
      */
-    public String approveCreditRequest(Long id);
+    String approveCreditRequest(Long id);
 
     /**
      * Denies a credit request.
@@ -34,7 +34,7 @@ public interface CreditService {
      * @param id The ID of the credit request to deny.
      * @return A message indicating the result of the operation.
      */
-    public String dennyCreditRequest(Long id);
+    String dennyCreditRequest(Long id);
 
     /**
      * Retrieves all credit requests with the specified status.
@@ -42,7 +42,7 @@ public interface CreditService {
      * @param status The status of the credit requests to retrieve.
      * @return A list of CreditRequestDto objects representing the credit requests.
      */
-    public List<CreditRequestDto> getAllCreditRequests(String status);
+    List<CreditRequestDto> getAllCreditRequests(String status);
 
     /**
      * Retrieves all credit requests for a specific user with the specified status.
@@ -51,7 +51,7 @@ public interface CreditService {
      * @param status The status of the credit requests to retrieve.
      * @return A list of CreditRequestDto objects representing the credit requests.
      */
-    public List<CreditRequestDto> getAllCreditRequestForUser(Long userId, String status);
+    List<CreditRequestDto> getAllCreditRequestForUser(Long userId, String status);
 
     /**
      * Creates a credit.
@@ -61,7 +61,7 @@ public interface CreditService {
      * @param currency      The currency of the credit.
      * @param salary        The salary of the applicant.
      */
-    public void createCredit(CreditRequest creditRequest, String tipRacuna, String currency, BigDecimal salary);
+    void createCredit(CreditRequest creditRequest, String tipRacuna, String currency, BigDecimal salary);
 
     /**
      * Retrieves detailed information about a credit.
@@ -69,7 +69,7 @@ public interface CreditService {
      * @param creditRequestId The ID of the credit request.
      * @return The DetailedCreditDto object representing detailed information about the credit.
      */
-    public DetailedCreditDto getDetailedCredit(Long creditRequestId);
+    DetailedCreditDto getDetailedCredit(Long creditRequestId);
 
 
     /**
@@ -77,11 +77,30 @@ public interface CreditService {
      *
      * @param creditRequestId
      */
-    public void deleteCreditRequest(Long creditRequestId);
+    void deleteCreditRequest(Long creditRequestId);
 
-    public List<CreditRequest> getAllCreditRequestsRaw(String status);
+    /**
+     * Retrieves all credit requests with a specified status.
+     *
+     * @param status the status of the credit requests to be retrieved
+     * @return a list of credit requests with the specified status
+     */
+    List<CreditRequest> getAllCreditRequestsRaw(String status);
 
-    public List<CreditRequest> getAllCreditRequestsForUserRaw(Long userId,String status);
+    /**
+     * Retrieves all credit requests for a specific user with a specified status.
+     *
+     * @param userId the ID of the user whose credit requests are to be retrieved
+     * @param status the status of the credit requests to be retrieved
+     * @return a list of credit requests for the specified user with the specified status
+     */
+    List<CreditRequest> getAllCreditRequestsForUserRaw(Long userId, String status);
 
-    public CreditRequest getCreditRequest(Long creditRequestId);
+    /**
+     * Retrieves a specific credit request by its ID.
+     *
+     * @param creditRequestId the ID of the credit request to be retrieved
+     * @return the details of the credit request
+     */
+    CreditRequest getCreditRequest(Long creditRequestId);
 }

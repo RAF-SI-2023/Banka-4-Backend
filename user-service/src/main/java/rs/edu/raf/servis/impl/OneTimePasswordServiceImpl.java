@@ -36,7 +36,7 @@ public class OneTimePasswordServiceImpl {
         oneTimePasswordRepository.deleteByExpirationBefore(LocalDateTime.now());
     }
 
-    private String generatePassword() {
+    public String generatePassword() {
         int length = 6;
         String characters = "0123456789";
         StringBuilder password = new StringBuilder();
@@ -45,6 +45,10 @@ public class OneTimePasswordServiceImpl {
             password.append(characters.charAt(index));
         }
         return password.toString();
+    }
+
+    public void setOneTimePasswordRepository(OneTimePasswordRepository mockRepository) {
+        this.oneTimePasswordRepository = mockRepository;
     }
 }
 

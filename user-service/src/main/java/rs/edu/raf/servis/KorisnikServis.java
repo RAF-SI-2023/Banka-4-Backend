@@ -122,7 +122,14 @@ public interface KorisnikServis {
      */
     KorisnikDTO findUserById(Long id);
 
+    /**
+     * Finds a worker by their ID.
+     *
+     * @param id the ID of the worker
+     * @return the details of the worker
+     */
     RadnikDTO findWorkerById(Long id);
+
 
     /**
      * Adds an account to a user.
@@ -131,7 +138,30 @@ public interface KorisnikServis {
      * @param accountNumber The account number to add.
      * @return True if the account is successfully added, otherwise false.
      */
+    /**
+     * Adds an account to a user.
+     *
+     * @param userId the ID of the user
+     * @param accountNumber the account number to be added
+     * @return true if the account was successfully added, false otherwise
+     */
     boolean addAccountToUser(Long userId, Long accountNumber);
+
+    /**
+     * Resets the limit for a worker.
+     *
+     * @param radnikId the ID of the worker whose limit is to be reset
+     * @param id the ID related to the limit reset operation
+     * @return the details of the worker after the limit reset
+     */
     RadnikDTO resetLimit(Long radnikId, Long id);
+
+    /**
+     * Updates the daily spent amount for a worker.
+     *
+     * @param id the ID of the worker
+     * @param price the amount to be added to the daily spent
+     */
     void updateDailySpent(Long id, BigDecimal price);
+
 }

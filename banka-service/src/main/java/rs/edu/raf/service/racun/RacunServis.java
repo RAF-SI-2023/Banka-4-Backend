@@ -173,6 +173,14 @@ public interface RacunServis {
      */
     Object nadjiRacunPoBrojuRacuna(Long brojRacuna);
 
+    /**
+     * Processes a bank transaction at an ATM.
+     *
+     * @param brojRacuna the account number
+     * @param stanje the amount involved in the transaction
+     * @return true if the transaction was successful, false otherwise
+     */
     boolean bankomat(Long brojRacuna, BigDecimal stanje);
+
 }
 

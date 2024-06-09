@@ -21,5 +21,11 @@ public class OneTimePassword {
     private String email;
     private String password;
     private LocalDateTime expiration;
+
+    public OneTimePassword(String email, String password, LocalDateTime expiration) {
+        this.email = email;
+        this.password = password;
+        this.expiration = expiration;
+    }
 }
 
