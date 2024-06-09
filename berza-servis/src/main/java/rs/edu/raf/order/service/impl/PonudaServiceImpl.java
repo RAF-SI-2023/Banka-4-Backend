@@ -68,7 +68,7 @@ public class PonudaServiceImpl implements PonudaService {
     @Override
     public void potvrdiNasuPonudu(StranaPonudaDTO stranaPonudaDTO) {
         // zove banka3 da prihvati nasu ponudu
-
+        ponudaRepository.banka3PrihvataPonudu(stranaPonudaDTO.getTicker(),Long.valueOf(stranaPonudaDTO.getQuantity()),stranaPonudaDTO.getAmountOffered());
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FuturesContractDto {
+    private Long id;
     private String type;
     private String name;
     private BigDecimal price;

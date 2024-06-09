@@ -33,6 +33,11 @@ public class MarzniRacunController {
         return marzniRacunService.findALlByUserId(userId);
     }
 
+    @GetMapping("/bank-profit")
+    public ResponseEntity<?> profit() {
+        return marzniRacunService.bankProfit();
+    }
+
     @PostMapping
     public ResponseEntity<?> createMarzniRacun(@RequestBody MarzniRacunCreateDTO marzniRacunCreateDTO) {
         return marzniRacunService.createMarzniRacun(marzniRacunCreateDTO);
