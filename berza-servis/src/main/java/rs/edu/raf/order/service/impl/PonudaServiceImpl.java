@@ -13,11 +13,13 @@ import rs.edu.raf.order.dto.Banka3StockDTO;
 import rs.edu.raf.order.dto.DodajPonuduDto;
 import rs.edu.raf.order.dto.PonudaBanci3Dto;
 import rs.edu.raf.order.dto.PonudaDTO;
+import rs.edu.raf.order.model.MojaPonudaBanci3Dto;
 import rs.edu.raf.order.model.MojePonudeBanci3;
 import rs.edu.raf.order.model.Ponuda;
 import rs.edu.raf.order.model.StranaPonudaDTO;
 import rs.edu.raf.order.repository.MojePonudeBanci3Repository;
 import rs.edu.raf.order.repository.PonudaRepository;
+import rs.edu.raf.order.service.MojePonudeBanci3Service;
 import rs.edu.raf.order.service.PonudaService;
 import rs.edu.raf.order.service.mapper.PonudaMapper;
 
