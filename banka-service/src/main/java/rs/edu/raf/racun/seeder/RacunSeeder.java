@@ -457,9 +457,9 @@ public class RacunSeeder implements CommandLineRunner {
                     "IF(kupac IS NOT NULL) THEN\n" +
                     "RAISE EXCEPTION 'Future contract je vec kupljen';\n" +
                     "END IF;\n" +
-                    "IF(CURRENT_DATE > to_timestamp(settlementDate / 1000)) THEN\n" +
-                    "RAISE EXCEPTION 'Future contract je istekao';\n" +
-                    "END IF;\n" +
+//                    "IF(CURRENT_DATE > to_timestamp(settlementDate / 1000)) THEN\n" +
+//                    "RAISE EXCEPTION 'Future contract je istekao';\n" +
+//                    "END IF;\n" +
                     "    -- Izračunavanje ukupnog dnevnog troška plus cene future contracta\n" +
                     "    dailySpentPlusPrice := dailySpentPlusPrice + contractPrice;\n" +
                     "\n" +
@@ -520,9 +520,9 @@ public class RacunSeeder implements CommandLineRunner {
                     "RAISE EXCEPTION 'Future contract je vec kupljen';\n" +
                     "END IF;\n" +
                     "\n" +
-                    "IF(CURRENT_DATE > to_timestamp(settlementDate / 1000)) THEN\n" +
-                    "RAISE EXCEPTION 'Future contract je istekao';\n" +
-                    "END IF;\n" +
+//                    "IF(CURRENT_DATE > to_timestamp(settlementDate / 1000)) THEN\n" +
+//                    "RAISE EXCEPTION 'Future contract je istekao';\n" +
+//                    "END IF;\n" +
                     "\n" +
                     "IF(firmaId <> radnik_firma_id) THEN\n" +
                     "RAISE EXCEPTION 'Ovaj zahtev nije za vašu firmu!';\n" +

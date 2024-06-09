@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Entity
@@ -38,6 +39,8 @@ public class FuturesContract {
         this.maintenanceMargin = maintenanceMargin;
         this.type = type;
         this.price = new BigDecimal(ThreadLocalRandom.current().nextDouble(1500.0,3000.0));
-        this.settlementDate = ThreadLocalRandom.current().nextLong(1717207348000L,1718385308000L);
+//        this.settlementDate = ThreadLocalRandom.current().nextLong(1718038790000L,1718385308000L);
+        Random r = new Random();
+        this.settlementDate = r.nextLong(1718385308000L-1718038790000L) + 1718038790000L;
     }
 }
