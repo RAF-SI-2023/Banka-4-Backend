@@ -298,96 +298,113 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     }
 
     // TODO: dodati @Leader anotaciju za kubernetes
-    @Scheduled(cron = "0 */1 * * * *")
+//    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(initialDelay = 180000, fixedRate = 180000)
     public void realizacijaTransakcija() {
 //        prenosSredstavaRepository.deleteAll();
         prenosSredstavaRepository.findAll().forEach(System.out::println);
-        for(PrenosSredstava p: prenosSredstavaRepository.findAllByStatus(Status.U_OBRADI)) {
-            Racun posiljalac = racunRepository.findByBrojRacuna(p.getRacunPosiljaoca()).orElse(null);
-            Racun primalac = racunRepository.findByBrojRacuna(p.getRacunPrimaoca()).orElse(null);
-            if(posiljalac == null || primalac == null) {
-                p.setStatus(Status.NEUSPELO);
-                p.setVremeIzvrsavanja(System.currentTimeMillis());
-                prenosSredstavaRepository.save(p);
-            }
-            else {
-                if(posiljalac.getCurrency().equals(primalac.getCurrency())) {
-                    boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(),p.getRacunPrimaoca(),p.getIznos(),p.getIznos());
-                    if(uspelo) p.setStatus(Status.REALIZOVANO);
-                    else p.setStatus(Status.NEUSPELO);
-                    p.setVremeIzvrsavanja(System.currentTimeMillis());
-                    prenosSredstavaRepository.save(p);
-                }
-                else {
-                    BigDecimal iznosPrimaocu = exchangeRateServiceImpl.convert(posiljalac.getCurrency(),primalac.getCurrency(),p.getIznos());
-                    boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(),p.getRacunPrimaoca(),p.getIznos(),iznosPrimaocu);
-                    if(uspelo) {
-                        p.setStatus(Status.REALIZOVANO);
-                        ExchangeInvoice exchangeInvoice = new ExchangeInvoice();
-                        exchangeInvoice.setSenderAccount(posiljalac.getBrojRacuna().toString());
-                        exchangeInvoice.setToAccount(primalac.getBrojRacuna().toString());
-                        exchangeInvoice.setSenderAmount(p.getIznos());
-                        exchangeInvoice.setSenderCurrency(posiljalac.getCurrency());
-                        exchangeInvoice.setToCurrency(primalac.getCurrency());
-                        exchangeInvoice.setExchangeRate(exchangeRateServiceImpl.exchangeRate(posiljalac.getCurrency(),primalac.getCurrency()));
-                        exchangeInvoice.setProfit(p.getIznos().multiply(new BigDecimal("0.005")));
-                        exchangeInvoice.setDateAndTime(System.currentTimeMillis());
-                        invoiceRepository.save(exchangeInvoice);
+            for (PrenosSredstava p : prenosSredstavaRepository.findAllByStatus(Status.U_OBRADI)) {
+                try {
+                    Racun posiljalac = racunRepository.findByBrojRacuna(p.getRacunPosiljaoca()).orElse(null);
+                    Racun primalac = racunRepository.findByBrojRacuna(p.getRacunPrimaoca()).orElse(null);
+                    if (posiljalac == null || primalac == null) {
+                        p.setStatus(Status.NEUSPELO);
+                        p.setVremeIzvrsavanja(System.currentTimeMillis());
+                        prenosSredstavaRepository.save(p);
+                    } else {
+                        if (posiljalac.getCurrency().equals(primalac.getCurrency())) {
+                            boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(), p.getRacunPrimaoca(), p.getIznos(), p.getIznos());
+                            if (uspelo) p.setStatus(Status.REALIZOVANO);
+                            else p.setStatus(Status.NEUSPELO);
+                            p.setVremeIzvrsavanja(System.currentTimeMillis());
+                            prenosSredstavaRepository.save(p);
+                        } else {
+                            BigDecimal iznosPrimaocu = exchangeRateServiceImpl.convert(posiljalac.getCurrency(), primalac.getCurrency(), p.getIznos());
+                            boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(), p.getRacunPrimaoca(), p.getIznos(), iznosPrimaocu);
+                            if (uspelo) {
+                                p.setStatus(Status.REALIZOVANO);
+                                ExchangeInvoice exchangeInvoice = new ExchangeInvoice();
+                                exchangeInvoice.setSenderAccount(posiljalac.getBrojRacuna().toString());
+                                exchangeInvoice.setToAccount(primalac.getBrojRacuna().toString());
+                                exchangeInvoice.setSenderAmount(p.getIznos());
+                                exchangeInvoice.setSenderCurrency(posiljalac.getCurrency());
+                                exchangeInvoice.setToCurrency(primalac.getCurrency());
+                                exchangeInvoice.setExchangeRate(exchangeRateServiceImpl.exchangeRate(posiljalac.getCurrency(), primalac.getCurrency()));
+                                exchangeInvoice.setProfit(p.getIznos().multiply(new BigDecimal("0.005")));
+                                exchangeInvoice.setDateAndTime(System.currentTimeMillis());
+                                invoiceRepository.save(exchangeInvoice);
+                            } else p.setStatus(Status.NEUSPELO);
+                            p.setVremeIzvrsavanja(System.currentTimeMillis());
+                            prenosSredstavaRepository.save(p);
+                        }
                     }
-                    else p.setStatus(Status.NEUSPELO);
+                    webSockerPrenosSredstava(p);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    p.setStatus(Status.NEUSPELO);
                     p.setVremeIzvrsavanja(System.currentTimeMillis());
+//                    e.getMessage()ovo se posalje preko socketa
                     prenosSredstavaRepository.save(p);
+                    webSockerPrenosSredstava(p);
                 }
             }
-            webSockerPrenosSredstava(p);
-        }
-        for(Uplata p: uplataRepository.findAllByStatus(Status.U_OBRADI)) {
-            Racun posiljalac = racunRepository.findByBrojRacuna(p.getRacunPosiljaoca()).orElse(null);
-            Racun primalac = racunRepository.findByBrojRacuna(p.getRacunPrimaoca()).orElse(null);
-            if(posiljalac == null || primalac == null) {
-                p.setStatus(Status.NEUSPELO);
-                p.setVremeIzvrsavanja(System.currentTimeMillis());
-                uplataRepository.save(p);
-            }
-            else {
-                if(posiljalac.getCurrency().equals(primalac.getCurrency())) {
-                    boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(),p.getRacunPrimaoca(),p.getIznos(),p.getIznos());
-                    if(uspelo) p.setStatus(Status.REALIZOVANO);
-                    else p.setStatus(Status.NEUSPELO);
-                    p.setVremeIzvrsavanja(System.currentTimeMillis());
-                    uplataRepository.save(p);
-                }
-                else {
-                    BigDecimal iznosPrimaocu = exchangeRateServiceImpl.convert(posiljalac.getCurrency(),primalac.getCurrency(),p.getIznos());
-                    boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(),p.getRacunPrimaoca(),p.getIznos(),iznosPrimaocu);
-                    if(uspelo) {
-                        p.setStatus(Status.REALIZOVANO);
-                        ExchangeInvoice exchangeInvoice = new ExchangeInvoice();
-                        exchangeInvoice.setSenderAccount(posiljalac.getBrojRacuna().toString());
-                        exchangeInvoice.setToAccount(primalac.getBrojRacuna().toString());
-                        exchangeInvoice.setSenderAmount(p.getIznos());
-                        exchangeInvoice.setSenderCurrency(posiljalac.getCurrency());
-                        exchangeInvoice.setToCurrency(primalac.getCurrency());
-                        exchangeInvoice.setExchangeRate(exchangeRateServiceImpl.exchangeRate(posiljalac.getCurrency(),primalac.getCurrency()));
-                        exchangeInvoice.setProfit(p.getIznos().multiply(new BigDecimal("0.005")));
-                        exchangeInvoice.setDateAndTime(System.currentTimeMillis());
-                        invoiceRepository.save(exchangeInvoice);
+            for (Uplata p : uplataRepository.findAllByStatus(Status.U_OBRADI)) {
+                try {
+                    Racun posiljalac = racunRepository.findByBrojRacuna(p.getRacunPosiljaoca()).orElse(null);
+                    Racun primalac = racunRepository.findByBrojRacuna(p.getRacunPrimaoca()).orElse(null);
+                    if (posiljalac == null || primalac == null) {
+                        p.setStatus(Status.NEUSPELO);
+                        p.setVremeIzvrsavanja(System.currentTimeMillis());
+                        uplataRepository.save(p);
+                    } else {
+                        if (posiljalac.getCurrency().equals(primalac.getCurrency())) {
+                            boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(), p.getRacunPrimaoca(), p.getIznos(), p.getIznos());
+                            if (uspelo) p.setStatus(Status.REALIZOVANO);
+                            else p.setStatus(Status.NEUSPELO);
+                            p.setVremeIzvrsavanja(System.currentTimeMillis());
+                            uplataRepository.save(p);
+                        } else {
+                            BigDecimal iznosPrimaocu = exchangeRateServiceImpl.convert(posiljalac.getCurrency(), primalac.getCurrency(), p.getIznos());
+                            boolean uspelo = sablonTransakcijeRepository.obradaTransakcije(p.getRacunPosiljaoca(), p.getRacunPrimaoca(), p.getIznos(), iznosPrimaocu);
+                            if (uspelo) {
+                                p.setStatus(Status.REALIZOVANO);
+                                ExchangeInvoice exchangeInvoice = new ExchangeInvoice();
+                                exchangeInvoice.setSenderAccount(posiljalac.getBrojRacuna().toString());
+                                exchangeInvoice.setToAccount(primalac.getBrojRacuna().toString());
+                                exchangeInvoice.setSenderAmount(p.getIznos());
+                                exchangeInvoice.setSenderCurrency(posiljalac.getCurrency());
+                                exchangeInvoice.setToCurrency(primalac.getCurrency());
+                                exchangeInvoice.setExchangeRate(exchangeRateServiceImpl.exchangeRate(posiljalac.getCurrency(), primalac.getCurrency()));
+                                exchangeInvoice.setProfit(p.getIznos().multiply(new BigDecimal("0.005")));
+                                exchangeInvoice.setDateAndTime(System.currentTimeMillis());
+                                invoiceRepository.save(exchangeInvoice);
+                            } else p.setStatus(Status.NEUSPELO);
+                            p.setVremeIzvrsavanja(System.currentTimeMillis());
+                            uplataRepository.save(p);
+                        }
                     }
-                    else p.setStatus(Status.NEUSPELO);
+                    webSocketUplata(p);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    p.setStatus(Status.NEUSPELO);
                     p.setVremeIzvrsavanja(System.currentTimeMillis());
+                    //e.getMessage treba ubaciti u socket
                     uplataRepository.save(p);
+                    webSocketUplata(p);
                 }
             }
-            webSocketUplata(p);
-        }
     }
 
     private void webSocketUplata(Uplata uplata) {
         System.out.println(uplata + " web socket");
+        messagingTemplate.convertAndSend("/topic/uplata-posiljaoca/" + uplata.getRacunPosiljaoca(), TransakcijaMapper.PlacanjeToDto(uplata));
+        messagingTemplate.convertAndSend("/topic/uplata-primaoca/" + uplata.getRacunPrimaoca(), TransakcijaMapper.PlacanjeToDto(uplata));
     }
 
     private void webSockerPrenosSredstava(PrenosSredstava prenosSredstava) {
         System.out.println(prenosSredstava + " web socket");
+        messagingTemplate.convertAndSend("/topic/prenos-sredstava-posiljaoca/" + prenosSredstava.getRacunPosiljaoca(), TransakcijaMapper.PrenosSredstavaToDto(prenosSredstava));
+        messagingTemplate.convertAndSend("/topic/prenos-sredstava-primaoca/" + prenosSredstava.getRacunPrimaoca(), TransakcijaMapper.PrenosSredstavaToDto(prenosSredstava));
     }
 
 

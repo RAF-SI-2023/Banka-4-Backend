@@ -6,10 +6,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import rs.edu.raf.model.dto.ExchangeRateResponseDto;
 import rs.edu.raf.model.entities.ExchangeRate;
+import rs.edu.raf.model.entities.racun.ExchangeInvoice;
 import rs.edu.raf.model.mapper.ExchangeRateMapper;
 import rs.edu.raf.repository.ExchangeRateRepository;
+import rs.edu.raf.repository.racun.InvoiceRepository;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,12 +25,14 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
     private final ExchangeRateMapper exchangeRateMapper;
     private final String apiUrl = "https://v6.exchangerate-api.com/v6/4bf14e8ddbdbfe05d9022143/latest/EUR";
     private final List<String> allowedCurrencies = List.of("RSD","EUR", "CHF", "USD", "GBP", "JPY", "CAD", "AUD");
-
+    private InvoiceRepository invoiceRepository;
 
     @Autowired
-    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository, ExchangeRateMapper exchangeRateMapper){
+    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository, ExchangeRateMapper exchangeRateMapper,
+                                   InvoiceRepository invoiceRepository){
         this.exchangeRateRepository = exchangeRateRepository;
         this.exchangeRateMapper = exchangeRateMapper;
+        this.invoiceRepository = invoiceRepository;
         init();
     }
 
@@ -88,9 +94,14 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
 
         BigDecimal provision = BigDecimal.valueOf(0.995);
 
-        BigDecimal finalAmount = oldValuteAmount.divide(oldAmount).multiply(newAmount).multiply(provision);
+        BigDecimal finalAmount = oldValuteAmount.divide(oldAmount, new MathContext(2, RoundingMode.HALF_DOWN)).multiply(newAmount).multiply(provision);
 
         return finalAmount;
+    }
+
+    @Override
+    public List<ExchangeInvoice> listInvoicesByCurrency(String currency) {
+        return invoiceRepository.findExchangeInvoicesBySenderCurrency(currency);
     }
 
     public BigDecimal exchangeRate(String oldValuteCurrencyCode, String newValuteCurrencyCode){
@@ -101,6 +112,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
         BigDecimal oldAmount = oldOptionalExchangeRate.get().getRate();
         BigDecimal newAmount = newOptionalExchangeRate.get().getRate();
 
-        return new BigDecimal("1.0").divide(oldAmount).multiply(newAmount);
+        return new BigDecimal("1.0").divide(oldAmount,new MathContext(2, RoundingMode.HALF_DOWN)).multiply(newAmount);
     }
 }

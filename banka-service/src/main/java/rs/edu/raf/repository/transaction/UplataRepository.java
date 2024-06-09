@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @Repository
-public interface UplataRepository extends MongoRepository<Uplata, String> {
+public interface UplataRepository extends JpaRepository<Uplata, String> {
 
     List<Uplata> findAllByStatus(String status);
 

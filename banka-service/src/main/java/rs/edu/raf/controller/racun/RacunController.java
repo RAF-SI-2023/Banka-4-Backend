@@ -44,8 +44,8 @@ public class RacunController {
     }
     @ApiOperation(value = "Izlistaj racune korisnika")
     @GetMapping("/nadjiRacuneKorisnika/{idKorisnik}")
-    public ResponseEntity<List<RacunDTO>> izlistajRacuneKorisnika(@PathVariable("idKorisnik") Long idKorisnik){
-        return new ResponseEntity<>(racunServis.izlistavanjeRacunaJednogKorisnika(idKorisnik), HttpStatus.OK);
+    public ResponseEntity<List<RacunDTO>> izlistajRacuneKorisnika(@PathVariable("idKorisnik") Long idKorisnik, @RequestHeader("Authorization") String token){
+        return new ResponseEntity<>(racunServis.izlistavanjeRacunaJednogKorisnika(idKorisnik, token), HttpStatus.OK);
     }
     @ApiOperation(value = "Nadji racun")
     @GetMapping("/nadjiRacun/{id}")
@@ -104,6 +104,13 @@ public class RacunController {
     public ResponseEntity<Firma> dodajDevizniRacun( @RequestBody NovaFirmaDTO novaFirmaDTO){
         return new ResponseEntity<>(racunServis.kreirajFirmu(novaFirmaDTO), HttpStatus.OK);
     }
+
+    @PostMapping("/atm")
+    @ApiOperation(value = "Atm")
+    public ResponseEntity<?> atm(@RequestBody AtmDto atmDto) {
+        return new ResponseEntity<>(racunServis.bankomat(atmDto.getBrojRacuna(),atmDto.getStanje()),HttpStatus.OK);
+    }
+
 
 
 

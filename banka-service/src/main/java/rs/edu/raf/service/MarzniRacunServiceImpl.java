@@ -99,20 +99,20 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
     }
 
     @Scheduled(cron = "0 0 12 * * ?")
-    private void midDayJob() {
+    public void midDayJob() {
         marzniRacunRepository.findAll().stream()
                 .filter(marzniRacun -> marzniRacun.getUlozenaSredstva().compareTo(marzniRacun.getMaintenanceMargin()) <= 0)
                 .forEach(this::executeCut);
     }
 
     @Scheduled(cron = "0 0 21 * * ?")
-    private void endOfDayJob() {
+    public void endOfDayJob() {
         marzniRacunRepository.findAll().stream()
                 .filter(marzniRacun -> marzniRacun.getUlozenaSredstva().compareTo(marzniRacun.getMaintenanceMargin()) <= 0)
                 .forEach(this::executeCut);
     }
 
-    private void executeCut(MarzniRacun marzniRacun) {
+    public void executeCut(MarzniRacun marzniRacun) {
         if (marzniRacun.getMarginCall() && marzniRacun.getMaintenanceDeadline().compareTo(System.currentTimeMillis()) <= 0) {
             liquidate(marzniRacun, null);
         } else {

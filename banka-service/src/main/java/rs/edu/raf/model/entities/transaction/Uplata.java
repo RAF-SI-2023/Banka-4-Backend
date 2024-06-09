@@ -11,11 +11,13 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "uplata")
+@Entity
+//@Document(collection = "uplata")
 public class Uplata {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private Long racunPosiljaoca;
 

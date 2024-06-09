@@ -40,4 +40,6 @@ public class Permisije {
     public static final long option_access = 0b100000000000000000000000000000;
     public static final long order_access = 0b1000000000000000000000000000000;
     public static final long termin_access = 0b10000000000000000000000000000000;
+    public static final long profit_access = 0b10000000000000000000000000000000;
+
 }

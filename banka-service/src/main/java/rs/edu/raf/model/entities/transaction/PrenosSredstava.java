@@ -9,15 +9,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
 
 @Data
-//@Entity
-//@Table(name = "prenos_sredstava")
-@Document(collection = "prenos_sredstava")
+@Entity
+@Table(name = "prenos_sredstava")
+//@Document(collection = "prenos_sredstava")
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrenosSredstava {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private Long racunPosiljaoca;
 
