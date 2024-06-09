@@ -355,8 +355,9 @@ public class RacunServisImpl implements RacunServis {
     public boolean bankomat(Long brojRacuna, BigDecimal stanje) {
         Racun racun = racunRepository.findByBrojRacuna(brojRacuna).orElseThrow(()->
                 new BankAccountNotFoundException("Racun sa brojem " + brojRacuna + " ne postoji!"));
-        if(racun.getStanje().add(stanje).compareTo(BigDecimal.ZERO) < 0) return false;
+        if(racun.getRaspolozivoStanje().add(stanje).compareTo(BigDecimal.ZERO) < 0) return false;
         racun.setStanje(racun.getStanje().add(stanje));
+        racun.setRaspolozivoStanje(racun.getStanje().add(stanje));
         racunRepository.save(racun);
         return true;
     }
