@@ -121,10 +121,6 @@ public class RacunSeeder implements CommandLineRunner {
                     valuteRepository.saveAll(valute);
 
 
-
-            MarzniRacun marzniRacun = new MarzniRacun(-1L, -1L, 444000000000000022L, "RSD", "STOCKS", new BigDecimal(10000000), new BigDecimal(10000000), new BigDecimal(500), new BigDecimal(50), false, null);
-            marzniRacunRepository.save(marzniRacun);
-
             List<Firma> firme = new ArrayList<>();
             Firma f1 = new Firma(-1L, "Nasa banka", "444000000000000022,444000000000000122,444000000000000222"
                     , "0112030403", "0112030402", 101017533, 17328905
