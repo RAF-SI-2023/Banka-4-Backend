@@ -326,7 +326,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         radnikRepository.save(radnik);
     }
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(initialDelay = 180000, fixedRate = 60000)
     public void clearDailySpent() {
         radnikRepository.clearDailySpent();
     }
