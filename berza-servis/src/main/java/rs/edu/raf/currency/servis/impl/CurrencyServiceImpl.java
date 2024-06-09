@@ -2,6 +2,7 @@ package rs.edu.raf.currency.servis.impl;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.currency.dto.CurrencyDTO;
@@ -17,7 +18,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
@@ -60,9 +61,11 @@ public class CurrencyServiceImpl implements CurrencyService {
         return dtos;
     }
 
+
     @PostConstruct
     @Scheduled(cron = "0 0 10 * * *")
     private void updateCurrencies() {
+
         List<Currency> currencies = new ArrayList<>();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://www.alphavantage.co/physical_currency_list/")).build();
         HttpResponse<String> response = null;         // FVHPQRIRKBYHSTJU

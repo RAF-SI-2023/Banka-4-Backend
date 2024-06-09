@@ -18,7 +18,7 @@ public class Seeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         
-    boolean reseed = false;
+    boolean reseed = true;
         try{
             if(!reseed)
                 return;
