@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.dto.OpcijaKorisnikaDto;
 import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
 import rs.edu.raf.opcija.model.OpcijaStanje;
 import rs.edu.raf.opcija.servis.OpcijaServis;
@@ -35,21 +36,32 @@ public class OpcijaController {
             @ApiResponse(responseCode = "400", description = "")
     })*/
 
-    @PostMapping("kreiraj-opciju")
+    @PostMapping("/kreiraj-opciju")
     @Operation(description = "Kreiraj opciju")      //moze @Valid u kontroleru ili u servisu ekplicitno validator
     public ResponseEntity<OpcijaDto> kreirajOpciju(@Valid @RequestBody NovaOpcijaDto novaOpcijaDto) {
        return new ResponseEntity<>(opcijaServis.save(novaOpcijaDto),HttpStatus.OK);
 
     }
 
-    @GetMapping("sve-opcije")
+    @PostMapping("/kreiraj-opciju-za-korisnika")
+    @Operation(description = "Kreiraj opciju za korisnika")
+    public ResponseEntity<Void> kreirajOpcijuZaKorisnika(@Valid @RequestBody OpcijaKorisnikaDto opcijaKorisnikaDto){
+        boolean success = opcijaServis.novaOpcijaKorisnika(opcijaKorisnikaDto);
+        if(success){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/sve-opcije")
     @Operation(description = "uzmi sve opcije")
     public ResponseEntity<List<OpcijaDto>> findAll() throws InterruptedException {
         return new ResponseEntity<>(opcijaServis.findAll(),HttpStatus.OK);
 
     }
 
-    @GetMapping("opcija-po-id/{opcijaId}")
+    @GetMapping("/opcija-po-id/{opcijaId}")
     @Operation(description = "uzmi opciju po id")
     public ResponseEntity<OpcijaDto> findOne(@PathVariable("opcijaId") Long opcijaId) {
         OpcijaDto opcijaDto = opcijaServis.findById(opcijaId);

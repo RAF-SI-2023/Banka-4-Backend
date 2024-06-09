@@ -2,6 +2,7 @@ package rs.edu.raf.opcija.servis;
 
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.dto.OpcijaKorisnikaDto;
 import rs.edu.raf.opcija.model.KorisnikoveKupljeneOpcije;
 import rs.edu.raf.opcija.model.OpcijaStanje;
 
@@ -100,4 +101,5 @@ public interface OpcijaServis {
          */
         Map<String, List<OpcijaDto>> classifyOptions(String ticker);
 
+        boolean novaOpcijaKorisnika(OpcijaKorisnikaDto opcijaKorisnikaDto);
 }

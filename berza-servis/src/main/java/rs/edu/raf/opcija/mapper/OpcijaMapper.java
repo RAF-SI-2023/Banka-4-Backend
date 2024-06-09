@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
-import rs.edu.raf.opcija.model.GlobalQuote;
-import rs.edu.raf.opcija.model.Opcija;
-import rs.edu.raf.opcija.model.OpcijaStanje;
-import rs.edu.raf.opcija.model.OpcijaTip;
+import rs.edu.raf.opcija.dto.OpcijaKorisnikaDto;
+import rs.edu.raf.opcija.model.*;
 import rs.edu.raf.opcija.repository.GlobalQuoteRepository;
 import rs.edu.raf.opcija.servis.IzvedeneVrednostiUtil;
 import rs.edu.raf.opcija.servis.util.GlobalQuoteApiMap;
@@ -144,6 +142,18 @@ public class OpcijaMapper {
         globalQuote.setSharesOutstanding(globalQuoteApiMap.getSharesOutstanding());
 
         return globalQuote;
+    }
+
+    public KorisnikoveKupljeneOpcije opcijaKorisnikaDtoToNovaKorisnikovaKupljenaOpcija(OpcijaKorisnikaDto opcijaKorisnikaDto){
+
+        KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcije = new KorisnikoveKupljeneOpcije();
+        korisnikoveKupljeneOpcije.setOpcijaId(opcijaKorisnikaDto.getOpcijaId());
+        korisnikoveKupljeneOpcije.setIskoriscena(false);
+        korisnikoveKupljeneOpcije.setAkcijaId(opcijaKorisnikaDto.getAkcijaId());
+        korisnikoveKupljeneOpcije.setAkcijaTickerCenaPrilikomIskoriscenja(opcijaKorisnikaDto.getAkcijaTickerCenaPrilikomIskoriscenja());
+        korisnikoveKupljeneOpcije.setKorisnikId(opcijaKorisnikaDto.getKorisnikId());
+
+        return korisnikoveKupljeneOpcije;
     }
 
 }
