@@ -121,7 +121,6 @@ public class RacunSeeder implements CommandLineRunner {
                     valuteRepository.saveAll(valute);
 
 
-
             List<Firma> firme = new ArrayList<>();
             Firma f1 = new Firma(-1L, "Nasa banka", "444000000000000022,444000000000000122,444000000000000222"
                     , "0112030403", "0112030402", 101017533, 17328905

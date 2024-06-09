@@ -44,6 +44,8 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
     @Autowired
     private TransakcijaServis transakcijaServis;
 
+    private BigDecimal drzavaPorez = new BigDecimal("0.85");
+
     @Override
     public ResponseEntity<?> findAll() {
         return ResponseEntity.status(HttpStatus.OK)
@@ -54,6 +56,19 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
     public ResponseEntity<?> findALlByUserId(Long userId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(marzniRacunRepository.findAllByVlasnik(userId).stream().map(MarzniRacunMapper::mapToDTO).toList());
+    }
+
+    @Override
+    public ResponseEntity<?> bankProfit() {
+
+        BigDecimal profit = BigDecimal.ZERO;
+        List<MarzniRacunDTO> marzniRacuni = marzniRacunRepository.findAllByVlasnik(-1L).stream().map(MarzniRacunMapper::mapToDTO).toList();
+
+        for (MarzniRacunDTO racunDTO : marzniRacuni) {
+            profit.add(racunDTO.getLiquidCash());
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(profit);
     }
 
     @Override
@@ -134,6 +149,10 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
         MarzniRacun marzniRacun = marzniRacuni.get(0);
 
         marzniRacun.setLiquidCash(marzniRacun.getLiquidCash().add(pairDTO.getValueChange()));
+
+        if (pairDTO.getValueChange().compareTo(BigDecimal.valueOf(0)) >= 0){
+            marzniRacun.setLiquidCash(marzniRacun.getLiquidCash().multiply(drzavaPorez));
+        }
 
         if (marzniRacun.getMarginCall() && marzniRacun.getUlozenaSredstva().add(marzniRacun.getLiquidCash()).compareTo(marzniRacun.getMaintenanceMargin()) >= 0) {
             marzniRacun.setMarginCall(false);

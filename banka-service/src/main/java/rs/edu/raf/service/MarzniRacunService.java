@@ -14,6 +14,8 @@ public interface MarzniRacunService {
 
     ResponseEntity<?> findALlByUserId(Long userId);
 
+    ResponseEntity<?> bankProfit();
+
     ResponseEntity<?> createMarzniRacun(MarzniRacunCreateDTO marzniRacunCreateDTO);
 
     ResponseEntity<?> changeBalance(MarzniRacunUpdateDTO marzniRacunUpdateDTO);
