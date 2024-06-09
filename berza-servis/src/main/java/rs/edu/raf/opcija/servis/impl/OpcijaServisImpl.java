@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
+import rs.edu.raf.opcija.dto.OpcijaKorisnikaDto;
 import rs.edu.raf.opcija.dto.OptionChainResponse;
 import rs.edu.raf.opcija.mapper.OpcijaMapper;
 import rs.edu.raf.opcija.model.*;
@@ -30,6 +31,7 @@ import rs.edu.raf.opcija.repository.KorisnikoveKupljeneOpcijeRepository;
 import rs.edu.raf.opcija.repository.OpcijaRepository;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -151,7 +153,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
         globalQuote.getPrice();
 
-        korisnikKupljenaOpcija.setAkcijaTickerCenaPrilikomIskoriscenja(globalQuote.getPrice());
+        korisnikKupljenaOpcija.setAkcijaTickerCenaPrilikomIskoriscenja(new BigDecimal(globalQuote.getPrice()));
         korisnikKupljenaOpcija.setIskoriscena(true);
 
         return korisnikKupljeneOpcijeRepository.save(korisnikKupljenaOpcija);
@@ -450,6 +452,15 @@ public class OpcijaServisImpl implements OpcijaServis {
         }
 
         return resultMap;
+    }
+
+    @Override
+    public boolean novaOpcijaKorisnika(OpcijaKorisnikaDto opcijaKorisnikaDto) {
+
+        if(korisnikKupljeneOpcijeRepository.save(opcijaMapper.opcijaKorisnikaDtoToNovaKorisnikovaKupljenaOpcija(opcijaKorisnikaDto)) == null){
+            return false;
+        }
+        return true;
     }
 
 

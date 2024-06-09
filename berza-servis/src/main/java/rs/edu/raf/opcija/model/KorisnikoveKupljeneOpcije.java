@@ -4,6 +4,8 @@ package rs.edu.raf.opcija.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data
 public class KorisnikoveKupljeneOpcije {
@@ -18,7 +20,7 @@ public class KorisnikoveKupljeneOpcije {
 
     private Long akcijaId;
 
-    private double akcijaTickerCenaPrilikomIskoriscenja;//stvarna cena akcija prilikom iskoriscenja opcije
+    private BigDecimal akcijaTickerCenaPrilikomIskoriscenja;//stvarna cena akcija prilikom iskoriscenja opcije
 
     private boolean iskoriscena;//bilo da je put ili call iskorisceno
 }
