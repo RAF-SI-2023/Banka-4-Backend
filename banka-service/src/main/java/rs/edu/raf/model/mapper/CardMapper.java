@@ -24,6 +24,8 @@ public class CardMapper {
         cardResponseDto.setType(card.getType());
         cardResponseDto.setStatus(card.getStatus());
         cardResponseDto.setBlocked(card.getBlocked());
+        cardResponseDto.setName(card.getName());
+
 
         return cardResponseDto;
 

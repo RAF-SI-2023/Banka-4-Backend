@@ -27,6 +27,7 @@ public class CSVSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         List<Exchange> exchanges = createExchanges();
+        exchangeRepository.deleteAll();
         exchangeRepository.saveAll(exchanges);
     }
 

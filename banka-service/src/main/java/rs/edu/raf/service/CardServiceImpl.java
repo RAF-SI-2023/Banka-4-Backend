@@ -36,9 +36,6 @@ public class CardServiceImpl implements CardService{
         card.setType(createCardDto.getType());
 
 
-//        Date creationDate = new Date();
-//        Date expirationDate = Date.from(creationDate.toInstant().plus(5, ChronoUnit.YEARS));
-
         LocalDate creationDate = LocalDate.now();
         LocalDate expirationDate = creationDate.plusMonths(60).withDayOfMonth(1);
 
@@ -52,6 +49,7 @@ public class CardServiceImpl implements CardService{
 
         card.setBankAccountNumber(Long.valueOf(createCardDto.getBankAccountNumber()));
         card.setNumber(generateCardNumber(createCardDto.getName().toLowerCase()));
+
         card.setBlocked(false);
 
         int rand = new Random().nextInt(900);
