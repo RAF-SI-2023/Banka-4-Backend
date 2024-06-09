@@ -58,6 +58,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
     }
 
     private void saveRates(Map<String, Object> conversionRates){
+    
+        exchangeRateRepository.deleteAll();
         conversionRates.forEach((currencyCode, rate) -> {
             ExchangeRate exchangeRate = new ExchangeRate();
             exchangeRate.setCurrencyCode(currencyCode);
@@ -98,6 +100,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
 
         return finalAmount;
     }
+
+    
 
     @Override
     public List<ExchangeInvoice> listInvoicesByCurrency(String currency) {
