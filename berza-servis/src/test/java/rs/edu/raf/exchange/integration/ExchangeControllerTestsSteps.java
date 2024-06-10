@@ -20,19 +20,19 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class ExchangeControllerTestsSteps extends ExchangeControllerTestsConfig{
+public class ExchangeControllerTestsSteps /*extends ExchangeControllerTestsConfig*/{
 
     /*@Autowired
     private TestRestTemplate restTemplate;*/
-
-    private ResponseEntity<ExchangeDTO> exchangeByNameResponse;
-    private ResponseEntity<List<ExchangeDTO>> allExchangesResponse;
-    private ResponseEntity<List<ExchangeDTO>> exchangesByCurrencyResponse;
-    private ResponseEntity<List<ExchangeDTO>> openExchangesResponse;
-    private ResponseEntity<List<ExchangeDTO>> exchangesByPolityResponse;
-
-    @Autowired
-    private ExchangeController exchangeController;
+//
+//    private ResponseEntity<ExchangeDTO> exchangeByNameResponse;
+//    private ResponseEntity<List<ExchangeDTO>> allExchangesResponse;
+//    private ResponseEntity<List<ExchangeDTO>> exchangesByCurrencyResponse;
+//    private ResponseEntity<List<ExchangeDTO>> openExchangesResponse;
+//    private ResponseEntity<List<ExchangeDTO>> exchangesByPolityResponse;
+//
+//    @Autowired
+//    private ExchangeController exchangeController;
 
     /*@Autowired
     private ExchangeService exchangeService;*/

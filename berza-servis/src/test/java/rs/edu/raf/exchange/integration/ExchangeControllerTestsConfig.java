@@ -4,8 +4,8 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import org.junit.jupiter.api.Disabled;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@CucumberContextConfiguration
-@SpringBootTest
-@Disabled
+//@CucumberContextConfiguration
+//@SpringBootTest
+//@Disabled
 public class ExchangeControllerTestsConfig {
 }
