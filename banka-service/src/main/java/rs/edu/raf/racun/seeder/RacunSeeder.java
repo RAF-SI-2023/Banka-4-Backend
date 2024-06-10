@@ -71,9 +71,9 @@ public class RacunSeeder implements CommandLineRunner {
 
 //        try {
 ///*
-//            uplataRepository.deleteAll();
+            uplataRepository.deleteAll();
 //            uplataRepository.findAll().forEach(System.out::println);
-//            prenosSredstavaRepository.deleteAll();
+            prenosSredstavaRepository.deleteAll();
 //            prenosSredstavaRepository.findAll().forEach(System.out::println);
 //*/
 //            List<Zemlja> zemlje = new ArrayList<>();

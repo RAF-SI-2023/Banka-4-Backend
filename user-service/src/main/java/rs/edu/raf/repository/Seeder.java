@@ -17,6 +17,8 @@ public class Seeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        korisnikRepository.deleteAll();
+        radnikRepository.deleteAll();
         
 //    boolean reseed = true;
 //        try{
