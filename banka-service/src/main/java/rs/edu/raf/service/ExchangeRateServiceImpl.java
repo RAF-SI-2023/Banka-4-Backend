@@ -42,10 +42,10 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
 
 
 
-    @Scheduled(cron = "0 5 8 * * *")
-    private void scheduledSaveExchange(){
-        saveExchangeRates();
-    }
+//    @Scheduled(cron = "0 5 8 * * *")
+//    private void scheduledSaveExchange(){
+//        saveExchangeRates();
+//    }
 
     public void saveExchangeRates(){
         RestTemplate restTemplate = new RestTemplate();
