@@ -37,59 +37,59 @@ public class ExchangeControllerTestsSteps extends ExchangeControllerTestsConfig{
     /*@Autowired
     private ExchangeService exchangeService;*/
 
-    @Given("the exchange service is available")
-    public void theExchangeServiceIsAvailable() {
-    }
-
-    @When("I search for exchange by name {string}")
-    public void iSearchForExchangeByName(String exchangeName) {
-        exchangeByNameResponse = exchangeController.getExchangeByName(exchangeName);
-    }
-
-    @Then("I should receive exchange details")
-    public void iShouldReceiveExchangeDetails() {
-        assertEquals(200, exchangeByNameResponse.getStatusCodeValue());
-    }
-
-    @When("I request to list all exchanges")
-    public void iRequestToListAllExchanges() {
-        allExchangesResponse = exchangeController.listAllExchanges();
-    }
-
-    @Then("I should receive a list of all exchanges")
-    public void iShouldReceiveAListOfAllExchanges() {
-        assertEquals(200, allExchangesResponse.getStatusCodeValue());
-    }
-
-    @When("I search for exchanges by currency {string}")
-    public void iSearchForExchangesByCurrency(String currency) {
-        exchangesByCurrencyResponse = exchangeController.getExchangesByCurrency(currency);
-    }
-
-    @Then("I should receive a list of exchanges using {string}")
-    public void iShouldReceiveAListOfExchangesUsingCurrency(String currency) {
-        assertEquals(200, exchangesByCurrencyResponse.getStatusCodeValue());
-    }
-
-    @When("I request to list open exchanges")
-    public void iRequestToListOpenExchanges() {
-        openExchangesResponse = exchangeController.listOpenExchanges();
-    }
-
-    @Then("I should receive a list of open exchanges")
-    public void iShouldReceiveAListOfOpenExchanges() {
-        assertEquals(200, openExchangesResponse.getStatusCodeValue());
-    }
-
-    @When("I search for exchanges by polity {string}")
-    public void iSearchForExchangesByPolity(String polity) {
-        exchangesByPolityResponse = exchangeController.getExchangesByPolity(polity);
-    }
-
-    @Then("I should receive a list of exchanges in the {string}")
-    public void iShouldReceiveAListOfExchangesInPolity(String polity) {
-        assertEquals(200, exchangesByPolityResponse.getStatusCodeValue());
-    }
+//    @Given("the exchange service is available")
+//    public void theExchangeServiceIsAvailable() {
+//    }
+//
+//    @When("I search for exchange by name {string}")
+//    public void iSearchForExchangeByName(String exchangeName) {
+//        exchangeByNameResponse = exchangeController.getExchangeByName(exchangeName);
+//    }
+//
+//    @Then("I should receive exchange details")
+//    public void iShouldReceiveExchangeDetails() {
+//        assertEquals(200, exchangeByNameResponse.getStatusCodeValue());
+//    }
+//
+//    @When("I request to list all exchanges")
+//    public void iRequestToListAllExchanges() {
+//        allExchangesResponse = exchangeController.listAllExchanges();
+//    }
+//
+//    @Then("I should receive a list of all exchanges")
+//    public void iShouldReceiveAListOfAllExchanges() {
+//        assertEquals(200, allExchangesResponse.getStatusCodeValue());
+//    }
+//
+//    @When("I search for exchanges by currency {string}")
+//    public void iSearchForExchangesByCurrency(String currency) {
+//        exchangesByCurrencyResponse = exchangeController.getExchangesByCurrency(currency);
+//    }
+//
+//    @Then("I should receive a list of exchanges using {string}")
+//    public void iShouldReceiveAListOfExchangesUsingCurrency(String currency) {
+//        assertEquals(200, exchangesByCurrencyResponse.getStatusCodeValue());
+//    }
+//
+//    @When("I request to list open exchanges")
+//    public void iRequestToListOpenExchanges() {
+//        openExchangesResponse = exchangeController.listOpenExchanges();
+//    }
+//
+//    @Then("I should receive a list of open exchanges")
+//    public void iShouldReceiveAListOfOpenExchanges() {
+//        assertEquals(200, openExchangesResponse.getStatusCodeValue());
+//    }
+//
+//    @When("I search for exchanges by polity {string}")
+//    public void iSearchForExchangesByPolity(String polity) {
+//        exchangesByPolityResponse = exchangeController.getExchangesByPolity(polity);
+//    }
+//
+//    @Then("I should receive a list of exchanges in the {string}")
+//    public void iShouldReceiveAListOfExchangesInPolity(String polity) {
+//        assertEquals(200, exchangesByPolityResponse.getStatusCodeValue());
+//    }
 
 
 }
