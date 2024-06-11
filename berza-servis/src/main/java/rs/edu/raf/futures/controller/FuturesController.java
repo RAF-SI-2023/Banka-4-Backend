@@ -58,7 +58,9 @@ public class FuturesController {
 
     @PostMapping("/buy/{id}/{racun}")
     @Operation(description = "Buy future contract")
-    public ResponseEntity<FuturesContractDto> buyFuture(@PathVariable("id") Long id, @PathVariable("racun") String racun, @RequestAttribute("userId") Long userId) {
-        return new ResponseEntity<>(futuresService.buy(id,userId,racun),HttpStatus.OK);
+    public ResponseEntity<String> buyFuture(@PathVariable("id") Long id, @PathVariable("racun") String racun, @RequestAttribute("userId") Long userId) {
+        String response = futuresService.buy(id,userId,racun);
+        if(response.equalsIgnoreCase("USPESNA KUPOVINA"))return new ResponseEntity<>("Uspesna kupovina",HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 }
