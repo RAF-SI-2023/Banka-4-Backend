@@ -22,7 +22,7 @@ public class FuturesContractMapper {
         futuresContractDto.setType(futuresContract.getType());
         futuresContractDto.setName(futuresContract.getName());
         futuresContractDto.setMaintenanceMargin(futuresContract.getMaintenanceMargin());
-        futuresContractDto.setSettlementDate(System.currentTimeMillis());
+        futuresContractDto.setSettlementDate(futuresContract.getSettlementDate());
         return futuresContractDto;
     }
 
