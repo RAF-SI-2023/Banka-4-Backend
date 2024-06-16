@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Repository
-public interface PrenosSredstavaRepository extends MongoRepository<PrenosSredstava, String> {
+public interface PrenosSredstavaRepository extends JpaRepository<PrenosSredstava, String> {
 
     List<PrenosSredstava> findAllByStatus(String status);
 

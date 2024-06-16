@@ -18,8 +18,9 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     @Override
     List<Card> findAll();
 
-    @Query("SELECT crd FROM Card crd WHERE crd.bankAccountNumber IN (SELECT tr.brojRacuna FROM TekuciRacun tr WHERE tr.vlasnik = :userId) " +
-            "OR crd.bankAccountNumber IN (SELECT dr.brojRacuna FROM DevizniRacun dr WHERE dr.vlasnik = :userId)")
+//    @Query("SELECT crd FROM Card crd WHERE crd.bankAccountNumber IN (SELECT tr.brojRacuna FROM TekuciRacun tr WHERE tr.vlasnik = :userId) " +
+//            "OR crd.bankAccountNumber IN (SELECT dr.brojRacuna FROM DevizniRacun dr WHERE dr.vlasnik = :userId)")
+    @Query("SELECT crd FROM Card crd JOIN Racun r ON crd.bankAccountNumber = r.brojRacuna WHERE r.vlasnik = :userId")
     public List<Card> findAllCardsForUser(@Param("userId") Long userId);
 
 }

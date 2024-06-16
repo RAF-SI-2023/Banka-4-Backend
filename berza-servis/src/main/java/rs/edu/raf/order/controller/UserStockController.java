@@ -14,7 +14,6 @@ import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.service.OrderService;
 import rs.edu.raf.order.service.UserStockService;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -49,7 +48,7 @@ public class UserStockController {
     @ApiOperation(value = "Returns our banks stocks.")
     @GetMapping("/get-our-banks-stocks")
     public ResponseEntity<List<Banka3StockDTO>> getOurBanksStocks() {
-        return new ResponseEntity<>(userStockService.getUserStocks(-1L).stream().map(o->new Banka3StockDTO(o.getQuantity(), o.getTicker())).toList(), HttpStatus.OK);
+        return new ResponseEntity<>(userStockService.getUserStocks(-1L).stream().map(o->new Banka3StockDTO(o.getQuantity(),o.getTicker())).toList(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Returns user or firm stocks.")

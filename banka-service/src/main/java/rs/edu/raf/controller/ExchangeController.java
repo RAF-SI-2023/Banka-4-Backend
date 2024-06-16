@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.model.dto.ExchangeRateResponseDto;
+import rs.edu.raf.model.entities.racun.ExchangeInvoice;
 import rs.edu.raf.service.ExchangeRateService;
 import rs.edu.raf.service.ExchangeRateServiceImpl;
 
@@ -36,6 +37,12 @@ public class ExchangeController {
 //        public ResponseEntity<List<ExchangeRateResponseDto>> getAllCurrencyRates(@RequestAttribute("userId") Long userId){
         //System.out.println("userId iz kontrolera: " + userId);
         return new ResponseEntity<>(exchangeRateService.getAllExchangeRates(), HttpStatus.OK) ;
+    }
+
+    @GetMapping("/invoices/{currency}")
+    @ApiOperation(value = "All invoices by currency")
+    public ResponseEntity<List<ExchangeInvoice>> allInvoicesByCurrency(@PathVariable("currency") String currency) {
+        return new ResponseEntity<>(exchangeRateService.listInvoicesByCurrency(currency),HttpStatus.OK);
     }
 
 }

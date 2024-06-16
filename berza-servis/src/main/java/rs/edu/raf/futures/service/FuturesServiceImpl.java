@@ -2,6 +2,7 @@ package rs.edu.raf.futures.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import rs.edu.raf.futures.dto.FutureRequestDto;
 import rs.edu.raf.futures.dto.FuturesContractDto;
@@ -63,11 +64,19 @@ public class FuturesServiceImpl implements FuturesService {
 
     @Override
     public void denyRequest(Long id) {
-        futureContractRequestRepository.deleteById(id);
+        futureContractRequestRepository.deny_request(id);
     }
 
     @Override
     public void approveRequest(Long id, Long supervisor_id) {
         futureContractRequestRepository.approve_request(id,supervisor_id);
+    }
+    @Scheduled(initialDelay = 120000, fixedRate = 120000)
+    public void confirmFutures() {
+        try {
+            futuresContractRepository.confirmFuture();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

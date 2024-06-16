@@ -15,6 +15,7 @@ public class FuturesContractMapper {
     private FuturesContractRepository futuresContractRepository;
     public FuturesContractDto futuresContractToFutureContractDto(FuturesContract futuresContract) {
         FuturesContractDto futuresContractDto = new FuturesContractDto();
+        futuresContractDto.setId(futuresContract.getId());
         futuresContractDto.setContractSize(futuresContract.getContractSize());
         futuresContractDto.setContractUnit(futuresContract.getContractUnit());
         futuresContractDto.setPrice(futuresContract.getPrice());
@@ -27,6 +28,7 @@ public class FuturesContractMapper {
 
     public FutureRequestDto futureContractRequestToFutureContractRequestDto(FutureContractRequest futureContractRequest) {
         FutureRequestDto futureRequestDto = new FutureRequestDto();
+        futureRequestDto.setId(futureContractRequest.getId());
         futureRequestDto.setEmail(futureContractRequest.getEmail());
         futureRequestDto.setIme(futureContractRequest.getIme());
         futureRequestDto.setPrezime(futureContractRequest.getPrezime());
