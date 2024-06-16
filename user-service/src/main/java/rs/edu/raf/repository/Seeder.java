@@ -17,13 +17,13 @@ public class Seeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        
     boolean reseed = true;
         try{
             if(!reseed)
                 return;
             korisnikRepository.deleteAll();
-            
+            radnikRepository.deleteAll();
+
             Korisnik korisnik = new Korisnik();
             korisnik.setIme("Petar");
             korisnik.setPrezime("Stamenic");
@@ -45,7 +45,7 @@ public class Seeder implements CommandLineRunner {
             Korisnik korisnik2 = new Korisnik();
             korisnik2.setIme("Petr");
             korisnik2.setPrezime("Stamenic");
-            korisnik2.setJmbg(String.valueOf(1706999793421L));
+            korisnik2.setJmbg(String.valueOf(1706999793423L));
             korisnik2.setDatumRodjenja(929631358000L);
             korisnik2.setPol("M");
             korisnik2.setEmail("stamenic.petar@gmail.rs");
@@ -67,7 +67,7 @@ public class Seeder implements CommandLineRunner {
             radnik.setDatumRodjenja(929631358000L);
             radnik.setPol("M");
             radnik.setEmail("pera@gmail.rs");
-            radnik.setBrojTelefona("+381600176998");
+            radnik.setBrojTelefona("+381600176997");
             radnik.setAdresa("Moja adresa");
             radnik.setFirmaId(-1L);
             radnik.setPozicija("PM");
@@ -88,7 +88,7 @@ public class Seeder implements CommandLineRunner {
             radnik1.setDatumRodjenja(929631358000L);
             radnik1.setPol("M");
             radnik1.setEmail("pera1@gmail.rs");
-            radnik1.setBrojTelefona("+381600176999");
+            radnik1.setBrojTelefona("+381600176996");
             radnik1.setAdresa("Moja adresa");
             radnik1.setPozicija("PM");
             radnik1.setDepartman("RAF");

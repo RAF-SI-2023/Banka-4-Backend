@@ -13,7 +13,10 @@ public class FutureSeeder implements CommandLineRunner{
     @Override
     public void run(String... args) throws Exception {
         futuresContractRepository.deleteAll();
-        futuresContractRepository.save(new FuturesContract("corn", 5000, "bushel", 1600.0, "AGRICULTURE"));
+        if(futuresContractRepository.findAll().size() > 0) return;
+        FuturesContract futuresContract = new FuturesContract("corn", 5000, "bushel", 1600.0, "AGRICULTURE");
+        futuresContract.setSettlementDate(1718879336000L);
+        futuresContractRepository.save(futuresContract);
         futuresContractRepository.save(new FuturesContract("soybean", 5000, "bushel", 2700.0, "AGRICULTURE"));
         futuresContractRepository.save(new FuturesContract("soybean oil", 60000, "pound", 2100.0, "AGRICULTURE"));
         futuresContractRepository.save(new FuturesContract("soybean meal", 180000, "pound", 1750.0, "AGRICULTURE"));

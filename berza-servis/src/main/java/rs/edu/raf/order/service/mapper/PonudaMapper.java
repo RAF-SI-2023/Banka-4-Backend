@@ -7,6 +7,8 @@ import rs.edu.raf.order.dto.PonudaDTO;
 import rs.edu.raf.order.model.Ponuda;
 import rs.edu.raf.order.repository.UserStockRepository;
 
+import java.math.BigDecimal;
+
 @Component
 @AllArgsConstructor
 public class PonudaMapper {
@@ -16,8 +18,9 @@ public class PonudaMapper {
     public Ponuda ponudaDTOToPonuda(DodajPonuduDto ponudaDTO){
         Ponuda ponuda = new Ponuda();
         ponuda.setUserStock(userStockRepository.findByUserIdAndTicker(-1L,ponudaDTO.getTicker()));
-        ponuda.setQuantity(ponudaDTO.getQuantity());
-        ponuda.setAmountOffered(ponudaDTO.getAmountOffered());
+        ponuda.setQuantity(ponudaDTO.getAmount());
+        ponuda.setAmountOffered(new BigDecimal(ponudaDTO.getPrice()));
+        ponuda.setBanka3Id(ponudaDTO.getMyOfferId());
         return ponuda;
     }
 

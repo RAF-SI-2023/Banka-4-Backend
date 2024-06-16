@@ -15,5 +15,5 @@ public class StranaPonudaDTO {
 
     private Integer quantity;
 
-    private BigDecimal amountOffered;
+    private Double amountOffered;
 }

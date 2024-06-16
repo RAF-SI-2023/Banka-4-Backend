@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.edu.raf.order.dto.Banka3StockDTO;
 import rs.edu.raf.order.dto.DodajPonuduDto;
+import rs.edu.raf.order.dto.PonudaBanci3Dto;
 import rs.edu.raf.order.dto.PonudaDTO;
 import rs.edu.raf.order.model.StranaPonudaDTO;
 import rs.edu.raf.order.service.PonudaService;
@@ -48,10 +49,24 @@ public class PonudaController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Place your offer here.")
+    @PostMapping("/place-to-banka3-offer")
+    public ResponseEntity<?> placeToBanka3Offer(@RequestBody PonudaBanci3Dto dodajPonuduDto) {
+        ponudaService.dodajPonuduBanci3(dodajPonuduDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Accept our offer.")
-    @PostMapping("/accept-our-offer")
-    public ResponseEntity<?> receiveOffer(@RequestBody StranaPonudaDTO stranaPonudaDTO) {
-        ponudaService.potvrdiNasuPonudu(stranaPonudaDTO);
+    @PostMapping("/accept-our-offer/{id}")
+    public ResponseEntity<?> receiveOffer(@PathVariable("id") Long id) {
+        ponudaService.potvrdiNasuPonudu(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Decline our offer.")
+    @PostMapping("/decline-our-offer/{id}")
+    public ResponseEntity<?> declineOurOffer(@PathVariable("id") Long id) {
+        ponudaService.odbijNasuPonudu(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -61,6 +76,10 @@ public class PonudaController {
     public ResponseEntity<?> acceptOffer(@PathVariable Long id) {
         ponudaService.prihvati(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/our-offers")
+    public ResponseEntity<?> ourOffers() {
+        return new ResponseEntity<>(ponudaService.svePonudeKaBanci3(),HttpStatus.OK);
     }
 
     @ApiOperation(value = "Decline banka's 3 offer.")

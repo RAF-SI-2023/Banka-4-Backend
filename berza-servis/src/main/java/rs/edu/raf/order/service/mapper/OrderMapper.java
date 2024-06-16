@@ -34,7 +34,6 @@ public class OrderMapper {
     public static OrderDto toDto(Order order) {
         return OrderDto.builder()
                 .id(order.getId())
-                .userId(order.getUserId())
                 .ticker(order.getTicker())
                 .quantity(order.getQuantity())
                 .limit(order.getLimit())

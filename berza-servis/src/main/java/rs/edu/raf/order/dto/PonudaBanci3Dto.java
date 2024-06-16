@@ -4,16 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DodajPonuduDto {
-    private Long myOfferId;
+@Data
+public class PonudaBanci3Dto {
     private String ticker;
-
     private Integer amount;
-
     private Double price;
+    private Long idBank4;
 }

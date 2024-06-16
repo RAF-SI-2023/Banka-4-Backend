@@ -36,7 +36,7 @@ public class FuturesServiceImpl implements FuturesService {
     }
 
     @Override
-    public FuturesContractDto buy(Long id, Long kupacId, String racunId) {
+    public String buy(Long id, Long kupacId, String racunId) {
 //        FuturesContract f = futuresContractRepository.findById(id).orElseThrow();
 //        if(f.getKupacId() != null) throw new RuntimeException("Vec je kupljeno!");
 //
@@ -52,9 +52,9 @@ public class FuturesServiceImpl implements FuturesService {
             futuresContractRepository.kupi_future_contract(kupacId,id,Long.valueOf(racunId));
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            // TODO: Exception handler
+            return e.getMessage();
         }
-        return null;
+        return "Uspesna kupovina";
     }
 
     @Override
@@ -71,12 +71,12 @@ public class FuturesServiceImpl implements FuturesService {
     public void approveRequest(Long id, Long supervisor_id) {
         futureContractRequestRepository.approve_request(id,supervisor_id);
     }
-    @Scheduled(initialDelay = 120000, fixedRate = 120000)
-    public void confirmFutures() {
-        try {
-            futuresContractRepository.confirmFuture();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    @Scheduled(initialDelay = 120000, fixedRate = 120000)
+//    public void confirmFutures() {
+//        try {
+//            futuresContractRepository.confirmFuture();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

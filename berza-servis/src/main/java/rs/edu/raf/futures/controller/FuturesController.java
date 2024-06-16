@@ -38,10 +38,10 @@ public class FuturesController {
         return new ResponseEntity<>(futuresService.findByKupac(id), HttpStatus.OK);
     }
 
-    @GetMapping("/request")
+    @GetMapping("/request/{id}")
     @Operation(description = "Get all requests for buying future contracts")
-    public ResponseEntity<List<FutureRequestDto>> allRequests(@RequestAttribute("userId") Long radnik_id) {
-        return new ResponseEntity<>(futuresService.allRequests(radnik_id),HttpStatus.OK);
+    public ResponseEntity<List<FutureRequestDto>> allRequests(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(futuresService.allRequests(id),HttpStatus.OK);
     }
 
     @PutMapping("/approve/{id}")
@@ -58,7 +58,9 @@ public class FuturesController {
 
     @PostMapping("/buy/{id}/{racun}")
     @Operation(description = "Buy future contract")
-    public ResponseEntity<FuturesContractDto> buyFuture(@PathVariable("id") Long id, @PathVariable("racun") String racun, @RequestAttribute("userId") Long userId) {
-        return new ResponseEntity<>(futuresService.buy(id,userId,racun),HttpStatus.OK);
+    public ResponseEntity<String> buyFuture(@PathVariable("id") Long id, @PathVariable("racun") String racun, @RequestAttribute("userId") Long userId) {
+        String response = futuresService.buy(id,userId,racun);
+        if(response.equalsIgnoreCase("USPESNA KUPOVINA"))return new ResponseEntity<>("Uspesna kupovina",HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 }
