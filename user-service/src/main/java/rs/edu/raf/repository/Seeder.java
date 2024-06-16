@@ -23,7 +23,6 @@ public class Seeder implements CommandLineRunner {
             if(!reseed)
                 return;
             korisnikRepository.deleteAll();
-
             
             Korisnik korisnik = new Korisnik();
             korisnik.setIme("Petar");
