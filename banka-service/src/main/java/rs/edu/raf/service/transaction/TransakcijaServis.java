@@ -79,65 +79,6 @@ public interface TransakcijaServis {
      */
     List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca);
 
-    /////////////////////////////////////////////////////////
-
-
-    ///////////////////////////////////////////////////////////////////
-
-    //DODATO
-    //potrebno je napraviti zahteve koji primaju neku od transakcija ( placanje ili transfer) kao i jednokratnu lozinku ukoliko je sve ispravno vraca OK
-    /**
-     * Checks the validity of a payment transaction.
-     *
-     * @param uplata The payment transaction to validate.
-     * @return true if the payment transaction is valid, false otherwise.
-     */
-    boolean proveraIspravnostiUplataTransakcije(Uplata uplata);
-
-    /**
-     * Checks the validity of a transfer transaction.
-     *
-     * @param prenosSredstava The transfer transaction to validate.
-     * @return true if the transfer transaction is valid, false otherwise.
-     */
-    boolean proveraIspravnostiPrenosSredstavaTransakcije(PrenosSredstava prenosSredstava);
-
-    ///////////////////////////////////////////////////////////
-
-    //DODATO
-    //potrebno je obezbediti listu prethodno sacuvanih sablona sa cesto koriscenim transakcijama
-    /**
-     * Retrieves a list of saved transactional patterns.
-     *
-     * @return A list of saved transactional patterns.
-     */
-    List<SablonTransakcije> getSavedTransactionalPatterns();
-
-
-    //DODATO
-    //potrebno je obezbediti dodavanje novih omiljenih sablona
-    /**
-     * Adds a new transactional pattern to the list of saved patterns.
-     *
-     * @param sablonTransakcije The transactional pattern to add.
-     * @return The added transactional pattern.
-     */
-    SablonTransakcije addNewTransactionalPattern(SablonTransakcije sablonTransakcije);
-
-    //DODATO
-    //potrebno je obezbediti brisanje starih sablona
-    /**
-     * Deletes a transactional pattern with the specified ID.
-     *
-     * @param transactionPatternId The ID of the transactional pattern to delete.
-     * @return true if the transactional pattern is successfully deleted, false otherwise.
-     */
-    boolean deleteTransactionalPattern(Long transactionPatternId);
-
-    /**
-     * Deletes all saved transactional patterns.
-     */
-    void deleteAllTransactionalPatterns();
 
     ///////////////////////////////////////////////////////////////////
 

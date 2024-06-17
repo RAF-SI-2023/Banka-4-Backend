@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
 import rs.edu.raf.exceptions.BankAccountNotFoundException;
 import rs.edu.raf.exceptions.CompanyNotFoundException;
 import rs.edu.raf.model.dto.KorisnikDTO;
@@ -52,6 +53,7 @@ public class RacunServisImpl implements RacunServis {
         this.racunRepository = racunRepository;
     }
 
+    @GeneratedOnlyIntegrationTestable
     @Override
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO) {
         DevizniRacun dr = racunMapper.noviDevizniRacunDTOToDevizniRacun(noviDevizniRacunDTO);
@@ -85,6 +87,7 @@ public class RacunServisImpl implements RacunServis {
         return prRepo;
     }
 
+    @GeneratedOnlyIntegrationTestable
     @Override
     public TekuciRacun kreirajTekuciRacun(NoviTekuciRacunDTO noviTekuciRacunDTO) {
         TekuciRacun tr = racunMapper.noviTekuciRacunDTOToTekuciRacun(noviTekuciRacunDTO);
@@ -108,6 +111,7 @@ public class RacunServisImpl implements RacunServis {
         }
     }
 
+    @GeneratedOnlyIntegrationTestable
     @Override
     public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika, String token) {
 

@@ -274,6 +274,7 @@
                         <exclude>**/repository/**</exclude>
                         <exclude>**/security/**</exclude>
                         <exclude>**/swagger/**</exclude>
+                        <exclude>**/annotations/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
