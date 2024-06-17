@@ -1,6 +1,10 @@
 package rs.edu.raf.service.transaction.impl;
 
+import io.cucumber.java.mk_latn.No;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,7 +38,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Data
+@AllArgsConstructor
 public class TransakcijaServisImpl implements TransakcijaServis {
 
     private final UplataRepository uplataRepository;
@@ -57,32 +61,38 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     /////////////////////////////////////////////////////////////////////////
 
     @Override
+    @GeneratedCrudOperation
     public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(String id) {
         return vratiPrenosSredstavaDtoPoId(id);
     }
 
     @Override
+    @GeneratedCrudOperation
     public UplataDTO dobaciUplatuSretstavaDTOPoID(String id) {
         return vratiUplatuDtoPoId(id);
     }
 
 
     @Override
+    @GeneratedCrudOperation
     public List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
         return vratiPrenosSredstavaDtoPoRacunuPrimaoca(brojPrimaoca);
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
         return vratiUplataDtoPoRacunuPrimaoca(brojPrimaoca);
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
         return vratiPrenosSredstavaDtoPoRacunuPosiljaoca(brojPosiljaoca);
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
         return vratiUplataDtoPoRacunuPosiljaoca(brojPosiljaoca);
     }
