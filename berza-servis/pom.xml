@@ -278,7 +278,8 @@
                 </executions>
                   <configuration>
                            <excludes>
-                                 <exclude>**/config/**</exclude>
+                               <exclude>**/config/**</exclude>
+                               <exclude>**/response/**</exclude>
                                  <exclude>**/configuration/**</exclude>
                                  <exclude>**/currency/**</exclude>
                                  <exclude>**/currency/**</exclude>

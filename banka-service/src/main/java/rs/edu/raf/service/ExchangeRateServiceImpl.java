@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedExternalAPI;
+import rs.edu.raf.annotations.GeneratedLegacyCode;
 import rs.edu.raf.model.dto.ExchangeRateResponseDto;
 import rs.edu.raf.model.entities.ExchangeRate;
 import rs.edu.raf.model.entities.racun.ExchangeInvoice;
@@ -76,6 +79,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
         return exchangeRates.stream().map(exchangeRateMapper::exchangeRateToExchangeRateResponseDto).toList();
     }
 
+    @GeneratedLegacyCode
     private boolean isAllowedCurrency(String oldValuteCurrencyCode, String newValuteCurrencyCode){
 
         if(!this.allowedCurrencies.contains(oldValuteCurrencyCode.toUpperCase())
@@ -103,11 +107,13 @@ public class ExchangeRateServiceImpl implements ExchangeRateService{
 
     
 
+    @GeneratedCrudOperation
     @Override
     public List<ExchangeInvoice> listInvoicesByCurrency(String currency) {
         return invoiceRepository.findExchangeInvoicesBySenderCurrency(currency);
     }
 
+    @GeneratedExternalAPI
     public BigDecimal exchangeRate(String oldValuteCurrencyCode, String newValuteCurrencyCode){
 
         Optional<ExchangeRate> oldOptionalExchangeRate = exchangeRateRepository.findByCurrencyCode(oldValuteCurrencyCode);
