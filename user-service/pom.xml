@@ -282,11 +282,15 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
-                        <exclude>rs/edu/raf/dto/*</exclude>
-                        <exclude>rs/edu/raf/model/*</exclude>
-                        <exclude>rs/edu/raf/exceptions/*</exclude>
-                        <exclude>rs/edu/raf/repository/*</exclude>
-                        <exclude>rs/edu/raf/security/*</exclude>
+                        <exclude>**/configuration/**</exclude>
+                        <exclude>**/controller/**</exclude>
+                        <exclude>**/dto/**</exclude>
+                        <exclude>**/exceptions/**</exclude>
+                        <exclude>**/mapper/**</exclude>
+                        <exclude>**/model/**</exclude>
+                        <exclude>**/repository/**</exclude>
+                        <exclude>**/security/**</exclude>
+                        <exclude>**/swagger/**</exclude>
                     </excludes>
                 </configuration>
                 <version>0.8.7</version>
