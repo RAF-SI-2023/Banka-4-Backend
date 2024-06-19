@@ -126,11 +126,11 @@ public class RacunSeeder implements CommandLineRunner {
                     , "0112030403", "0112030402", 101017533, 17328905
                     , 6102, 130501701);
             firme.add(f1);
-            Firma f2 = new Firma(-2L, "Factory World Wide", ""
+            Firma f2 = new Firma(-2L, "Factory World Wide", null
                     , "0112030403", "0112030402", 101017533, 17328905
                     , 6102, 130501701);
             firme.add(f2);
-            Firma f3 = new Firma(-3L, "EM Analytic Solutions", ""
+            Firma f3 = new Firma(-3L, "EM Analytic Solutions", null
                     , "0112030403", "0112030402", 101017533, 17328905
                     , 6102, 130501701);
             firme.add(f3);
