@@ -128,6 +128,12 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
     @Override
+    public List<OpcijaKorisnikaDto> findAllForUser(Long id) {
+        Optional<KorisnikoveKupljeneOpcije> opcije = korisnikKupljeneOpcijeRepository.findKorisnikoveKupljeneOpcijeByKorisnikId(id);
+        return opcije.stream().map(opcija -> opcijaMapper.opcijaKorisnikaToNovaKorisnikovaKupljenaOpcijaDTO(opcija)).collect(Collectors.toList());
+    }
+
+    @Override
     public List<OpcijaDto> findByStockAndDateAndStrike(String ticker, LocalDateTime datumIstekaVazenja, Double strikePrice) {
 
         List<Opcija> opcije = this.opcijaRepository.findByStockAndDateAndStrike(ticker,datumIstekaVazenja,strikePrice);//(page-1)*6

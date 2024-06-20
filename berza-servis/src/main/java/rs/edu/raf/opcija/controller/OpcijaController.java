@@ -61,6 +61,12 @@ public class OpcijaController {
 
     }
 
+    @GetMapping("/sve-opcije-korisnika/{id}")
+    @Operation(description = "uzmi sve opcije korisnika")
+    public ResponseEntity<List<OpcijaKorisnikaDto>> findAllForKorisnik(@PathVariable("id") Long opcijaId){
+        return new ResponseEntity<>(opcijaServis.findAllForUser(opcijaId),HttpStatus.OK);
+    }
+
     @GetMapping("/opcija-po-id/{opcijaId}")
     @Operation(description = "uzmi opciju po id")
     public ResponseEntity<OpcijaDto> findOne(@PathVariable("opcijaId") Long opcijaId) {
