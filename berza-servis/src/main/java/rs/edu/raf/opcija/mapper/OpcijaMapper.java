@@ -156,4 +156,15 @@ public class OpcijaMapper {
         return korisnikoveKupljeneOpcije;
     }
 
+
+    public OpcijaKorisnikaDto opcijaKorisnikaToNovaKorisnikovaKupljenaOpcijaDTO(KorisnikoveKupljeneOpcije opcijaKorisnikaDto){
+
+        OpcijaKorisnikaDto korisnikoveKupljeneOpcije = new OpcijaKorisnikaDto();
+        korisnikoveKupljeneOpcije.setOpcijaId(opcijaKorisnikaDto.getOpcijaId());
+        korisnikoveKupljeneOpcije.setAkcijaId(opcijaKorisnikaDto.getAkcijaId());
+        korisnikoveKupljeneOpcije.setAkcijaTickerCenaPrilikomIskoriscenja(opcijaKorisnikaDto.getAkcijaTickerCenaPrilikomIskoriscenja());
+        korisnikoveKupljeneOpcije.setKorisnikId(opcijaKorisnikaDto.getKorisnikId());
+
+        return korisnikoveKupljeneOpcije;
+    }
 }
