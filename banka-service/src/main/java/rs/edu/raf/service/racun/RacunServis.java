@@ -142,6 +142,13 @@ public interface RacunServis {
     List<FirmaDTO> izlistajSveFirme();
 
     /**
+     * Grab a company based on the id.
+     *
+     * @return A company DTO.
+     */
+    FirmaDTO dohvatiFirmu(Long id);
+
+    /**
      * Creates a new company based on the provided DTO.
      *
      * @param firma The DTO containing information about the new company.

@@ -297,6 +297,15 @@ public class RacunServisImpl implements RacunServis {
     }
 
     @Override
+    public FirmaDTO dohvatiFirmu(Long id){
+        Optional<Firma> firma = firmaRepository.findById(id);
+        if (firma.isEmpty()) {
+            return null;
+        }
+        return firmaMapper.firmaToFirmaDTO(firmaRepository.findById(id).get());
+    }
+
+    @Override
     public Firma kreirajFirmu(NovaFirmaDTO firmaDTO) {
         Firma f = firmaMapper.novaFirmaDTOToFirma(firmaDTO);
         return this.firmaRepository.save(f);
