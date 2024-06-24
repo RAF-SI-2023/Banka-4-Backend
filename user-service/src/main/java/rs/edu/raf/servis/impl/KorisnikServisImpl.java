@@ -67,6 +67,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
     }
 
+    @GeneratedExternalAPI
     @Override
     public boolean registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
 
