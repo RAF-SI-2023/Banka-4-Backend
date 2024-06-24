@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedExternalAPI;
+import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.dto.*;
 import rs.edu.raf.exceptions.JMBGDateMismatchException;
 import rs.edu.raf.exceptions.UserNotFoundException;
@@ -90,6 +93,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return false;
     }
 
+    @GeneratedExternalAPI
     @Override
     public KorisnikDTO promeniSifruKorisnikaUzKod(IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
         if(kodServis.dobarKod(izmenaSifreUzKodDto.getEmail(), izmenaSifreUzKodDto.getKod(),true)) {
@@ -99,6 +103,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return null;
     }
 
+    @GeneratedExternalAPI
     @Override
     public KorisnikDTO promeniSifruKorisnika(String email, IzmenaSifreDto izmenaSifreDto) {
         Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(email);
@@ -244,6 +249,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return korisnici.stream().map(korisnikMapper::korisnikToKorisnikDto).collect(Collectors.toList());
     }
 
+
     @Override
     public RadnikDTO nadjiAktivnogRadnikaPoEmail(String email) {
 
@@ -251,6 +257,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         return radnik.map(radnikMapper::radnikToRadnikDto).orElseThrow(()->new UserNotFoundException("Employee with phone " + email + " not found!"));
     }
+
 
     @Override
     public KorisnikDTO nadjiAktivnogKorisnikaPoEmail(String email) {
@@ -276,6 +283,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElseThrow(()->new UserNotFoundException("User with phone " + brojTelefona + " not found!"));
     }
 
+    @GeneratedCrudOperation
     @Override
     public KorisnikDTO findUserById(Long id) {
         Korisnik korisnik = korisnikRepository.findKorisnikByIdAndAktivanIsTrue(id).orElse(null);
@@ -283,6 +291,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return null;
     }
 
+    @GeneratedCrudOperation
     public RadnikDTO findWorkerById(Long id){
         return radnikMapper.radnikToRadnikDto(radnikRepository.findById(id).orElse(null));
     }
@@ -319,6 +328,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik));
     }
 
+    @GeneratedScheduledOperation
     @Override
     public void updateDailySpent(Long id, BigDecimal price) {
         Radnik radnik = radnikRepository.findById(id).orElseThrow(()->new UserNotFoundException("Employee with id " + id + " not found!"));
@@ -326,6 +336,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         radnikRepository.save(radnik);
     }
 
+    @GeneratedScheduledOperation
     @Scheduled(initialDelay = 180000, fixedRate = 60000)
     public void clearDailySpent() {
         radnikRepository.clearDailySpent();
