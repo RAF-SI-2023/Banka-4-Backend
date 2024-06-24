@@ -57,7 +57,7 @@ public class OTCController {
     public ResponseEntity<?> makeOfferForOTC(@RequestBody @Validated OTCOfferDTO otcOfferDTO) {
         try {
             otcService.makeOfferForOTC(otcOfferDTO);
-        } catch (OTCOfferDoesntExist | QuantityOfOTCDoesntExist | PriceMustBePositive e){
+        } catch (OTCOfferDoesntExist | QuantityOfOTCDoesntExist | PriceMustBePositive | OTCOfferCurrentlyPlaced e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(e.getMessage()));
         }
 
