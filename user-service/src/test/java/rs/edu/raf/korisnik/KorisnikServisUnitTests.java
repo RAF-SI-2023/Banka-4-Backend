@@ -371,11 +371,32 @@ public class KorisnikServisUnitTests {
     }
 
     @Test
-    public void testKreirajNovogKorisnika(){
+    public void testKreirajNovogKorisnika1(){
 
         NoviKorisnikDTO noviKorisnikDTO = createMockNoviKorisnikDTO();
 
         Korisnik korisnik = createMockKorisnik();
+
+        given(korisnikRepository.save(korisnik)).willReturn(korisnik);
+        given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
+
+        try{
+            KorisnikDTO kreiraniKorisnik = korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), kreiraniKorisnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testKreirajNovogKorisnika2(){
+
+        NoviKorisnikDTO noviKorisnikDTO = createMockNoviKorisnikDTO();
+
+        Korisnik korisnik = createMockKorisnik();
+
+        korisnik.setJmbg(String.valueOf(506995793457L));
+        korisnik.setDatumRodjenja(802344392000L);
 
         given(korisnikRepository.save(korisnik)).willReturn(korisnik);
         given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
@@ -451,11 +472,32 @@ public class KorisnikServisUnitTests {
 //    }
 
     @Test
-    public void testKreirajNovogRadnika(){
+    public void testKreirajNovogRadnika1(){
 
         NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
 
         Radnik radnik = createMockRadnik();
+
+        given(radnikRepository.save(radnik)).willReturn(radnik);
+        given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO, -1L)).willReturn(radnik);
+
+        try{
+            RadnikDTO kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO, -1L);
+            assertEquals(radnikMapper.radnikToRadnikDto(radnik), kreiraniRadnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testKreirajNovogRadnika2(){
+
+        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+        radnik.setJmbg(String.valueOf(506995793457L));
+        radnik.setDatumRodjenja(802344392000L);
 
         given(radnikRepository.save(radnik)).willReturn(radnik);
         given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO, -1L)).willReturn(radnik);
@@ -501,7 +543,7 @@ public class KorisnikServisUnitTests {
     }
 
     @Test
-    public void testIzmeniKorisnika(){
+    public void testIzmeniKorisnika1(){
         IzmenaKorisnikaDTO izmenaKorisnikaDTO = createMockIzmenaKorisnikDTO();
 
         Korisnik korisnik = createMockKorisnik();
@@ -519,11 +561,53 @@ public class KorisnikServisUnitTests {
     }
 
     @Test
-    public void testIzmeniRadnika(){
+    public void testIzmeniKorisnika2(){
+        IzmenaKorisnikaDTO izmenaKorisnikaDTO = createMockIzmenaKorisnikDTO();
+
+        Korisnik korisnik = createMockKorisnik();
+
+        korisnik.setJmbg(String.valueOf(506995793457L));
+        korisnik.setDatumRodjenja(802344392000L);
+
+        given(korisnikRepository.save(korisnik)).willReturn(korisnik);
+        given(korisnikRepository.findById(izmenaKorisnikaDTO.getId())).willReturn(Optional.of(korisnik));
+
+
+        try{
+            KorisnikDTO izmenjenKorisnik = korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), izmenjenKorisnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testIzmeniRadnika1(){
 
         IzmenaRadnikaDTO izmenaRadnikaDTO = createMockIzmenaRadnikDTO();
 
         Radnik radnik = createMockRadnik();
+
+        given(radnikRepository.save(radnik)).willReturn(radnik);
+        given(radnikRepository.findById(izmenaRadnikaDTO.getId())).willReturn(Optional.of(radnik));
+
+        try{
+            RadnikDTO izmenjenRadnik = korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+            assertEquals(radnikMapper.radnikToRadnikDto(radnik), izmenjenRadnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testIzmeniRadnika2(){
+
+        IzmenaRadnikaDTO izmenaRadnikaDTO = createMockIzmenaRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+        radnik.setJmbg(String.valueOf(506995793457L));
+        radnik.setDatumRodjenja(802344392000L);
 
         given(radnikRepository.save(radnik)).willReturn(radnik);
         given(radnikRepository.findById(izmenaRadnikaDTO.getId())).willReturn(Optional.of(radnik));
