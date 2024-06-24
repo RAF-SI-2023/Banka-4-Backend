@@ -117,6 +117,8 @@ public class OTCServiceImpl implements OTCService {
             throw new QuantityOfOTCDoesntExist();
         } else if (otcOfferDTO.getPriceOffered().compareTo(BigDecimal.ZERO) <= 0){
             throw new PriceMustBePositive();
+        } else if (otcOfferDTO.getSellerId() != null) {
+            throw new OTCOfferCurrentlyPlaced();
         }
 
         otcOffer.setBuyerId(otcOfferDTO.getBuyerId());
