@@ -16,6 +16,7 @@ import rs.edu.raf.order.repository.MyOfferRepository;
 import rs.edu.raf.order.repository.OfferRepository;
 import rs.edu.raf.order.repository.UserStockRepository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +83,8 @@ public class BankOtcService {
                 myStock.setTicker(myOffer.getTicker());
                 myStock.setUserId(-1l);
                 myStock.setQuantity(myOffer.getAmount());
+                myStock.setCurrentAsk(new BigDecimal("1.0"));
+                myStock.setCurrentBid(new BigDecimal("1.0"));
 //                myStock.setPrivateAmount(0);
 //                myStock.setPublicAmount(myOffer.getAmount());
 //                myStock.("RSD");
