@@ -21,7 +21,7 @@ public class Seeder implements CommandLineRunner {
         try{
             if(!reseed)
                 return;
-            if(korisnikRepository.findAll().size() > 0 || radnikRepository.findAll().size() > 0) return;
+//            if(korisnikRepository.findAll().size() > 0 || radnikRepository.findAll().size() > 0) return;
             korisnikRepository.deleteAll();
             radnikRepository.deleteAll();
 
