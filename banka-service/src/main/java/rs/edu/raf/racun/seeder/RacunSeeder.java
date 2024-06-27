@@ -216,7 +216,7 @@ public class RacunSeeder implements CommandLineRunner {
         }
     }
 
-    @Scheduled(initialDelay = 60000)
+    @Scheduled(initialDelay = 180000)
     public void init(){
         System.out.println("dodavanje funkcija");
         try(Connection connection = dataSource.getConnection();
