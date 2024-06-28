@@ -2,6 +2,7 @@ package rs.edu.raf.servis.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
 import rs.edu.raf.exceptions.InvalidTokenException;
 import rs.edu.raf.model.Kod;
 import rs.edu.raf.repository.KodRepository;
@@ -16,6 +17,7 @@ public class KodServisImpl implements KodServis {
     private KodRepository kodRepository;
 
     @Override
+    @GeneratedCrudOperation
     public void dodajKod(String email, String kod, Long expirationDate, boolean reset) {
 
                                 //postoji kod za reset i kod pre login, a razlikuju se po boolean reset

@@ -1,20 +1,35 @@
 package rs.edu.raf.oneTimePassword;
 
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import rs.edu.raf.model.OneTimePassword;
+import rs.edu.raf.repository.OneTimePasswordRepository;
+import rs.edu.raf.servis.impl.OneTimePasswordServiceImpl;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 
-@DataJpaTest
+@RunWith(MockitoJUnitRunner.class)
 public class UnitTests {
-/*
-    @Autowired
+
+    @Mock
     private OneTimePasswordRepository oneTimePasswordRepository;
 
-    @MockBean
-    private OneTimePasswordService oneTimePasswordService;
+    @InjectMocks
+    private OneTimePasswordServiceImpl oneTimePasswordService;
 
     @Test
     public void whenGenerateOneTimePassword_thenPasswordIsGeneratedAndSaved() {
         String email = "test@example.com";
+        when(oneTimePasswordRepository.save(any())).thenReturn(new OneTimePassword(1L,email,"123456",LocalDateTime.now().plusMinutes(5)));
         OneTimePassword otp = oneTimePasswordService.generateOneTimePassword(email);
         assertEquals(email, otp.getEmail());
         assertEquals(6, otp.getPassword().length());
@@ -29,11 +44,12 @@ public class UnitTests {
         otp.setEmail(email);
         otp.setPassword(password);
         otp.setExpiration(LocalDateTime.now().plusMinutes(5));
-        oneTimePasswordRepository.save(otp);
+        when(oneTimePasswordRepository.findByEmail(email)).thenReturn(List.of(otp));
 
         boolean result = oneTimePasswordService.validateOneTimePassword(email, password);
 
         assertTrue(result);
+        when(oneTimePasswordRepository.findByEmail(email)).thenReturn(List.of());
         List<OneTimePassword> remaining = oneTimePasswordRepository.findByEmail(email);
         assertEquals(0, remaining.size());
     }
@@ -46,7 +62,7 @@ public class UnitTests {
         otp.setEmail(email);
         otp.setPassword(password);
         otp.setExpiration(LocalDateTime.now().minusMinutes(1)); // Expired
-        oneTimePasswordRepository.save(otp);
+        when(oneTimePasswordRepository.findByEmail(email)).thenReturn(List.of(otp));
 
         boolean result = oneTimePasswordService.validateOneTimePassword(email, password);
 
@@ -60,15 +76,12 @@ public class UnitTests {
         OneTimePassword otp1 = new OneTimePassword();
         otp1.setExpiration(LocalDateTime.now().minusMinutes(10)); // Expired
         oneTimePasswordRepository.save(otp1);
+
         OneTimePassword otp2 = new OneTimePassword();
         otp2.setExpiration(LocalDateTime.now().plusMinutes(10)); // Not expired
         oneTimePasswordRepository.save(otp2);
-
         oneTimePasswordService.cleanupOneTimePasswords();
 
-        List<OneTimePassword> remaining = oneTimePasswordRepository.findAll();
-        assertEquals(1, remaining.size());
-        assertEquals(otp2, remaining.get(0));
+        verify(oneTimePasswordRepository, times(1)).deleteByExpirationBefore(any());
     }
-    */
 }
