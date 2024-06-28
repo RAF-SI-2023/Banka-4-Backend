@@ -5,6 +5,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
 import rs.edu.raf.dto.KorisnikDTO;
 import rs.edu.raf.exceptions.MailNotSendException;
 import rs.edu.raf.servis.MailServis;
@@ -16,6 +17,7 @@ public class MailServiceImplementation implements MailServis {
     private JavaMailSender emailSender;
 
     @Override
+    @GeneratedOnlyIntegrationTestable
     public boolean posaljiMailZaRegistraciju(KorisnikDTO korisnik, String kod) {
         String text = "";
         if(korisnik.getPol().equals("M")){
@@ -42,6 +44,7 @@ public class MailServiceImplementation implements MailServis {
     }
 
     @Override
+    @GeneratedOnlyIntegrationTestable
     public boolean posaljiMailZaPromenuLozinke(KorisnikDTO korisnik, String kod) {
         String text = "";
         if(korisnik.getPol().equals("M")){
