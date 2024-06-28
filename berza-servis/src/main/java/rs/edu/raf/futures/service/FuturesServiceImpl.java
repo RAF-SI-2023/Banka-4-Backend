@@ -71,12 +71,12 @@ public class FuturesServiceImpl implements FuturesService {
     public void approveRequest(Long id, Long supervisor_id) {
         futureContractRequestRepository.approve_request(id,supervisor_id);
     }
-//    @Scheduled(initialDelay = 120000, fixedRate = 120000)
-//    public void confirmFutures() {
-//        try {
-//            futuresContractRepository.confirmFuture();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Scheduled(initialDelay = 240000, fixedRate = 120000)
+    public void confirmFutures() {
+        try {
+            futuresContractRepository.confirmFuture();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
