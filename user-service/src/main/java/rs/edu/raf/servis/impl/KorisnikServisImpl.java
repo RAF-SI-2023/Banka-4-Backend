@@ -326,6 +326,13 @@ public class KorisnikServisImpl implements KorisnikServis {
         radnikRepository.save(radnik);
     }
 
+    @Override
+    public void updateProfit(Long id, BigDecimal price) {
+        Radnik radnik = radnikRepository.findById(id).orElseThrow(()->new UserNotFoundException("Employee with id " + id + " not found!"));
+        radnik.setProfit(radnik.getProfit().add(price));
+        radnikRepository.save(radnik);
+    }
+
     @Scheduled(initialDelay = 180000, fixedRate = 60000)
     public void clearDailySpent() {
         radnikRepository.clearDailySpent();

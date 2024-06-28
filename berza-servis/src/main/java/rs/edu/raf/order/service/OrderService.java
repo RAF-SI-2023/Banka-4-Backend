@@ -2,11 +2,9 @@ package rs.edu.raf.order.service;
 
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
-import rs.edu.raf.order.model.Enums.Action;
 import rs.edu.raf.order.model.Order;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -34,9 +32,10 @@ public interface OrderService {
      * Accepts an order based on the provided order ID.
      *
      * @param orderId The ID of the order to accept.
+     * @param token
      * @return An OrderDto object representing the accepted order.
      */
-    OrderDto acceptOrder(Long orderId);
+    OrderDto acceptOrder(Long orderId, String token);
 
     /**
      * Approximates the value of an order based on the order request.
