@@ -14,6 +14,9 @@ import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
+import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.opcija.dto.NovaOpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaDto;
 import rs.edu.raf.opcija.dto.OpcijaKorisnikaDto;
@@ -68,6 +71,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     private OpcijaRepository opcijaRepository;
 
 
+    @GeneratedCrudOperation
     private List<Opcija> fetchAllOptionsForAllTickers() throws IOException {
 
         List<String> tickerNames = finansijaApiUtil.fetchTickerNames();
@@ -82,6 +86,7 @@ public class OpcijaServisImpl implements OpcijaServis {
         log.info("Gotovo fetchovanje sa yahoo api");
         return yahooOpcije.stream().map(yahooOpcija -> opcijaMapper.yahooOpcijaToOpcija(yahooOpcija)).collect(Collectors.toList());
     }
+    @GeneratedCrudOperation
     private List<GlobalQuote> fetchAllGlobalQuote() throws IOException {
 
         List<String> tickerNames = finansijaApiUtil.fetchTickerNames();
@@ -103,6 +108,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
     //CITA IZ CACHE A AKO NE POSTOJI ONDA IZ BAZE
     @Override
+    @GeneratedCrudOperation
     public List<OpcijaDto> findAll()  {
 
         List<Opcija> opcije = new ArrayList<>();
@@ -128,6 +134,14 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
     @Override
+    @GeneratedCrudOperation
+    public List<OpcijaKorisnikaDto> findAllForUser(Long id) {
+        Optional<KorisnikoveKupljeneOpcije> opcije = korisnikKupljeneOpcijeRepository.findKorisnikoveKupljeneOpcijeByKorisnikId(id);
+        return opcije.stream().map(opcija -> opcijaMapper.opcijaKorisnikaToNovaKorisnikovaKupljenaOpcijaDTO(opcija)).collect(Collectors.toList());
+    }
+
+    @Override
+    @GeneratedCrudOperation
     public List<OpcijaDto> findByStockAndDateAndStrike(String ticker, LocalDateTime datumIstekaVazenja, Double strikePrice) {
 
         List<Opcija> opcije = this.opcijaRepository.findByStockAndDateAndStrike(ticker,datumIstekaVazenja,strikePrice);//(page-1)*6
@@ -136,6 +150,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
     @Override
     @Transactional//izdvajamo opciju i akciju jer su nezavisne promene
+    @GeneratedOnlyIntegrationTestable
     public KorisnikoveKupljeneOpcije izvrsiOpciju(Long opcijaId, Long userId) {
                                                                                                         //moze ih biti vise pa uzimamo prvu neiskoriscenu
         KorisnikoveKupljeneOpcije korisnikKupljenaOpcija = korisnikKupljeneOpcijeRepository.findFirstByOpcijaIdAndKorisnikIdAndIskoriscenaFalse(opcijaId, userId).orElse(null);
@@ -161,6 +176,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
 
     @Override
+    @GeneratedCrudOperation
     public OpcijaStanje proveriStanjeOpcije(Long opcijaId){
 
         Opcija opcija = opcijaRepository.findById(opcijaId).orElse(null);
@@ -194,6 +210,7 @@ public class OpcijaServisImpl implements OpcijaServis {
         return opcijaStanje;
     }
     @Override
+    @GeneratedCrudOperation
     public OpcijaDto save(NovaOpcijaDto novaOpcijaDto) {
 
         Opcija opcija = opcijaMapper.novaOpcijaDtoToOpcija(novaOpcijaDto);
@@ -204,6 +221,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
     //CITA IZ CACHE A AKO NE POSTOJI ONDA IZ BAZE
     @Override
+    @GeneratedCrudOperation
     //optional je ili objekat ili null(ako ne postoji u bazi)
     public OpcijaDto findById(Long id) {
         Cache cache = cacheManager.getCache("opcijeCache");
@@ -232,6 +250,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     @Override
     @Scheduled(fixedRate = 60000)//poseban thread obradjuje
     @Transactional//sve promene nad bazom se upisuju u bazu tek kada se metoda uspesno zavrsi,ako dodje do izuzetka radi se roll back
+    @GeneratedScheduledOperation
     public void azuirajPostojeceOpcije() throws IOException {
 
 
@@ -455,6 +474,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
     @Override
+    @GeneratedCrudOperation
     public boolean novaOpcijaKorisnika(OpcijaKorisnikaDto opcijaKorisnikaDto) {
 
         if(korisnikKupljeneOpcijeRepository.save(opcijaMapper.opcijaKorisnikaDtoToNovaKorisnikovaKupljenaOpcija(opcijaKorisnikaDto)) == null){

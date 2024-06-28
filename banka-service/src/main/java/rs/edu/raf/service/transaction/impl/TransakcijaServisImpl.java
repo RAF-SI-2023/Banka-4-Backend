@@ -1,11 +1,19 @@
 package rs.edu.raf.service.transaction.impl;
 
+import io.cucumber.java.mk_latn.No;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import rs.edu.raf.annotations.Generated;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedLegacyCode;
+import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.model.dto.transaction.RealizacijaTransakcije;
 import rs.edu.raf.model.entities.racun.*;
 import rs.edu.raf.repository.racun.InvoiceRepository;
@@ -31,7 +39,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@Data
+@AllArgsConstructor
 public class TransakcijaServisImpl implements TransakcijaServis {
 
     private final UplataRepository uplataRepository;
@@ -54,32 +62,38 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     /////////////////////////////////////////////////////////////////////////
 
     @Override
+    @GeneratedCrudOperation
     public PrenosSredstavaDTO dobaviPrenosSretstavaDTOPoID(String id) {
         return vratiPrenosSredstavaDtoPoId(id);
     }
 
     @Override
+    @GeneratedCrudOperation
     public UplataDTO dobaciUplatuSretstavaDTOPoID(String id) {
         return vratiUplatuDtoPoId(id);
     }
 
 
     @Override
+    @GeneratedCrudOperation
     public List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
         return vratiPrenosSredstavaDtoPoRacunuPrimaoca(brojPrimaoca);
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPrimaoca(Long brojPrimaoca) {
         return vratiUplataDtoPoRacunuPrimaoca(brojPrimaoca);
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<PrenosSredstavaDTO> dobaviPrenosSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
         return vratiPrenosSredstavaDtoPoRacunuPosiljaoca(brojPosiljaoca);
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<UplataDTO> dobaciUplatuSretstavaDTOPoBrojuPosiljaoca(Long brojPosiljaoca) {
         return vratiUplataDtoPoRacunuPosiljaoca(brojPosiljaoca);
     }
@@ -146,16 +160,20 @@ public class TransakcijaServisImpl implements TransakcijaServis {
         return uplataRepository.save(TransakcijaMapper.NovoPlacanjeDtoToEntity(novaUplataDTO));
     }
 
+    @GeneratedCrudOperation
     @Override
     public Optional<PrenosSredstava> vratiPrenosSredstavaPoId(String id) {
         return prenosSredstavaRepository.findById(id);
     }
 
+    @GeneratedCrudOperation
     @Override
     public Optional<Uplata> vratiUplatuPoId(String id) {
         return uplataRepository.findById(id);
     }
 
+
+    @GeneratedCrudOperation
     @Override
     public PrenosSredstavaDTO vratiPrenosSredstavaDtoPoId(String id) {
         return prenosSredstavaRepository.findById(id)
@@ -163,6 +181,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .orElseThrow(() -> new EntityNotFoundException("Prenos sredstava sa ID-om " + id + " nije pronađen."));
     }
 
+    @GeneratedCrudOperation
     @Override
     public UplataDTO vratiUplatuDtoPoId(String id) {
         return uplataRepository.findById(id)
@@ -170,6 +189,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .orElseThrow(() -> new EntityNotFoundException("Placanje sa ID-om " + id + " nije pronađeno."));
     }
 
+    @GeneratedCrudOperation
     @Override
     public List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPrimaoca(Long racunPrimaoca) {
         return prenosSredstavaRepository.findAllByRacunPrimaoca(racunPrimaoca).stream()
@@ -177,6 +197,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .collect(Collectors.toList());
     }
 
+    @GeneratedCrudOperation
     @Override
     public List<UplataDTO> vratiUplataDtoPoRacunuPrimaoca(Long racunPrimaoca) {
         uplataRepository.findAllByRacunPrimaoca(racunPrimaoca).forEach(System.out::println);
@@ -185,6 +206,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .collect(Collectors.toList());
     }
 
+    @GeneratedCrudOperation
     @Override
     public List<PrenosSredstavaDTO> vratiPrenosSredstavaDtoPoRacunuPosiljaoca(Long racunPosiljaoca) {
         return prenosSredstavaRepository.findAllByRacunPosiljaoca(racunPosiljaoca).stream()
@@ -192,6 +214,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .collect(Collectors.toList());
     }
 
+    @GeneratedCrudOperation
     @Override
     public List<UplataDTO> vratiUplataDtoPoRacunuPosiljaoca(Long racunPosiljaoca) {
         uplataRepository.findAllByRacunPosiljaoca(racunPosiljaoca).forEach(System.out::println);
@@ -200,17 +223,20 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .collect(Collectors.toList());
     }
 
+    @GeneratedCrudOperation
     @Override
     public List<PrenosSredstava> vratiPrenosSredstavaUObradi() {
         return prenosSredstavaRepository.findAllByStatus(Status.U_OBRADI);
     }
 
+    @GeneratedCrudOperation
     @Override
     public List<Uplata> vratiUplateUObradi() {
         return uplataRepository.findAllByStatus(Status.U_OBRADI);
     }
 
     @Override
+    @GeneratedLegacyCode
     public BigDecimal izracunajRezervisanaSredstva(Long brojRacuna) {
 
         return switch (racunServis.nadjiVrstuRacuna(brojRacuna)) {
@@ -297,8 +323,8 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 .orElseThrow(() -> new EntityNotFoundException("Prenos sredstava sa ID-om " + idPrenosaSredstava + " nije pronađen."));
     }
 
-    // TODO: dodati @Leader anotaciju za kubernetes
-//    @Scheduled(cron = "0 */3 * * * *")
+
+    @GeneratedScheduledOperation
     @Scheduled(initialDelay = 180000, fixedRate = 180000)
     public void realizacijaTransakcija() {
 //        prenosSredstavaRepository.deleteAll();
@@ -394,13 +420,13 @@ public class TransakcijaServisImpl implements TransakcijaServis {
                 }
             }
     }
-
+    @Generated
     private void webSocketUplata(Uplata uplata) {
         System.out.println(uplata + " web socket");
         messagingTemplate.convertAndSend("/topic/uplata-posiljaoca/" + uplata.getRacunPosiljaoca(), TransakcijaMapper.PlacanjeToDto(uplata));
         messagingTemplate.convertAndSend("/topic/uplata-primaoca/" + uplata.getRacunPrimaoca(), TransakcijaMapper.PlacanjeToDto(uplata));
     }
-
+    @Generated
     private void webSockerPrenosSredstava(PrenosSredstava prenosSredstava) {
         System.out.println(prenosSredstava + " web socket");
         messagingTemplate.convertAndSend("/topic/prenos-sredstava-posiljaoca/" + prenosSredstava.getRacunPosiljaoca(), TransakcijaMapper.PrenosSredstavaToDto(prenosSredstava));
@@ -459,53 +485,5 @@ public class TransakcijaServisImpl implements TransakcijaServis {
 //        return false;
 //    }
 
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-
-
-
-    @Override
-    public boolean proveraIspravnostiUplataTransakcije(Uplata uplata) {
-
-        return false;
-    }
-
-    @Override
-    public boolean proveraIspravnostiPrenosSredstavaTransakcije(PrenosSredstava prenosSredstava) {
-        return false;
-    }
-
-    @Override
-    public List<SablonTransakcije> getSavedTransactionalPatterns() {
-        return this.sablonTransakcijeRepository.findAll();
-    }
-
-    @Override
-    public SablonTransakcije addNewTransactionalPattern(SablonTransakcije sablonTransakcije) {
-        if(sablonTransakcije != null) {           //AKO VEC POSTOJI AZURIRACE,AKO NE POSTOJI DODACE
-            return this.sablonTransakcijeRepository.save(sablonTransakcije);
-        }
-        return null;
-    }
-
-    @Override
-    public boolean deleteTransactionalPattern(Long transactionPatternId) {
-
-        if(transactionPatternId != null){
-            //NE VRACA GRESKU AKO NE POSTOJI ID
-            this.sablonTransakcijeRepository.deleteById(transactionPatternId);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void deleteAllTransactionalPatterns() {
-        //NE VRACA GRESKU AKO NEMA STA DA SE BRISE
-        this.sablonTransakcijeRepository.deleteAll();
-    }
 
 }

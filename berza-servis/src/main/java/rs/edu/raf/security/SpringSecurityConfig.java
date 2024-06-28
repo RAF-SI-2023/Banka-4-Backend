@@ -52,6 +52,7 @@ public class SpringSecurityConfig implements WebSecurityCustomizer {
                         .requestMatchers("/offer/place-offer").permitAll()
                         .requestMatchers("/offer/accept-our-offer").permitAll()
                         .requestMatchers("/user-stocks/get-our-banks-stocks").permitAll()
+                                .requestMatchers("/v1/otcTrade/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET,"/racuni/izlistajSveFirme").access("@permissionEvaluator.hasPermission(authentication, null,'" + Permisije.listanje_korisnika + "')")
                         .anyRequest().authenticated()
                 )

@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface KorisnikoveKupljeneOpcijeRepository extends JpaRepository<KorisnikoveKupljeneOpcije,Long> {
     Optional<KorisnikoveKupljeneOpcije> findFirstByOpcijaIdAndKorisnikIdAndIskoriscenaFalse(Long opcijaId, Long korisnikId);
+
+    Optional<KorisnikoveKupljeneOpcije> findKorisnikoveKupljeneOpcijeByKorisnikId(Long korisnikId);
 }

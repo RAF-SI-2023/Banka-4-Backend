@@ -35,7 +35,7 @@ public class FuturesContractMapper {
         futureRequestDto.setBroj_telefona(futureContractRequest.getBroj_telefona());
         futureRequestDto.setRadnik_id(futureContractRequest.getRadnikId());
         futureRequestDto.setRacun_id(futureContractRequest.getRacunId());
-        futureRequestDto.setFuturesContractDto(futuresContractToFutureContractDto(futuresContractRepository.findById(futureContractRequest.getId()).orElseThrow()));
+        futureRequestDto.setFuturesContractDto(futuresContractToFutureContractDto(futuresContractRepository.findById(futureContractRequest.getFuturesContract().getId()).orElseThrow()));
         futureRequestDto.setStatus(futureContractRequest.getRequestStatus().toString());
         return futureRequestDto;
     }

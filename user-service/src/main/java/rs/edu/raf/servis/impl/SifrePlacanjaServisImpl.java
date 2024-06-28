@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
 import rs.edu.raf.dto.SifrePlacanjaDTO;
 import rs.edu.raf.model.SifrePlacanja;
 import rs.edu.raf.repository.SifrePlacanjaRepository;
@@ -25,6 +26,7 @@ public class SifrePlacanjaServisImpl implements SifrePlacanjaServis {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    @GeneratedCrudOperation
     public List<SifrePlacanjaDTO> readAndProcessFile() {
         List<SifrePlacanjaDTO> data = new ArrayList<>();
         HashMap<Integer,String > codes = new HashMap<>();
@@ -42,6 +44,7 @@ public class SifrePlacanjaServisImpl implements SifrePlacanjaServis {
     @Override
     @Transactional
     @PostConstruct
+    @GeneratedCrudOperation
     public void init() {
 
         List<SifrePlacanjaDTO> sifrePlacanjaDTOS = readAndProcessFile();
@@ -52,6 +55,7 @@ public class SifrePlacanjaServisImpl implements SifrePlacanjaServis {
         }
         sifrePlacanjaRepository.saveAll(sifrePlacanja);
     }
+    @GeneratedCrudOperation
     private HashMap<Integer,String> full(HashMap<Integer,String> dataMap) {
         dataMap.put(120, "Prоmеt rоbе i uslugа – mеđufаznа pоtrоšnjа");
         dataMap.put(121, "Prоmеt rоbе i uslugа – finаlnа pоtrоšnjа");
@@ -257,11 +261,13 @@ public class SifrePlacanjaServisImpl implements SifrePlacanjaServis {
 
     //PROVERITI
     @Override
+    @GeneratedCrudOperation
     public SifrePlacanja findById(Long id) {
         return null;
     }
 
     @Override
+    @GeneratedCrudOperation
     public SifrePlacanja findByOblikAndOsnov(Integer oblikIOsnov) {
         return null;
     }

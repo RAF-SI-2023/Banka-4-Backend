@@ -2,6 +2,8 @@ package rs.edu.raf.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
 import rs.edu.raf.model.dto.CreditRequestDto;
 import rs.edu.raf.model.dto.DetailedCreditDto;
 import rs.edu.raf.model.entities.Credit;
@@ -111,14 +113,17 @@ public class CreditServiceImpl implements CreditService{
                 .collect(Collectors.toList());
     }
 
+    @GeneratedCrudOperation
     public List<CreditRequest> getAllCreditRequestsRaw(String status){
         return creditRequestRepository.findAllByStatus(status);
     }
 
+    @GeneratedCrudOperation
     public List<CreditRequest> getAllCreditRequestsForUserRaw(Long userId,String status){
         return creditRequestRepository.findAllCreditRequestsForUser(userId, status);
     }
 
+    @GeneratedOnlyIntegrationTestable
     public List<CreditRequestDto> getAllCreditRequestForUser(Long userId, String status){
         List<CreditRequest> creditRequests = creditRequestRepository.findAllCreditRequestsForUser(userId, status);
         System.out.println(creditRequests);
@@ -185,6 +190,7 @@ public class CreditServiceImpl implements CreditService{
         return detailedCreditDto;
     }
 
+    @GeneratedCrudOperation
     public void deleteCreditRequest(Long creditRequestId){
         Optional<CreditRequest> creditRequestOptional = creditRequestRepository.findById(creditRequestId);
 
@@ -197,6 +203,7 @@ public class CreditServiceImpl implements CreditService{
         creditRequestRepository.delete(creditRequest);
     }
 
+    @GeneratedCrudOperation
     public CreditRequest getCreditRequest(Long creditRequestId){
         return creditRequestRepository.findById(creditRequestId).orElse(null);
     }

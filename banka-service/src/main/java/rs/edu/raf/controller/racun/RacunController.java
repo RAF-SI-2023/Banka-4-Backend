@@ -99,6 +99,13 @@ public class RacunController {
     public ResponseEntity<List<FirmaDTO>> izlistajSveFirme(@RequestHeader("Authorization") String authorization){
         return new ResponseEntity<>(racunServis.izlistajSveFirme(), HttpStatus.OK);
     }
+
+    @ApiOperation(value = "Dohvati firmu preko id")
+    @GetMapping("/firma/{id}")
+    public ResponseEntity<FirmaDTO> izlistajSveFirme(@PathVariable("id") Long id){
+        return new ResponseEntity<>(racunServis.dohvatiFirmu(id), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Kreiraj novu firmu")
     @PostMapping("/kreirajFirmu")
     public ResponseEntity<Firma> dodajDevizniRacun( @RequestBody NovaFirmaDTO novaFirmaDTO){

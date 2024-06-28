@@ -8,6 +8,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import rs.edu.raf.dto.*;
+import rs.edu.raf.exceptions.UserNotFoundException;
+import rs.edu.raf.exceptions.WrongEmployeeException;
 import rs.edu.raf.mapper.KorisnikMapper;
 import rs.edu.raf.mapper.RadnikMapper;
 import rs.edu.raf.model.Korisnik;
@@ -16,13 +18,16 @@ import rs.edu.raf.repository.KorisnikRepository;
 import rs.edu.raf.repository.RadnikRepository;
 import rs.edu.raf.servis.impl.KorisnikServisImpl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KorisnikServisUnitTests {
@@ -371,11 +376,32 @@ public class KorisnikServisUnitTests {
     }
 
     @Test
-    public void testKreirajNovogKorisnika(){
+    public void testKreirajNovogKorisnika1(){
 
         NoviKorisnikDTO noviKorisnikDTO = createMockNoviKorisnikDTO();
 
         Korisnik korisnik = createMockKorisnik();
+
+        given(korisnikRepository.save(korisnik)).willReturn(korisnik);
+        given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
+
+        try{
+            KorisnikDTO kreiraniKorisnik = korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), kreiraniKorisnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testKreirajNovogKorisnika2(){
+
+        NoviKorisnikDTO noviKorisnikDTO = createMockNoviKorisnikDTO();
+
+        Korisnik korisnik = createMockKorisnik();
+
+        korisnik.setJmbg(String.valueOf(506995793457L));
+        korisnik.setDatumRodjenja(802344392000L);
 
         given(korisnikRepository.save(korisnik)).willReturn(korisnik);
         given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
@@ -451,11 +477,32 @@ public class KorisnikServisUnitTests {
 //    }
 
     @Test
-    public void testKreirajNovogRadnika(){
+    public void testKreirajNovogRadnika1(){
 
         NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
 
         Radnik radnik = createMockRadnik();
+
+        given(radnikRepository.save(radnik)).willReturn(radnik);
+        given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO, -1L)).willReturn(radnik);
+
+        try{
+            RadnikDTO kreiraniRadnik = korisnikServis.kreirajNovogRadnika(noviRadnikDTO, -1L);
+            assertEquals(radnikMapper.radnikToRadnikDto(radnik), kreiraniRadnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testKreirajNovogRadnika2(){
+
+        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+        radnik.setJmbg(String.valueOf(506995793457L));
+        radnik.setDatumRodjenja(802344392000L);
 
         given(radnikRepository.save(radnik)).willReturn(radnik);
         given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO, -1L)).willReturn(radnik);
@@ -501,7 +548,7 @@ public class KorisnikServisUnitTests {
     }
 
     @Test
-    public void testIzmeniKorisnika(){
+    public void testIzmeniKorisnika1(){
         IzmenaKorisnikaDTO izmenaKorisnikaDTO = createMockIzmenaKorisnikDTO();
 
         Korisnik korisnik = createMockKorisnik();
@@ -519,11 +566,53 @@ public class KorisnikServisUnitTests {
     }
 
     @Test
-    public void testIzmeniRadnika(){
+    public void testIzmeniKorisnika2(){
+        IzmenaKorisnikaDTO izmenaKorisnikaDTO = createMockIzmenaKorisnikDTO();
+
+        Korisnik korisnik = createMockKorisnik();
+
+        korisnik.setJmbg(String.valueOf(506995793457L));
+        korisnik.setDatumRodjenja(802344392000L);
+
+        given(korisnikRepository.save(korisnik)).willReturn(korisnik);
+        given(korisnikRepository.findById(izmenaKorisnikaDTO.getId())).willReturn(Optional.of(korisnik));
+
+
+        try{
+            KorisnikDTO izmenjenKorisnik = korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+            assertEquals(korisnikMapper.korisnikToKorisnikDto(korisnik), izmenjenKorisnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testIzmeniRadnika1(){
 
         IzmenaRadnikaDTO izmenaRadnikaDTO = createMockIzmenaRadnikDTO();
 
         Radnik radnik = createMockRadnik();
+
+        given(radnikRepository.save(radnik)).willReturn(radnik);
+        given(radnikRepository.findById(izmenaRadnikaDTO.getId())).willReturn(Optional.of(radnik));
+
+        try{
+            RadnikDTO izmenjenRadnik = korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+            assertEquals(radnikMapper.radnikToRadnikDto(radnik), izmenjenRadnik);
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testIzmeniRadnika2(){
+
+        IzmenaRadnikaDTO izmenaRadnikaDTO = createMockIzmenaRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+        radnik.setJmbg(String.valueOf(506995793457L));
+        radnik.setDatumRodjenja(802344392000L);
 
         given(radnikRepository.save(radnik)).willReturn(radnik);
         given(radnikRepository.findById(izmenaRadnikaDTO.getId())).willReturn(Optional.of(radnik));
@@ -627,6 +716,12 @@ public class KorisnikServisUnitTests {
     }
 
     @Test
+    public void testNadjiAKtivnogKorisnikaPoJmbgNePostojiKorisnik() {
+        when(korisnikRepository.findByJmbgAndAktivanIsTrue(anyString())).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class,()->korisnikServis.nadjiAktivnogKorisnikaPoJMBG(String.valueOf(1011000793457L)));
+    }
+
+    @Test
     public void testNadjiAktivnogKorisnikaPoBrojuTelefona(){
         List<Korisnik> korisnici = createMockKorisnikList();
 
@@ -642,5 +737,70 @@ public class KorisnikServisUnitTests {
         } catch (Exception e){
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void testResetLimitRadnikNePostoji() {
+        when(radnikRepository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class,()->korisnikServis.resetLimit(1L,1L));
+    }
+
+    @Test
+    public void testResetLimitNijeIstaFirma() {
+        Radnik radnik = new Radnik();
+        radnik.setFirmaId(-2L);
+        radnik.setId(10L);
+        when(radnikRepository.findById(anyLong())).thenReturn(Optional.of(radnik));
+        assertThrows(WrongEmployeeException.class,()->korisnikServis.resetLimit(10L,-3L));
+    }
+
+    @Test
+    public void testResetLimitUspesno() {
+        Radnik radnik = new Radnik();
+        radnik.setFirmaId(-2L);
+        radnik.setId(10L);
+        radnik.setDailySpent(new BigDecimal("1000.0"));
+        when(radnikRepository.findById(anyLong())).thenReturn(Optional.of(radnik));
+        when(radnikRepository.save(any())).thenReturn(radnik);
+        korisnikServis.resetLimit(10L,-2L);
+        verify(radnikRepository,times(1)).save(any());
+    }
+
+    @Test
+    public void testAddAcountNemaKorisnika() {
+        when(korisnikRepository.findKorisnikByIdAndAktivanIsTrue(anyLong())).thenReturn(Optional.empty());
+        assertFalse(korisnikServis.addAccountToUser(1L,1L));
+    }
+
+    @Test
+    public void testAddAcountNemaRacune() {
+        Korisnik korisnik = new Korisnik();
+        korisnik.setAktivan(true);
+        korisnik.setId(100L);
+        when(korisnikRepository.findKorisnikByIdAndAktivanIsTrue(anyLong())).thenReturn(Optional.of(korisnik));
+        when(korisnikRepository.save(any())).thenReturn(korisnik);
+        assertTrue(korisnikServis.addAccountToUser(100L,1L));
+    }
+
+    @Test
+    public void testAddAcountVecImaRacun() {
+        Korisnik korisnik = new Korisnik();
+        korisnik.setAktivan(true);
+        korisnik.setId(100L);
+        korisnik.setPovezaniRacuni(String.valueOf(1L));
+        when(korisnikRepository.findKorisnikByIdAndAktivanIsTrue(anyLong())).thenReturn(Optional.of(korisnik));
+//        when(korisnikRepository.save(any())).thenReturn(korisnik);
+        assertFalse(korisnikServis.addAccountToUser(100L,1L));
+    }
+
+    @Test
+    public void testAddAcountUspesno() {
+        Korisnik korisnik = new Korisnik();
+        korisnik.setAktivan(true);
+        korisnik.setId(100L);
+        korisnik.setPovezaniRacuni(String.valueOf(2L));
+        when(korisnikRepository.findKorisnikByIdAndAktivanIsTrue(anyLong())).thenReturn(Optional.of(korisnik));
+        when(korisnikRepository.save(any())).thenReturn(korisnik);
+        assertTrue(korisnikServis.addAccountToUser(100L,1L));
     }
 }

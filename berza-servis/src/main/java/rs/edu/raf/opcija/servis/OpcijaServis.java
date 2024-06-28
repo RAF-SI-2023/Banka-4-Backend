@@ -26,6 +26,15 @@ public interface OpcijaServis {
         List<OpcijaDto> findAll() throws InterruptedException;
 
         /**
+         * Retrieves all options for a user.
+         *
+         * @param id The ID of the user whose options to find.
+         * @return A list of OpcijaKorisnikaDto objects representing all options for a user.
+         */
+        List<OpcijaKorisnikaDto> findAllForUser(Long id);
+
+
+        /**
          * Saves a new option.
          *
          * @param option The NovaOpcijaDto object containing information about the new option.

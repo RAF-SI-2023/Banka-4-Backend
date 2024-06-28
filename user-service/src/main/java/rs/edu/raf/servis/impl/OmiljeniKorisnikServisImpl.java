@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
 import rs.edu.raf.dto.OmiljeniKorisnikDTO;
 import rs.edu.raf.exceptions.UserNotFoundException;
 import rs.edu.raf.repository.OmiljeniKorisnikRepository;
@@ -23,21 +24,25 @@ public class OmiljeniKorisnikServisImpl implements OmiljeniKorisnikServis {
     @Autowired
     private OmiljeniKorisnikRepository omiljeniKorisnikRepository;
     @Override
+    @GeneratedCrudOperation
     public OmiljeniKorisnikDTO add(OmiljeniKorisnikDTO omiljeniKorisnikDTO) {
         return OmiljeniKorisnikMapper.toDTO(omiljeniKorisnikRepository.save(OmiljeniKorisnikMapper.toEntity(omiljeniKorisnikDTO)));
     }
 
     @Override
+    @GeneratedCrudOperation
     public void edit(OmiljeniKorisnikDTO omiljeniKorisnikDTO) {
         omiljeniKorisnikRepository.save(OmiljeniKorisnikMapper.toEntity(omiljeniKorisnikDTO));
     }
 
     @Override
+    @GeneratedCrudOperation
     public void delete(Long id) {
         omiljeniKorisnikRepository.deleteById(id);
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<OmiljeniKorisnikDTO> findByIdKorisnika(Long id) {
         return omiljeniKorisnikRepository.findOmiljeniKorisniksByIdKorisnika(id).stream().map(OmiljeniKorisnikMapper::toDTO).collect(Collectors.toList());
     }

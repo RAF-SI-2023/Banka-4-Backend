@@ -276,6 +276,25 @@
                         </goals>
                     </execution>
                 </executions>
+                  <configuration>
+                           <excludes>
+                               <exclude>**/config/**</exclude>
+                               <exclude>**/response/**</exclude>
+                                 <exclude>**/configuration/**</exclude>
+                                 <exclude>**/currency/**</exclude>
+                                 <exclude>**/currency/**</exclude>
+                                 <exclude>**/controller/**</exclude>
+                                 <exclude>**/dto/**</exclude>
+                                 <exclude>**/model/**</exclude>
+                                 <exclude>**/mapper/**</exclude>
+                                 <exclude>**/repository/**</exclude>
+                                 <exclude>**/seeder/**</exclude>
+                               <exclude>**/security/**</exclude>
+                               <exclude>**/swagger/**</exclude>
+                               <exclude>**/exceptions/**</exclude>
+                               <exclude>**/annotations/**</exclude>
+                           </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
