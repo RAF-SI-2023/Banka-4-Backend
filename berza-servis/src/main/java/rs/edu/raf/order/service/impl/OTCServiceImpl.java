@@ -80,7 +80,7 @@ public class OTCServiceImpl implements OTCService {
 
         if (otcResolveDTO.getUserId() == -1L){
             otcOffer.setBanksApproval(true);
-        } else if (otcResolveDTO.getUserId().equals(otcOffer.getSellerId())){
+        } if (otcResolveDTO.getUserId().equals(otcOffer.getSellerId())){
             otcOffer.setSellerApproval(true);
         }
 
@@ -94,9 +94,11 @@ public class OTCServiceImpl implements OTCService {
             stockToBeAddedToBuyer = userStockRepository.findByUserIdAndTicker(otcOffer.getBuyerId(), otcOffer.getTicker());
             if (stockToBeAddedToBuyer == null){
                 stockToBeAddedToBuyer = new UserStock();
-                stockToBeAddedToBuyer.setId(otcOffer.getBuyerId());
+                stockToBeAddedToBuyer.setUserId(otcOffer.getBuyerId());
                 stockToBeAddedToBuyer.setTicker(otcOffer.getTicker());
                 stockToBeAddedToBuyer.setQuantity(otcOffer.getQuantityToBuy());
+                stockToBeAddedToBuyer.setCurrentBid(new BigDecimal("1.0"));
+                stockToBeAddedToBuyer.setCurrentAsk(new BigDecimal("1.0"));
             } else {
                 stockToBeAddedToBuyer.setQuantity(stockToBeAddedToBuyer.getQuantity() + otcOffer.getQuantityToBuy());
             }
@@ -117,7 +119,7 @@ public class OTCServiceImpl implements OTCService {
             throw new QuantityOfOTCDoesntExist();
         } else if (otcOfferDTO.getPriceOffered().compareTo(BigDecimal.ZERO) <= 0){
             throw new PriceMustBePositive();
-        } else if (otcOfferDTO.getSellerId() != null) {
+        } else if (otcOffer.getBuyerId() != null) {
             throw new OTCOfferCurrentlyPlaced();
         }
 
