@@ -8,6 +8,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import rs.edu.raf.dto.*;
+import rs.edu.raf.exceptions.JMBGDateMismatchException;
 import rs.edu.raf.exceptions.UserNotFoundException;
 import rs.edu.raf.exceptions.WrongEmployeeException;
 import rs.edu.raf.mapper.KorisnikMapper;
@@ -450,6 +451,53 @@ public class KorisnikServisUnitTests {
         });
     }
 
+    @Test
+    public void testKreirajNovogKorisnikaLosDatumRodjenja2(){
+
+        NoviKorisnikDTO noviKorisnikDTO = createMockNoviKorisnikDTO();
+
+        Korisnik korisnik = createMockKorisnik();
+
+        noviKorisnikDTO.setDatumRodjenja(708532400000L);
+        korisnik.setDatumRodjenja(708532400000L);
+
+        noviKorisnikDTO.setJmbg(String.valueOf(1405992793457L));
+        korisnik.setJmbg(String.valueOf(1405992793457L));
+        given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
+        assertThrows(Exception.class, () -> {
+            korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+        });
+
+        noviKorisnikDTO.setJmbg(String.valueOf(1406993793457L));
+        korisnik.setJmbg(String.valueOf(1406993793457L));
+        assertThrows(Exception.class, () -> {
+            korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+        });
+
+        noviKorisnikDTO.setDatumRodjenja(708040800000L);
+        korisnik.setDatumRodjenja(708040800000L);
+
+        korisnik.setJmbg(String.valueOf(805992793457L));
+        noviKorisnikDTO.setJmbg(String.valueOf(905992793457L));
+//        given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
+
+        assertThrows(Exception.class, () -> {
+            korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+        });
+//
+        korisnik.setJmbg(String.valueOf(905993793457L));
+        noviKorisnikDTO.setJmbg(String.valueOf(805993793457L));
+        assertThrows(Exception.class, () -> {
+            korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+        });
+
+        korisnik.setJmbg(String.valueOf(906993793457L));
+        noviKorisnikDTO.setJmbg(String.valueOf(806993793457L));
+        assertThrows(Exception.class, () -> {
+            korisnikServis.kreirajNovogKorisnika(noviKorisnikDTO);
+        });
+    }
+
 //    @Test
 //    public void testRegistrujNovogKorisnika(){
 //
@@ -544,6 +592,59 @@ public class KorisnikServisUnitTests {
 
         assertThrows(Exception.class, () -> {
             korisnikServis.kreirajNovogRadnika(noviRadnikDTO, -1L);
+        });
+    }
+
+    @Test
+    public void testKreirajNovogRadnikaLosDatumRodjenja2(){
+
+        NoviRadnikDTO noviRadnikDTO = createMockNoviRadnikDTO();
+
+        Radnik radnik = createMockRadnik();
+
+        noviRadnikDTO.setDatumRodjenja(708532400000L);
+        radnik.setDatumRodjenja(708532400000L);
+
+        noviRadnikDTO.setJmbg(String.valueOf(1305992793457L));
+        radnik.setJmbg(String.valueOf(1305992793457L));
+        given(radnikMapper.noviRadnikDtoToRadnik(noviRadnikDTO,-1L)).willReturn(radnik);
+        assertThrows(JMBGDateMismatchException.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO,-1L);
+        });
+
+        noviRadnikDTO.setJmbg(String.valueOf(1405992793457L));
+        radnik.setJmbg(String.valueOf(1405992793457L));
+        assertThrows(JMBGDateMismatchException.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO,-1L);
+        });
+
+        noviRadnikDTO.setJmbg(String.valueOf(1406993793457L));
+        radnik.setJmbg(String.valueOf(1406993793457L));
+        assertThrows(JMBGDateMismatchException.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO,-1L);
+        });
+
+        noviRadnikDTO.setDatumRodjenja(708040800000L);
+        radnik.setDatumRodjenja(708040800000L);
+
+        radnik.setJmbg(String.valueOf(805992793457L));
+        noviRadnikDTO.setJmbg(String.valueOf(905992793457L));
+//        given(korisnikMapper.noviKorisnikDtoToKorisnik(noviKorisnikDTO)).willReturn(korisnik);
+
+        assertThrows(JMBGDateMismatchException.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO,-1L);
+        });
+//
+        radnik.setJmbg(String.valueOf(905993793457L));
+        noviRadnikDTO.setJmbg(String.valueOf(805993793457L));
+        assertThrows(JMBGDateMismatchException.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO,-1L);
+        });
+
+        radnik.setJmbg(String.valueOf(906993793457L));
+        noviRadnikDTO.setJmbg(String.valueOf(806993793457L));
+        assertThrows(JMBGDateMismatchException.class, () -> {
+            korisnikServis.kreirajNovogRadnika(noviRadnikDTO,-1L);
         });
     }
 

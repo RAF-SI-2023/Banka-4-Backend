@@ -147,21 +147,21 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Korisnik> korisnik = korisnikRepository.findById(izmenaKorisnikaDTO.getId());
 
         if (korisnik.isPresent()) {
-            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
-            if (korisnik.get().getJmbg().toString().length() == 12) {
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 1)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(1, 3)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(3, 6))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
-            else{
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 2)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2, 4)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4, 7))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
+//            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+//            if (korisnik.get().getJmbg().toString().length() == 12) {
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 1)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(1, 3)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(3, 6))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
+//            else{
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 2)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2, 4)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4, 7))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
 
             if(izmenaKorisnikaDTO.getPrezime()!=null && !izmenaKorisnikaDTO.getPrezime().equals(""))
                 korisnik.get().setPrezime(izmenaKorisnikaDTO.getPrezime());
@@ -191,21 +191,21 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Radnik> radnik = radnikRepository.findById(izmenaRadnikaDTO.getId());
 
         if (radnik.isPresent()) {
-            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
-            if (radnik.get().getJmbg().toString().length() == 12) {
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 1)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(1, 3)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(3, 6))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
-            else{
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 2)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2, 4)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(4, 7))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
+//            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+//            if (radnik.get().getJmbg().toString().length() == 12) {
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 1)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(1, 3)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(3, 6))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
+//            else{
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 2)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2, 4)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(4, 7))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
 
             if(izmenaRadnikaDTO.getPrezime()!=null && !izmenaRadnikaDTO.getPrezime().equals(""))
                 radnik.get().setPrezime(izmenaRadnikaDTO.getPrezime());
