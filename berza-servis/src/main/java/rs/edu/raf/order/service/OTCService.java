@@ -27,6 +27,7 @@ public interface OTCService {
      * @return List of otc's a user or firm should accept or decline.
      */
     List<OTCOfferDTO> getAllPendingOTC(Long id);
+    List<OTCOfferDTO> getAllPendingOTCForBank();
 
     /**
      * Accept or decline a pending otc offer.
