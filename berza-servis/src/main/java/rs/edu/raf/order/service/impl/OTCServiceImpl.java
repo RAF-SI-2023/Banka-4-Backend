@@ -44,14 +44,23 @@ public class OTCServiceImpl implements OTCService {
                 if (otc.getSellerId().equals(id) && !otc.getSellerApproval()) {
                     // We're the seller and haven't confirmed the otc offer.
                     pendingOTC.add(otcMapper.otcToOtcOfferDto(otc));
-                } else if (otc.getSellerId().equals(-1L) && !otc.getBanksApproval()) {
-                    // We're the bank and haven't confirmed the otc offer.
-                    pendingOTC.add(otcMapper.otcToOtcOfferDto(otc));
                 }
             }
         }
 
         return pendingOTC;
+    }
+
+    @Override
+    public List<OTCOfferDTO> getAllPendingOTCForBank() {
+        List<OTCOfferDTO> otcs = new ArrayList<>();
+
+        for(OTC otc: otcRepository.findAll()) {
+            if(otc.getBuyerId() != null && otc.getSellerId() != -1L && !otc.getBanksApproval()) {
+                otcs.add(otcMapper.otcToOtcOfferDto(otc));
+            }
+        }
+        return otcs;
     }
 
     @Override
