@@ -116,6 +116,7 @@ public class OTCServiceImpl implements OTCService {
             // Add money to seller and subtract from buyer
 
         }
+        else otcRepository.save(otcOffer);
     }
 
     @Override
