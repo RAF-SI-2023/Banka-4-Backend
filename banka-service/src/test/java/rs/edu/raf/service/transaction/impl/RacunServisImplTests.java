@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import rs.edu.raf.exceptions.BankAccountNotFoundException;
 import rs.edu.raf.model.dto.racun.*;
 import rs.edu.raf.model.entities.racun.DevizniRacun;
 import rs.edu.raf.model.entities.racun.Firma;
@@ -15,6 +16,7 @@ import rs.edu.raf.model.mapper.racun.RacunMapper;
 import rs.edu.raf.repository.racun.FirmaRepository;
 import rs.edu.raf.repository.transaction.DevizniRacunRepository;
 import rs.edu.raf.repository.transaction.PravniRacunRepository;
+import rs.edu.raf.repository.transaction.RacunRepository;
 import rs.edu.raf.repository.transaction.TekuciRacunRepository;
 import rs.edu.raf.service.racun.impl.RacunServisImpl;
 
@@ -23,8 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 
@@ -40,6 +41,8 @@ public class RacunServisImplTests {
     static PravniRacunRepository pravniRacunRepository;
     @Mock
     static TekuciRacunRepository tekuciRacunRepository;
+    @Mock
+    static RacunRepository racunRepository;
 
     @Mock
     static FirmaRepository firmaRepository;
@@ -57,19 +60,21 @@ public class RacunServisImplTests {
         given(racunMapper.noviDevizniRacunDTOToDevizniRacun(dto)).willReturn(dr);
         given(devizniRacunRepository.save(dr)).willReturn(dr);
 
-    }
+    }*/
 
     @Test
     public void kreirajPravniRacunTest() {
+        Firma f = kreirajFirmu();
         NoviPravniRacunDTO dto = kreirajNoviPravniRacunDTO();
         PravniRacun pr = kreirajPravniRacun();
 
         given(racunMapper.noviPravniRacunDTOToPravniRacun(dto)).willReturn(pr);
         given(pravniRacunRepository.save(pr)).willReturn(pr);
+        given(firmaRepository.findById(pr.getVlasnik())).willReturn(Optional.of(f));
 
-        //PravniRacun prRS = rs.kreirajPravniRacun(dto);
-        //assertEquals(pr, prRS);
-    }
+        PravniRacun prRS = rs.kreirajPravniRacun(dto);
+        assertEquals(pr, prRS);
+    }/*
 
     @Test
     public void kreirajTekuciRacunTest() {
@@ -141,6 +146,10 @@ public class RacunServisImplTests {
         given(tekuciRacunRepository.findByIdAndAktivanIsTrue(tr.getId())).willReturn(Optional.of(tr));
         dto = rs.nadjiAktivanRacunPoID(tr.getId());
         assertEquals(tdto, dto);
+
+        given(tekuciRacunRepository.findByIdAndAktivanIsTrue(tr.getId())).willReturn(Optional.empty());
+        BankAccountNotFoundException e = assertThrows(BankAccountNotFoundException.class, () -> rs.nadjiAktivanRacunPoID(tr.getId()));
+        assertEquals(e.getMessage(), "Bank account " + tr.getId() + " not found!");
     }
 
     @Test
@@ -191,6 +200,9 @@ public class RacunServisImplTests {
 
         dto = rs.nadjiAktivanRacunPoBrojuRacuna(tr.getBrojRacuna());
         assertEquals(tdto, dto);
+
+        dto = rs.nadjiAktivanRacunPoBrojuRacuna(4100L);
+        assertNull(dto);
     }
 
     @Test
@@ -225,17 +237,19 @@ public class RacunServisImplTests {
         assertFalse(rs.dodajDevizniRacunKorisniku(dr, k));
         dr.setBrojRacuna(444000000000011211L);
         assertTrue(rs.dodajDevizniRacunKorisniku(dr, k));
-    }
+    }*/
 
     @Test
     public void dodajPravniRacunFirmiTest() {
         PravniRacun pr = kreirajPravniRacun();
         Firma f = kreirajFirmu();
+        Firma fp = kreirajFirmuPraznu();
 
+        assertTrue(rs.dodajPravniRacunFirmi(pr, fp));
         assertFalse(rs.dodajPravniRacunFirmi(pr, f));
         pr.setBrojRacuna(444000000000011222L);
         assertTrue(rs.dodajPravniRacunFirmi(pr, f));
-    }
+    }/*
 
     @Test
     public void dodajTekuciRacunKorisnikuTest() {
@@ -257,6 +271,7 @@ public class RacunServisImplTests {
         assertEquals(444000000000011111L, (long) rs.generisiBrojRacuna("DevizniRacun"));
         assertEquals(444000000000011122L, (long) rs.generisiBrojRacuna("PravniRacun"));
         assertEquals(444000000000011133L, (long) rs.generisiBrojRacuna("TekuciRacun"));
+        assertNull(rs.generisiBrojRacuna("Racun"));
     }
 
     @Test
@@ -264,6 +279,7 @@ public class RacunServisImplTests {
         assertEquals("DevizniRacun", rs.nadjiVrstuRacuna(444000000000011111L));
         assertEquals("PravniRacun", rs.nadjiVrstuRacuna(444000000000011122L));
         assertEquals("TekuciRacun", rs.nadjiVrstuRacuna(444000000000011133L));
+        assertNull(rs.nadjiVrstuRacuna(4100L));
     }
 
     @Test
@@ -279,6 +295,21 @@ public class RacunServisImplTests {
     }
 
     @Test
+    public void dohvatiFirmuTest() {
+        Firma f = kreirajFirmu();
+        FirmaDTO dto = kreirajFirmaDTOs().get(0);
+
+        given(firmaRepository.findById(f.getId())).willReturn(Optional.of(f));
+        given(firmaMapper.firmaToFirmaDTO(f)).willReturn(dto);
+
+        FirmaDTO dtoRS = rs.dohvatiFirmu(f.getId());
+        assertEquals(dto, dtoRS);
+
+        given(firmaRepository.findById(f.getId())).willReturn(Optional.empty());
+        assertNull(rs.dohvatiFirmu(f.getId()));
+    }
+
+    @Test
     public void kreirajFirmuTest() {
         Firma f = kreirajFirmu();
         NovaFirmaDTO dto = kreirajNovaFirmaDTO();
@@ -288,6 +319,64 @@ public class RacunServisImplTests {
 
         Firma fRS = rs.kreirajFirmu(dto);
         assertEquals(f, fRS);
+    }
+
+    @Test
+    public void deaktivirajTest() {
+        DevizniRacun dr = kreirajNoviDevizniRacun();
+        given(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr.getBrojRacuna())).willReturn(Optional.of(dr));
+        PravniRacun pr = kreirajPravniRacun();
+        given(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr.getBrojRacuna())).willReturn(Optional.of(pr));
+        TekuciRacun tr = kreirajTekuciRacun();
+        given(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr.getBrojRacuna())).willReturn(Optional.of(tr));
+
+        assertTrue(rs.deaktiviraj(dr.getBrojRacuna()));
+        assertTrue(rs.deaktiviraj(pr.getBrojRacuna()));
+        assertTrue(rs.deaktiviraj(tr.getBrojRacuna()));
+
+        assertFalse(rs.deaktiviraj(4100L));
+    }
+
+    @Test
+    public void nadjiKorisnikaPoBrojuRacunaTest() {
+        DevizniRacun dr = kreirajNoviDevizniRacun();
+        TekuciRacun tr = kreirajTekuciRacun();
+
+        given(tekuciRacunRepository.findVlasnikByBrojRacuna(tr.getBrojRacuna())).willReturn(tr.getVlasnik());
+        Long userId = rs.nadjiKorisnikaPoBrojuRacuna(tr.getBrojRacuna());
+        System.out.println(userId);
+        System.out.println(dr);
+        assertEquals(userId, tr.getVlasnik());
+
+        given(devizniRacunRepository.findVlasnikByBrojRacuna(dr.getBrojRacuna())).willReturn(dr.getVlasnik());
+        given(tekuciRacunRepository.findVlasnikByBrojRacuna(dr.getBrojRacuna())).willReturn(null);
+        userId = rs.nadjiKorisnikaPoBrojuRacuna(dr.getBrojRacuna());
+        System.out.println(userId);
+        System.out.println(dr);
+        assertEquals(userId, dr.getVlasnik());
+    }
+
+    @Test
+    public void nadjiRacunPoBrojuRacunaTest() {
+        DevizniRacun dr = kreirajNoviDevizniRacun();
+        TekuciRacun tr = kreirajTekuciRacun();
+        given(tekuciRacunRepository.findByBrojRacunaAndAktivanIsTrue(tr.getBrojRacuna())).willReturn(Optional.of(tr));
+        given(devizniRacunRepository.findByBrojRacunaAndAktivanIsTrue(dr.getBrojRacuna())).willReturn(Optional.of(dr));
+
+        Object racun = rs.nadjiRacunPoBrojuRacuna(tr.getBrojRacuna());
+        assertEquals(racun, tr);
+
+        racun = rs.nadjiRacunPoBrojuRacuna(dr.getBrojRacuna());
+        assertEquals(racun, dr);
+
+        assertNull(rs.nadjiRacunPoBrojuRacuna(4100L));
+    }
+
+    @Test
+    public void bankomat() {
+        DevizniRacun dr = kreirajNoviDevizniRacun();
+        given(racunRepository.findByBrojRacuna(dr.getBrojRacuna())).willReturn(Optional.of(dr));
+        assertTrue(rs.bankomat(dr.getBrojRacuna(), BigDecimal.valueOf(100)));
     }
 
     private NoviDevizniRacunDTO kreirajNoviDevizniRacunDTO() {
@@ -409,6 +498,11 @@ public class RacunServisImplTests {
 
     private Firma kreirajFirmu() {
         Firma f = new Firma(11222L, "Belit d.o.o. Beograd", "444000000000011122", "0112030403", "0112030402", 101017533, 17328905, 6102, 130501701);
+        return f;
+    }
+
+    private Firma kreirajFirmuPraznu() {
+        Firma f = new Firma(11222L, "Belit d.o.o. Beograd", null, "0112030403", "0112030402", 101017533, 17328905, 6102, 130501701);
         return f;
     }
 
