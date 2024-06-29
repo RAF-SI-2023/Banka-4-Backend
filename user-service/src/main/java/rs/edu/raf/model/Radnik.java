@@ -27,6 +27,8 @@ public class Radnik implements UserDetails {
 
     private Long datumRodjenja;
 
+    private BigDecimal profit;
+
     private String pol;
     @Column(unique=true)
     private String email;

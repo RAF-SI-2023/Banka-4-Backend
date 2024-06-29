@@ -9,7 +9,6 @@ import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.dto.PairDTO;
 import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.Enums.Action;
-import rs.edu.raf.order.model.Enums.Status;
 import rs.edu.raf.order.model.Enums.Type;
 import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.repository.OrderRepository;
@@ -54,24 +53,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto acceptOrder(Long orderId) {
+    public OrderDto acceptOrder(Long orderId, String token) {
         OrderDto result = null;
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
             if (order.getStatus().equals("PENDING")) {
                 order.setStatus("ACCEPTED");
-                if (order.getAction().equals(Action.BUY)) placeBuyOrder(order);
-                else placeSellOrder(order);
+                if (order.getAction().equals(Action.BUY)) placeBuyOrder(order, token);
+                else placeSellOrder(order, token);
                 result = OrderMapper.toDto(orderRepository.save(order));
             }
         }
         return result;
     }
 
-    private OrderDto placeBuyOrder(Order buyOrder) {
+    private OrderDto placeBuyOrder(Order buyOrder, String token) {
         orderRepository.save(buyOrder);
-        checkStopOrderAndStopLimitOrder();
+        checkStopOrderAndStopLimitOrder(token);
 
         if (buyOrder.getType().equals(Type.MARKET_ORDER) || buyOrder.getType().equals(Type.LIMIT_ORDER)) {
 
@@ -110,14 +109,14 @@ public class OrderServiceImpl implements OrderService {
 
             // future margin order check
 
-            modifyUserBalance(buyOrder.getUserId(), totalValueChange.negate());
+            modifyUserBalance(buyOrder.getUserId(), totalValueChange.negate(), buyOrder.getRadnikId(), token);
             int totalQuantitySold = 0;
 
             for (Map.Entry<Order, Integer> entry : matchedSellOrders.entrySet()) {
                 Order sellOrder = entry.getKey();
                 Integer quantitySold = entry.getValue();
 
-                modifyUserBalance(sellOrder.getUserId(), sellOrder.getLimit().multiply(new BigDecimal(quantitySold)));
+                modifyUserBalance(sellOrder.getUserId(), sellOrder.getLimit().multiply(new BigDecimal(quantitySold)), sellOrder.getRadnikId(), token);
 
                 totalQuantitySold += quantitySold;
             }
@@ -140,9 +139,9 @@ public class OrderServiceImpl implements OrderService {
         return OrderMapper.toDto(buyOrder);
     }
 
-    private OrderDto placeSellOrder(Order sellOrder) {
+    private OrderDto placeSellOrder(Order sellOrder, String token) {
         orderRepository.save(sellOrder);
-        checkStopOrderAndStopLimitOrder();
+        checkStopOrderAndStopLimitOrder(token);
 
         UserStockRequest userStockRequest = new UserStockRequest();
         userStockRequest.setUserId(sellOrder.getUserId());
@@ -183,14 +182,14 @@ public class OrderServiceImpl implements OrderService {
 
             // future margin order check
 
-            modifyUserBalance(sellOrder.getUserId(), totalValueChange);
+            modifyUserBalance(sellOrder.getUserId(), totalValueChange, sellOrder.getRadnikId(), token);
 
             for (Map.Entry<Order, Integer> entry : matchedBuyOrders.entrySet()) {
                 Order buyOrder = entry.getKey();
                 Integer quantityBought = entry.getValue();
 
                 // Modify buyer's balance
-                modifyUserBalance(buyOrder.getUserId(), buyOrder.getLimit().multiply(new BigDecimal(quantityBought)).negate());
+                modifyUserBalance(buyOrder.getUserId(), buyOrder.getLimit().multiply(new BigDecimal(quantityBought)).negate(), buyOrder.getRadnikId(), token);
 
                 // Modify buyer's stock quantity
                 UserStockRequest userStockRequestBuyer = new UserStockRequest();
@@ -260,7 +259,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByUserId(userId);
     }
 
-    private void checkStopOrderAndStopLimitOrder() {
+    private void checkStopOrderAndStopLimitOrder(String token) {
         List<Order> allOrders = orderRepository.findAll();
         for (Order order : allOrders) {
             if (order.getType().equals(Type.STOP_ORDER)) {
@@ -268,13 +267,13 @@ public class OrderServiceImpl implements OrderService {
                     List<Order> sellOrders = findAllSellOrdersForTicker(order.getTicker());
                     if (!sellOrders.isEmpty() && sellOrders.get(0).getLimit().compareTo(order.getStop()) >= 0) {
                         order.setType(Type.MARKET_ORDER);
-                        placeBuyOrder(order);
+                        placeBuyOrder(order, token);
                     }
                 } else if (order.getAction().equals(Action.SELL)) {
                     List<Order> buyOrders = findAllBuyOrdersForTicker(order.getTicker());
                     if (!buyOrders.isEmpty() && buyOrders.get(0).getLimit().compareTo(order.getStop()) <= 0) {
                         order.setType(Type.MARKET_ORDER);
-                        placeSellOrder(order);
+                        placeSellOrder(order, token);
                     }
                 }
             } else if (order.getType().equals(Type.STOP_LIMIT_ORDER)) {
@@ -282,13 +281,13 @@ public class OrderServiceImpl implements OrderService {
                     List<Order> sellOrders = findAllSellOrdersForTicker(order.getTicker());
                     if (!sellOrders.isEmpty() && sellOrders.get(0).getLimit().compareTo(order.getStop()) >= 0) {
                         order.setType(Type.LIMIT_ORDER);
-                        placeBuyOrder(order);
+                        placeBuyOrder(order, token);
                     }
                 } else if (order.getAction().equals(Action.SELL)) {
                     List<Order> buyOrders = findAllBuyOrdersForTicker(order.getTicker());
                     if (!buyOrders.isEmpty() && buyOrders.get(0).getLimit().compareTo(order.getStop()) <= 0) {
                         order.setType(Type.LIMIT_ORDER);
-                        placeSellOrder(order);
+                        placeSellOrder(order, token);
                     }
                 }
             }
@@ -311,7 +310,7 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
-    private void modifyUserBalance(Long userId, BigDecimal valueChange) {
+    private void modifyUserBalance(Long userId, BigDecimal valueChange, Long radnikId, String token) {
 
         String marzniRacunUpdateFundsEndpoint = "localhost:8082/api/marzniRacuni/updateBalance";
         Gson gson = new Gson();
@@ -324,11 +323,28 @@ public class OrderServiceImpl implements OrderService {
         HttpRequest stocksRequest = HttpRequest.newBuilder()
                 .uri(URI.create(marzniRacunUpdateFundsEndpoint))
                 .header("Content-Type", "application/json")
+                .header("Authorization", token)
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(pair)))
                 .build();
 
+        if (radnikId != null) {
+            String getRadnikByIdEndpoint = "https://banka-4-dev.si.raf.edu.rs/user-service/api/radnik/profit/" + radnikId + "/" + valueChange;
+            HttpRequest radnikRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(getRadnikByIdEndpoint))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", token)
+                    .PUT(HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            try {
+                client.send(radnikRequest, HttpResponse.BodyHandlers.ofString());
+            } catch (Exception e) {
+                System.out.println("Failed to send balance update to MarniRacunController: " + e);
+            }
+        }
+
         try {
-            HttpResponse<String> stocksResponse = client.send(stocksRequest, HttpResponse.BodyHandlers.ofString());
+            client.send(stocksRequest, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
             System.out.println("Failed to send balance update to MarniRacunController: " + e);
         }
