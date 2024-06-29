@@ -134,4 +134,6 @@ public interface KorisnikServis {
     boolean addAccountToUser(Long userId, Long accountNumber);
     RadnikDTO resetLimit(Long radnikId, Long id);
     void updateDailySpent(Long id, BigDecimal price);
+
+    void updateProfit(Long id, BigDecimal price);
 }

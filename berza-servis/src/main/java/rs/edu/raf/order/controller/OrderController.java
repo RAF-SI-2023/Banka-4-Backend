@@ -73,6 +73,7 @@ public class OrderController {
         }
 
         order.setUserId(radnikDTO.getFirmaId());
+        order.setRadnikId(radnikDTO.getId());
 
         return new ResponseEntity<>(orderService.placeOrder(order), HttpStatus.OK);
     }
@@ -97,8 +98,8 @@ public class OrderController {
 
     @ApiOperation(value = "Accepts order.")
     @PostMapping("/approve/{orderId}")
-    public ResponseEntity<OrderDto> acceptOrder(@PathVariable Long orderId) {
-        return new ResponseEntity<>(orderService.acceptOrder(orderId), HttpStatus.OK);
+    public ResponseEntity<OrderDto> acceptOrder(@PathVariable Long orderId, @RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(orderService.acceptOrder(orderId, token), HttpStatus.OK);
     }
 
 }

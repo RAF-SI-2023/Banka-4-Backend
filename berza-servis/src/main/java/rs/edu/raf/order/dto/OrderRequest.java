@@ -9,6 +9,8 @@ public class OrderRequest {
 
     private Long userId;
 
+    private Long radnikId;
+
     private String ticker;
 
     private Integer quantity;

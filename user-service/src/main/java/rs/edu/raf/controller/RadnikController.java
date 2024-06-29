@@ -80,7 +80,10 @@ public class RadnikController {
         korisnikServis.updateDailySpent(id,price);
     }
 
-
+    @PutMapping("/profit/{id}/{price}")
+    public void updateProfit(@PathVariable("id") Long id, @PathVariable("price")BigDecimal price) {
+        korisnikServis.updateProfit(id,price);
+    }
 
 }
 
