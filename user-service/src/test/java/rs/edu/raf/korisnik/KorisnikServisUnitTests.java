@@ -1,5 +1,6 @@
 package rs.edu.raf.korisnik;
 
+import io.cucumber.java.sl.Ko;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -685,6 +686,136 @@ public class KorisnikServisUnitTests {
         } catch (Exception e){
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void testIzmeniKorisnikaNePostoji(){
+        IzmenaKorisnikaDTO izmenaKorisnikaDTO = createMockIzmenaKorisnikDTO();
+
+        when(korisnikRepository.findById(izmenaKorisnikaDTO.getId())).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, ()-> korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO));
+    }
+
+    @Test
+    public void testIzmeniKorisnikaNulls(){
+        IzmenaKorisnikaDTO izmenaKorisnikaDTO = new IzmenaKorisnikaDTO();
+        Korisnik korisnik = createMockKorisnik();
+        Korisnik spy = spy(korisnik);
+        Optional<Korisnik> k = Optional.of(spy);
+
+        when(korisnikRepository.findById(izmenaKorisnikaDTO.getId())).thenReturn(k);
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPrezime(anyString());
+
+        izmenaKorisnikaDTO.setPrezime("");
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPrezime(anyString());
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPol(anyString());
+
+        izmenaKorisnikaDTO.setPol("");
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPol(anyString());
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setEmail(anyString());
+
+        izmenaKorisnikaDTO.setEmail("");
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setEmail(anyString());
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setBrojTelefona(anyString());
+
+        izmenaKorisnikaDTO.setBrojTelefona("");
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setBrojTelefona(anyString());
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setAdresa(anyString());
+
+        izmenaKorisnikaDTO.setAdresa("");
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setAdresa(anyString());
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPassword(anyString());
+
+        izmenaKorisnikaDTO.setPassword("");
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPassword(anyString());
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPovezaniRacuni(anyString());
+
+        izmenaKorisnikaDTO.setPovezaniRacuni("");
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setPovezaniRacuni(anyString());
+
+        korisnikServis.izmeniKorisnika(izmenaKorisnikaDTO);
+        verify(k.get(),never()).setAktivan(anyBoolean());
+    }
+
+    @Test
+    public void testIzmeniRadnikaNePostoji(){
+        IzmenaRadnikaDTO izmenaRadnikaDTO = createMockIzmenaRadnikDTO();
+
+        when(radnikRepository.findById(izmenaRadnikaDTO.getId())).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, ()-> korisnikServis.izmeniRadnika(izmenaRadnikaDTO));
+    }
+
+    @Test
+    public void testIzmeniRadnikaNulls(){
+        IzmenaRadnikaDTO izmenaRadnikaDTO = new IzmenaRadnikaDTO();
+        Radnik radnik = createMockRadnik();
+        Radnik spy = spy(radnik);
+        Optional<Radnik> k = Optional.of(spy);
+        izmenaRadnikaDTO.setAktivan(true);
+
+        when(radnikRepository.findById(izmenaRadnikaDTO.getId())).thenReturn(k);
+
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setPrezime(anyString());
+
+        izmenaRadnikaDTO.setPrezime("");
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setPrezime(anyString());
+
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setPol(anyString());
+
+        izmenaRadnikaDTO.setPol("");
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setPol(anyString());
+
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setBrojTelefona(anyString());
+
+        izmenaRadnikaDTO.setBrojTelefona("");
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setBrojTelefona(anyString());
+
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setDepartman(anyString());
+
+        izmenaRadnikaDTO.setDepartman("");
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setDepartman(anyString());
+
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setAdresa(anyString());
+
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setPassword(anyString());
+
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setPermisije(anyLong());
+
+        izmenaRadnikaDTO.setPassword("");
+        korisnikServis.izmeniRadnika(izmenaRadnikaDTO);
+        verify(k.get(),never()).setPassword(anyString());
     }
 
     @Test

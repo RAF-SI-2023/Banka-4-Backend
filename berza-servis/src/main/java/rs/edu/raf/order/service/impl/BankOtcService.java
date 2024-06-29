@@ -6,6 +6,9 @@ import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
+import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.order.dto.banka3.FrontendOfferDto;
 import rs.edu.raf.order.dto.banka3.MyOfferDto;
 import rs.edu.raf.order.dto.banka3.MyStockDto;
@@ -34,6 +37,7 @@ public class BankOtcService {
 
     //GET: /getOurStocks
     //dohvatamo sve Stocks koje mi nudimo
+    @GeneratedCrudOperation
     public List<MyStockDto> findAllStocks(){
         List<UserStock> myStocks = myStockRepository.findAllByUserId(-1L);
         List<MyStockDto> dtos = new ArrayList<>();
@@ -48,6 +52,7 @@ public class BankOtcService {
 
     //POST: /sendOffer/bank
     //primamo ponude od drugih banaka
+    @GeneratedCrudOperation
     public Offer receiveOffer(OfferDto offerDto){
         Offer offer = new Offer();
         offer.setTicker(offerDto.getTicker());
@@ -70,6 +75,7 @@ public class BankOtcService {
 
     //POST: /offerAccepted/bank/{id}
     //stize poruka da su nam prihvatili ponudu
+    @GeneratedCrudOperation
     public boolean offerAccepted(Long id){
         Optional<MyOffer> myOfferOptional = myOfferRepository.findById(id);
 
@@ -108,6 +114,7 @@ public class BankOtcService {
 
     //POST: /offerDeclined/bank/{id}
     //stize poruka da su nam odbili ponudu
+    @GeneratedCrudOperation
     public boolean offerDeclined(Long id){
         Optional<MyOffer> myOfferOptional = myOfferRepository.findById(id);
         if(myOfferOptional.isPresent()){
@@ -124,29 +131,34 @@ public class BankOtcService {
 
     //GET: /getBanksStocks
     //dohvatamo sve Stocks od drugih banaka
+    @GeneratedCrudOperation
     public List<BankOTCStock> getAllStocksForBanks(){
         return bankOTCStockRepository.findAll();
     }
 
     //GET: /getOffers
     //pohvatamo sve ponude koje su nam stigle
+    @GeneratedCrudOperation
     public List<Offer> findAllOffers(){
         return offerRepository.findAll();
     }
 
     //GET: /getOurOffers
     //dohvatamo sve ponude koje smo mi poslali
+    @GeneratedCrudOperation
     public List<MyOffer> getMyOffers(){
         return myOfferRepository.findAll();
     }
 
     //PUT: /refresh
     //pozivi ka banci 3
+    @GeneratedCrudOperation
     public void getBankStocks(){
         bankOTCStockRepository.deleteAll();
         getStocksFromBank3();
     }
 
+    @GeneratedOnlyIntegrationTestable
     private void getStocksFromBank3(){
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -178,6 +190,7 @@ public class BankOtcService {
 
     //POST: /makeOffer
     //sa frontenda nam stize ponuda koju treba proslediti
+    @GeneratedOnlyIntegrationTestable
     public boolean makeOffer(FrontendOfferDto frontendOfferDto){
         MyOffer myOffer = new MyOffer();
         myOffer.setTicker(frontendOfferDto.getTicker());
@@ -221,6 +234,7 @@ public class BankOtcService {
 
     //POST: /acceptOffer/{id}
     //kad mi prihvatamo njihovu ponudu
+    @GeneratedCrudOperation
     public boolean acceptOffer(Long id){
         Optional<Offer> offer = offerRepository.findById(id);
         if(offer.isPresent()){
@@ -245,6 +259,7 @@ public class BankOtcService {
 
     //POST: /declineOffer/{id}
     //kad mi odbijemo njihovu ponudu
+    @GeneratedCrudOperation
     public boolean declineOffer(Long id){
         Optional<Offer> offer = offerRepository.findById(id);
         if(offer.isPresent()){
@@ -260,6 +275,7 @@ public class BankOtcService {
 
     //DELETE: /deleteMyOffer/id
     //kada treba neka nasu ponuda da obrisemo iz baze
+    @GeneratedCrudOperation
     public boolean deleteMyOffer(Long id){
         Optional<MyOffer> myOfferOptional = myOfferRepository.findById(id);
         if(myOfferOptional.isPresent()) {
@@ -273,6 +289,7 @@ public class BankOtcService {
 
     //DELETE: /deleteOffer/id
     //kada treba neka tudju ponuda da obrisemo iz baze
+    @GeneratedCrudOperation
     public boolean deleteOffer(Long id){
         Optional<Offer> offerOptional = offerRepository.findById(id);
         if(offerOptional.isPresent()) {
@@ -285,6 +302,7 @@ public class BankOtcService {
     }
 
     @Scheduled(fixedRate = 10000)
+    @GeneratedScheduledOperation
     private void sendAcceptedOffers() {
         List<Offer> offers = offerRepository.findAllByOfferStatus(OfferStatus.ACCEPTED);
         if (!offers.isEmpty()) {
@@ -313,6 +331,7 @@ public class BankOtcService {
     }
 
     @Scheduled(fixedRate = 10000)
+    @GeneratedScheduledOperation
     private void sendDeclinedOffers(){
         List<Offer> offers = offerRepository.findAllByOfferStatus(OfferStatus.DECLINED);
         if(!offers.isEmpty()){

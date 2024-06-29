@@ -10,6 +10,7 @@ import rs.edu.raf.order.repository.UserStockRepository;
 import rs.edu.raf.order.service.UserStockService;
 import rs.edu.raf.order.service.mapper.UserStockMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -32,6 +33,8 @@ public class UserStockServiceImpl implements UserStockService {
                 newUserStock.setUserId(userId);
                 newUserStock.setTicker(ticker);
                 newUserStock.setQuantity(quantity);
+                newUserStock.setCurrentAsk(new BigDecimal("1.0"));
+                newUserStock.setCurrentBid(new BigDecimal("1.0"));
                 userStockRepository.save(newUserStock);
             } else {
                 return false;
