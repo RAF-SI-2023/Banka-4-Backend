@@ -504,11 +504,11 @@ public class RacunSeeder implements CommandLineRunner {
                     "futureContractId NUMERIC;\n" +
                     "\n" +
                     "BEGIN\n" +
-                    "SELECT request_status,firma_id,settlement_date,kupac_id,price,racun_id,radnik_id,futures_contract_id\n" +
+                    "SELECT request_status,firma_id,settlement_date,kupac_id,price,fcr.racun_id,radnik_id,futures_contract_id\n" +
                     "INTO requestStatus,radnik_firma_id,settlementDate,kupac,contractPrice,racunId,radnikId,futureContractId\n" +
                     "FROM berza_schema.future_contract_request fcr JOIN berza_schema.futures_contract fc\n" +
                     "ON (fcr.futures_contract_id = fc.id)\n" +
-                    "WHERE fcr.futures_contract_id = contract_id\n" +
+                    "WHERE fcr.id = contract_id\n" +
                     "FOR UPDATE;\n" +
                     "\n" +
                     "SELECT raspolozivo_stanje INTO balance FROM banka_schema.racun\n" +

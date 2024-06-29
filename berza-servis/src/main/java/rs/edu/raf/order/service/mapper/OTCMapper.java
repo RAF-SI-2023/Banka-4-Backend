@@ -15,6 +15,7 @@ public class OTCMapper {
         otcDTO.setOtcId(otc.getId());
         otcDTO.setTicker(otc.getTicker());
         otcDTO.setQuantity(otc.getQuantity());
+        otcDTO.setSellerId(otc.getSellerId());
 
         return otcDTO;
     }

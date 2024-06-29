@@ -15,6 +15,7 @@ import rs.edu.raf.dto.IzmenaRadnikaDTO;
 import rs.edu.raf.dto.NoviRadnikDTO;
 import rs.edu.raf.dto.RadnikDTO;
 import rs.edu.raf.model.Radnik;
+import rs.edu.raf.repository.RadnikRepository;
 import rs.edu.raf.servis.KorisnikServis;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class RadnikController {
     private KorisnikServis korisnikServis;
+    private RadnikRepository radnikRepository;
 
     @PostMapping
     @Operation(description = "Dodaj novog radnika")
@@ -70,7 +72,9 @@ public class RadnikController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long id = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            id = ((Radnik) authentication.getPrincipal()).getFirmaId();
+            Radnik radnik = radnikRepository
+                    .findByEmailAndAktivanIsTrue(((UserDetails) authentication.getPrincipal()).getUsername()).orElseThrow();
+            id = radnik.getFirmaId();
         }
         return new ResponseEntity<>(korisnikServis.resetLimit(radnikId,id),HttpStatus.OK);
     }
