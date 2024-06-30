@@ -9,5 +9,4 @@ import java.util.List;
 @Repository
 public interface OTCRepository extends JpaRepository<OTC,Long> {
 
-    OTC findOTCBySellerIdAndTicker(Long SellerId, String ticker);
 }

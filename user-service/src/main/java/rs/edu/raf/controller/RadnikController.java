@@ -37,7 +37,9 @@ public class RadnikController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long id = null;
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            id = ((Radnik) authentication.getPrincipal()).getFirmaId();
+            Radnik radnik = radnikRepository
+                    .findByEmailAndAktivanIsTrue(((UserDetails) authentication.getPrincipal()).getUsername()).orElseThrow();
+            id = radnik.getFirmaId();
         }
         return new ResponseEntity<>(korisnikServis.kreirajNovogRadnika(noviRadnikDTO,id), HttpStatus.CREATED);
     }
