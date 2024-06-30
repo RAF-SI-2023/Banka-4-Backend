@@ -23,7 +23,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 
-@Data
 @AllArgsConstructor
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -83,6 +82,7 @@ public class OrderServiceImpl implements OrderService {
             Map<Order, Integer> matchedSellOrders = new HashMap<>();
 
             for (Order sellOrder : sellOrders) {
+                if (buyOrder.getId().equals(sellOrder.getId())) continue;
                 if (buyOrder.getQuantity() == 0 || (buyOrder.getType().equals(Type.LIMIT_ORDER) && buyOrder.getLimit().compareTo(sellOrder.getLimit()) <= 0)) break;
 
                 if (sellOrder.getQuantity() > buyOrder.getQuantity()) {
@@ -156,6 +156,7 @@ public class OrderServiceImpl implements OrderService {
             Map<Order, Integer> matchedBuyOrders = new HashMap<>();
 
             for (Order buyOrder : buyOrders) {
+                if (sellOrder.getId().equals(buyOrder.getId())) continue;
                 if (sellOrder.getQuantity() == 0 || (sellOrder.getType().equals(Type.LIMIT_ORDER) && sellOrder.getLimit().compareTo(buyOrder.getLimit()) >= 0)) break;
 
                 if (buyOrder.getQuantity() > sellOrder.getQuantity()) {
@@ -298,6 +299,7 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findAllBuyOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.BUY, ticker)
                 .stream()
+                .filter(order -> order.getStatus().equals("ACCEPTED"))
                 .sorted(Comparator.comparing(Order::getLimit).reversed())
                 .toList();
     }
@@ -306,13 +308,14 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findAllSellOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.SELL, ticker)
                 .stream()
+                .filter(order -> order.getStatus().equals("ACCEPTED"))
                 .sorted(Comparator.comparing(Order::getLimit))
                 .toList();
     }
 
     private void modifyUserBalance(Long userId, BigDecimal valueChange, Long radnikId, String token) {
 
-        String marzniRacunUpdateFundsEndpoint = "localhost:8082/api/marzniRacuni/updateBalance";
+        String marzniRacunUpdateFundsEndpoint = "http://localhost:8082/api/marzniRacuni/updateBalance";
         Gson gson = new Gson();
 
         PairDTO pair = new PairDTO();

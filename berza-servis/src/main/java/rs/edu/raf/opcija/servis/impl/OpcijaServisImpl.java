@@ -316,6 +316,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     }
 
     @Override
+    @GeneratedCrudOperation
     public Map<String, List<OpcijaDto>> findPutsAndCallsByStockTicker(String ticker) {
         Map<String, List<OpcijaDto>> resultMap = new HashMap<>();
         List<OpcijaDto> callsList = new ArrayList<>();
@@ -405,6 +406,7 @@ public class OpcijaServisImpl implements OpcijaServis {
 
 
     @Override
+    @GeneratedCrudOperation
     public Map<String, List<OpcijaDto>> findPutsAndCallsByStockTickerAndExpirationDate(String ticker, Date startOfDay, Date endOfDay) {
         Map<String, List<OpcijaDto>> resultMap = new HashMap<>();
         List<OpcijaDto> callsList = new ArrayList<>();
