@@ -296,6 +296,7 @@
                                <exclude>**/annotations/**</exclude>
                                <exclude>**/OptionYahooApiMap.class</exclude>
                                <exclude>**/GlobalQuoteApiMap.class</exclude>
+                               <exclude>**/PonudaServiceImpl.class</exclude>
                            </excludes>
                 </configuration>
             </plugin>
