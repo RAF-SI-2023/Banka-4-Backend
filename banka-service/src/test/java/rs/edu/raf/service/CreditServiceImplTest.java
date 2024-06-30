@@ -101,6 +101,20 @@ public class CreditServiceImplTest {
     }
 
     @Test
+    void approveCreditRequest_NotFound() {
+        Long id = 1L;
+
+        given(creditRequestRepository.findById(id)).willReturn(Optional.empty());
+
+        String result = creditService.approveCreditRequest(id);
+        String expected = "Ne postoji takav zahtev za kredit";
+
+        assertEquals(expected, result, "Expected message not returned");
+        verify(creditRequestRepository, times(1)).findById(id);
+        verify(creditService, times(0)).createCredit(any(CreditRequest.class), anyString(), anyString(), any(BigDecimal.class));
+    }
+
+    @Test
     void dennyCreditRequest() {
         Long id = 1L;
         CreditRequest creditRequest = new CreditRequest();
@@ -114,6 +128,19 @@ public class CreditServiceImplTest {
 
         verify(creditRequestRepository, times(1)).findById(id);
 
+    }
+
+    @Test
+    void dennyCreditRequest_NotFound() {
+        Long id = 1L;
+
+        given(creditRequestRepository.findById(id)).willReturn(Optional.empty());
+
+        String result = creditService.dennyCreditRequest(id);
+        String expected = "Ne postoji takav zahtev za kredit";
+
+        assertEquals(expected, result, "Expected message not returned");
+        verify(creditRequestRepository, times(1)).findById(id);
     }
 
     @Test
@@ -176,6 +203,21 @@ public class CreditServiceImplTest {
     }
 
     @Test
+    void createCredit_WithoutAccountType() {
+        CreditRequest creditRequest = new CreditRequest();
+        creditRequest.setId(1L);
+        creditRequest.setBankAccountNumber(123456789L);
+        creditRequest.setAmount(BigDecimal.valueOf(1000));
+        creditRequest.setType("housing");
+        creditRequest.setLoanTerm(12L);
+        creditRequest.setSalary(BigDecimal.valueOf(5000));
+
+        creditService.createCredit(creditRequest, null, "RSD", BigDecimal.valueOf(5000));
+        verify(creditRepository, times(0)).save(any(Credit.class));
+    }
+
+
+    @Test
     void getDetailedCredit() {
         Long creditRequestId = 1L;
         Credit credit = new Credit();
@@ -191,6 +233,33 @@ public class CreditServiceImplTest {
         verify(creditRepository, times(1)).findCreditByCreditRequestId(creditRequestId);
         verify(creditRequestMapper, times(1)).creditToDetailedCreditDto(credit);
 
-
     }
+
+    @Test
+    void deleteCreditRequest() {
+        Long creditRequestId = 1L;
+        CreditRequest creditRequest = new CreditRequest();
+
+        given(creditRequestRepository.findById(creditRequestId)).willReturn(Optional.of(creditRequest));
+        doNothing().when(creditRequestRepository).delete(creditRequest);
+
+        creditService.deleteCreditRequest(creditRequestId);
+
+        verify(creditRequestRepository, times(1)).findById(creditRequestId);
+        verify(creditRequestRepository, times(1)).delete(creditRequest);
+    }
+
+    @Test
+    void deleteCreditRequest_NotFound() {
+        Long creditRequestId = 1L;
+
+        given(creditRequestRepository.findById(creditRequestId)).willReturn(Optional.empty());
+
+        creditService.deleteCreditRequest(creditRequestId);
+
+        verify(creditRequestRepository, times(1)).findById(creditRequestId);
+        verify(creditRequestRepository, times(0)).delete(any(CreditRequest.class));
+    }
+
+
 }
