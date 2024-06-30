@@ -44,8 +44,8 @@ public class RacunMapperTests {
         NoviDevizniRacunDTO dto = new NoviDevizniRacunDTO();
         dto.setVlasnik(11111L);
         dto.setZaposleni(22222L);
-        dto.setCurrency(List.of("Srpski dinar", "Americki dolar"));
-        dto.setDefaultCurrency("Srpski dinar");
+        dto.setCurrency(List.of("RSD", "Americki dolar"));
+        dto.setDefaultCurrency("RSD");
         dto.setBrojDozvoljenihValuta(2);
 
         DevizniRacun dr = new DevizniRacun();
@@ -54,7 +54,7 @@ public class RacunMapperTests {
         dr.setStanje(new BigDecimal("0"));
         dr.setRaspolozivoStanje(new BigDecimal("0"));
         dr.setZaposleni(22222L);
-        dr.setCurrency("Srpski dinar,Americki dolar");
+        dr.setCurrency("RSD,Americki dolar");
         dr.setAktivan(true);
         dr.setKamatnaStopa(new BigDecimal("1"));
         dr.setOdrzavanjeRacuna(new BigDecimal("200"));
@@ -88,7 +88,7 @@ public class RacunMapperTests {
         pr.setStanje(new BigDecimal("0"));
         pr.setRaspolozivoStanje(new BigDecimal("0"));
         pr.setZaposleni(22222L);
-        pr.setCurrency("Srpski dinar");
+        pr.setCurrency("RSD");
         pr.setAktivan(true);
 
         given(prr.findTop1ByOrderByIdDesc()).willReturn(111L);
@@ -119,7 +119,7 @@ public class RacunMapperTests {
         tr.setStanje(new BigDecimal("0"));
         tr.setRaspolozivoStanje(new BigDecimal("0"));
         tr.setZaposleni(22222L);
-        tr.setCurrency("Srpski dinar");
+        tr.setCurrency("RSD");
         tr.setAktivan(true);
         tr.setVrstaRacuna("Studentski");
         tr.setOdrzavanjeRacuna(new BigDecimal("0"));
@@ -153,7 +153,7 @@ public class RacunMapperTests {
         dr.setZaposleni(22222L);
         dr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
         dr.setDatumIsteka(dr.getDatumKreiranja() + 5*1000L*31536000L);
-        dr.setCurrency("Srpski dinar,Americki dolar");
+        dr.setCurrency("RSD,Americki dolar");
         dr.setAktivan(true);
 
         RacunDTO dto = rm.devizniRacunToRacunDTO(dr);
@@ -181,7 +181,7 @@ public class RacunMapperTests {
         pr.setZaposleni(22222L);
         pr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
         pr.setDatumIsteka(pr.getDatumKreiranja() + 5*1000L*31536000L);
-        pr.setCurrency("Srpski dinar");
+        pr.setCurrency("RSD");
         pr.setAktivan(true);
 
         RacunDTO dto = rm.pravniRacunToRacunDTO(pr);
@@ -209,7 +209,7 @@ public class RacunMapperTests {
         tr.setZaposleni(22222L);
         tr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
         tr.setDatumIsteka(tr.getDatumKreiranja() + 5*1000L*31536000L);
-        tr.setCurrency("Srpski dinar");
+        tr.setCurrency("RSD");
         tr.setAktivan(true);
 
         RacunDTO dto = rm.tekuciRacunToRacunDTO(tr);
