@@ -331,7 +331,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         if (radnikId != null) {
-            String getRadnikByIdEndpoint = "https://banka-4-dev.si.raf.edu.rs/user-service/api/radnik/profit/" + radnikId + "/" + valueChange;
+            String getRadnikByIdEndpoint = "http://localhost:8080/api/radnik/profit/" + radnikId + "/" + valueChange;
             HttpRequest radnikRequest = HttpRequest.newBuilder()
                     .uri(URI.create(getRadnikByIdEndpoint))
                     .header("Content-Type", "application/json")

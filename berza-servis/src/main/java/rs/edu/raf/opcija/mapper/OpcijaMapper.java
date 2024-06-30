@@ -149,7 +149,7 @@ public class OpcijaMapper {
         KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcije = new KorisnikoveKupljeneOpcije();
         korisnikoveKupljeneOpcije.setOpcijaId(opcijaKorisnikaDto.getOpcijaId());
         korisnikoveKupljeneOpcije.setIskoriscena(false);
-        korisnikoveKupljeneOpcije.setAkcijaId(opcijaKorisnikaDto.getAkcijaId());
+        korisnikoveKupljeneOpcije.setTicker(opcijaKorisnikaDto.getTicker());
         korisnikoveKupljeneOpcije.setAkcijaTickerCenaPrilikomIskoriscenja(opcijaKorisnikaDto.getAkcijaTickerCenaPrilikomIskoriscenja());
         korisnikoveKupljeneOpcije.setKorisnikId(opcijaKorisnikaDto.getKorisnikId());
 
@@ -161,7 +161,7 @@ public class OpcijaMapper {
 
         OpcijaKorisnikaDto korisnikoveKupljeneOpcije = new OpcijaKorisnikaDto();
         korisnikoveKupljeneOpcije.setOpcijaId(opcijaKorisnikaDto.getOpcijaId());
-        korisnikoveKupljeneOpcije.setAkcijaId(opcijaKorisnikaDto.getAkcijaId());
+        korisnikoveKupljeneOpcije.setTicker(opcijaKorisnikaDto.getTicker());
         korisnikoveKupljeneOpcije.setAkcijaTickerCenaPrilikomIskoriscenja(opcijaKorisnikaDto.getAkcijaTickerCenaPrilikomIskoriscenja());
         korisnikoveKupljeneOpcije.setKorisnikId(opcijaKorisnikaDto.getKorisnikId());
 
