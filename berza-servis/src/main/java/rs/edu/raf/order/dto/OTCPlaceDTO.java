@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class OTCPlaceDTO {
     private Long userId;
-    private String ticker;
+    private Long stockId;
     @Positive
     private Integer quantity;
 }

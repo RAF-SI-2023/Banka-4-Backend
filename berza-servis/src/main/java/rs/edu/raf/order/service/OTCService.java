@@ -1,10 +1,7 @@
 package rs.edu.raf.order.service;
 
 
-import rs.edu.raf.order.dto.OTCDTO;
-import rs.edu.raf.order.dto.OTCOfferDTO;
-import rs.edu.raf.order.dto.OTCPlaceDTO;
-import rs.edu.raf.order.dto.OTCResolveDTO;
+import rs.edu.raf.order.dto.*;
 
 import java.util.List;
 
@@ -18,7 +15,7 @@ public interface OTCService {
      *
      * @return List of public otc dto's.
      */
-    List<OTCDTO> getAllPublicOTC();
+    List<PublicUserStockDto> getAllPublicOTC(Long id);
 
     /**
      * Returns all pending otc offers waiting for confirmation by the user or firm.
@@ -26,9 +23,9 @@ public interface OTCService {
      * @param id Users(my) id.
      * @return List of otc's a user or firm should accept or decline.
      */
-    List<OTCOfferDTO> getAllPendingOTC(Long id);
-    List<OTCOfferDTO> getAllPendingOTCForBank();
-
+    List<OTCDTO> getAllPendingOTC(Long id);
+    List<OTCDTO> getAllPendingOTCForBank();
+    List<OTCDTO> getAllCompletedOTC(Long id);
     /**
      * Accept or decline a pending otc offer.
      *
@@ -48,5 +45,5 @@ public interface OTCService {
      *
      * @param otcPlaceDTO Dto with stock ticker and quantity we want to make public for otc offers.
      */
-    void placeOTCPublic(OTCPlaceDTO otcPlaceDTO);
+    void placeOTCPublic(OTCPlaceDTO otcPlaceDTO, Long userId);
 }

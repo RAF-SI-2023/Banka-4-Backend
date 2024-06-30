@@ -20,18 +20,20 @@ public class OTC {
 
     private Long sellerId;
 
-    private String ticker;
-
-    private Integer quantity;
+    private Long stock_id;
 
     private Boolean sellerApproval;
 
     private Boolean banksApproval;
 
-    //Buyer sets these fields when he makes an offer
     private Long buyerId;
 
     private Integer quantityToBuy;
 
     private BigDecimal priceOffer;
+    private String razlogOdbijanja;
+    private Long datumKreiranja;
+    private Long datumRealizacije;
+    private String opis;
+    private boolean resen;
 }

@@ -17,6 +17,7 @@ public interface UserStockService {
      * @return True if the user stock quantity was successfully changed, otherwise false.
      */
     boolean changeUserStockQuantity(UserStockRequest userStockRequest);
+    UserStockDto setPublicQuantity(Long user_stock_id, Integer publicQuantity, Long userId);
 
     /**
      * Retrieves information about a specific user stock.

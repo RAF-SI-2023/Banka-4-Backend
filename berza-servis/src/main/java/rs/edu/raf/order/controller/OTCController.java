@@ -13,6 +13,7 @@ import rs.edu.raf.order.dto.OTCPlaceDTO;
 import rs.edu.raf.order.dto.OTCResolveDTO;
 import rs.edu.raf.order.exceptions.*;
 import rs.edu.raf.order.service.OTCService;
+import rs.edu.raf.order.service.UserStockService;
 import rs.edu.raf.stocks.exceptions.ExceptionResponse;
 
 import java.util.List;
@@ -26,11 +27,12 @@ import java.util.List;
 public class OTCController {
 
     private OTCService otcService;
+    private UserStockService userStockService;
 
     @ApiOperation(value = "Returns all public available otc's.")
-    @GetMapping("/all-public-otc")
-    public ResponseEntity<List<?>> getAllPublicOTC() {
-        return new ResponseEntity<>(otcService.getAllPublicOTC(), HttpStatus.OK);
+    @GetMapping("/all-public-otc/{id}")
+    public ResponseEntity<List<?>> getAllPublicOTC(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(otcService.getAllPublicOTC(id), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Return user pending otc offers waiting for confirmation.")
@@ -38,6 +40,14 @@ public class OTCController {
     public ResponseEntity<List<?>> getAllPendingOTC(@PathVariable Long userId) {
         return new ResponseEntity<>(otcService.getAllPendingOTC(userId), HttpStatus.OK);
     }
+
+    @ApiOperation(value = "Return user completed otc offers.")
+    @GetMapping("/completed-otc-offers/{userId}")
+    public ResponseEntity<List<?>> getAllCompletedOTC(@PathVariable Long userId) {
+        return new ResponseEntity<>(otcService.getAllCompletedOTC(userId), HttpStatus.OK);
+    }
+
+
 
     @ApiOperation(value = "Return all pending otc offers waiting for confirmation from bank.")
     @GetMapping("/pending-otc-offers/bank")
@@ -74,8 +84,9 @@ public class OTCController {
     @PostMapping("/place-otc-public")
     public ResponseEntity<?> placeOTCPublic(@RequestBody @Validated OTCPlaceDTO otcPlaceDTO) {
         try {
-            otcService.placeOTCPublic(otcPlaceDTO);
-        } catch (UserDoesntOwnTicker | UserDoesntOwnQuantityTicker e){
+//            otcService.placeOTCPublic(otcPlaceDTO, userId);
+            userStockService.setPublicQuantity(otcPlaceDTO.getStockId(),otcPlaceDTO.getQuantity(),otcPlaceDTO.getUserId());
+        } catch (RuntimeException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(e.getMessage()));
         }
 

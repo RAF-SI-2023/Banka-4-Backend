@@ -8,4 +8,6 @@ public class OTCResolveDTO {
     private Long userId;
     private Long otcId;
     private boolean accept;
+    private String razlog;
+    private String opis;
 }
