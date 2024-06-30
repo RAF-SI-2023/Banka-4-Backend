@@ -291,6 +291,7 @@
                                  <exclude>**/seeder/**</exclude>
                                <exclude>**/security/**</exclude>
                                <exclude>**/swagger/**</exclude>
+                               <exclude>**/opcija/**</exclude>
                                <exclude>**/exceptions/**</exclude>
                                <exclude>**/annotations/**</exclude>
                                <exclude>**/OptionYahooApiMap.class</exclude>
