@@ -76,7 +76,7 @@ public class RacunMapper {
         pr.setZaposleni(noviPravniRacunDTO.getZaposleni());
         pr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
         pr.setDatumIsteka(pr.getDatumKreiranja() + 5*1000L*31536000L);
-        pr.setCurrency("Srpski dinar");
+        pr.setCurrency("RSD");
         pr.setAktivan(true);
 
         return pr;
@@ -94,7 +94,7 @@ public class RacunMapper {
         tr.setZaposleni(noviTekuciRacunDTO.getZaposleni());
         tr.setDatumKreiranja(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) * 1000L);
         tr.setDatumIsteka(tr.getDatumKreiranja() + 5*1000L*31536000L);
-        tr.setCurrency("Srpski dinar");
+        tr.setCurrency("RSD");
         tr.setAktivan(true);
         tr.setVrstaRacuna(noviTekuciRacunDTO.getVrstaRacuna());
 

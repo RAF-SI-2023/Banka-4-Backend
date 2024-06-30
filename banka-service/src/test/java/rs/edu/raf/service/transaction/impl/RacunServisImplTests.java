@@ -103,7 +103,7 @@ public class RacunServisImplTests {
 
         //List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(k.getId());
         //assertEquals(dtos, dtosRS);
-    }
+    }*/
 
     @Test
     public void izlistavanjeRacunaJedneFirmeTest() {
@@ -111,15 +111,13 @@ public class RacunServisImplTests {
         PravniRacun pr = kreirajPravniRacun();
         List<RacunDTO> dtos = kreirajPRacunDTOs();
 
-        //given(korisnikRepository.findById(f.getId())).willReturn(Optional.empty());
         given(firmaRepository.findById(f.getId())).willReturn(Optional.of(f));
         given(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr.getBrojRacuna())).willReturn(Optional.of(pr));
         given(racunMapper.pravniRacunToRacunDTO(pr)).willReturn(dtos.get(0));
 
-        //List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(f.getId());
-        ///assertEquals(dtos, dtosRS);
+        List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJedneFirme(f.getId());
+        assertEquals(dtos, dtosRS);
     }
-*/
     @Test
     public void nadjiAktivanRacunPoIDTest() {
         DevizniRacun dr = kreirajNoviDevizniRacun();
@@ -344,15 +342,11 @@ public class RacunServisImplTests {
 
         given(tekuciRacunRepository.findVlasnikByBrojRacuna(tr.getBrojRacuna())).willReturn(tr.getVlasnik());
         Long userId = rs.nadjiKorisnikaPoBrojuRacuna(tr.getBrojRacuna());
-        System.out.println(userId);
-        System.out.println(dr);
         assertEquals(userId, tr.getVlasnik());
 
         given(devizniRacunRepository.findVlasnikByBrojRacuna(dr.getBrojRacuna())).willReturn(dr.getVlasnik());
         given(tekuciRacunRepository.findVlasnikByBrojRacuna(dr.getBrojRacuna())).willReturn(null);
         userId = rs.nadjiKorisnikaPoBrojuRacuna(dr.getBrojRacuna());
-        System.out.println(userId);
-        System.out.println(dr);
         assertEquals(userId, dr.getVlasnik());
     }
 
