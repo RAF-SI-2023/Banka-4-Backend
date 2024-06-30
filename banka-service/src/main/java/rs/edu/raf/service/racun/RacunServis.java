@@ -46,14 +46,6 @@ public interface RacunServis {
     List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika, String token);
 
     /**
-     * Lists all accounts of a single firm based on the firm's ID.
-     *
-     * @param idFirme The ID of the firm.
-     * @return A list of account DTOs belonging to the firm.
-     */
-    List<RacunDTO> izlistavanjeRacunaJedneFirme(Long idFirme);
-
-    /**
      * Finds an active account by its ID.
      *
      * @param id The ID of the account to find.

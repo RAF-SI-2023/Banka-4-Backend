@@ -146,23 +146,17 @@ public class RacunServisImpl implements RacunServis {
                     }
                 }
             }
-        }
-        return racunDTOs;
-    }
-
-    @Override
-    public List<RacunDTO> izlistavanjeRacunaJedneFirme(Long idFirme) {
-
-        List<RacunDTO> racunDTOs = new ArrayList<>();
-        Firma f = firmaRepository.findById(idFirme).orElseThrow(()->new CompanyNotFoundException("Company with id " + idFirme + " doesn't exist!"));
-        if (f != null) {
-            RacunDTO dto;
-            List<String> racuni = List.of(f.getPovezaniRacuni().split(","));
-            for (String r : racuni) {
-                PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
-                if (pr != null) {
-                    dto = racunMapper.pravniRacunToRacunDTO(pr);
-                    racunDTOs.add(dto);
+        } else {
+            Firma f = firmaRepository.findById(idKorisnika).orElseThrow(()->new CompanyNotFoundException("Company from user with id " + idKorisnika + " doesn't exist!"));
+            if (f != null) {
+                RacunDTO dto;
+                List<String> racuni = List.of(f.getPovezaniRacuni().split(","));
+                for (String r : racuni) {
+                    PravniRacun pr = this.pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(Long.parseLong(r)).orElse(null);
+                    if (pr != null) {
+                        dto = racunMapper.pravniRacunToRacunDTO(pr);
+                        racunDTOs.add(dto);
+                    }
                 }
             }
         }

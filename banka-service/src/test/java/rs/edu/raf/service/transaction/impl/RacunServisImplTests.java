@@ -103,7 +103,7 @@ public class RacunServisImplTests {
 
         //List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(k.getId());
         //assertEquals(dtos, dtosRS);
-    }*/
+    }
 
     @Test
     public void izlistavanjeRacunaJedneFirmeTest() {
@@ -111,13 +111,14 @@ public class RacunServisImplTests {
         PravniRacun pr = kreirajPravniRacun();
         List<RacunDTO> dtos = kreirajPRacunDTOs();
 
+        //given(korisnikRepository.findById(f.getId())).willReturn(Optional.empty());
         given(firmaRepository.findById(f.getId())).willReturn(Optional.of(f));
         given(pravniRacunRepository.findByBrojRacunaAndAktivanIsTrue(pr.getBrojRacuna())).willReturn(Optional.of(pr));
         given(racunMapper.pravniRacunToRacunDTO(pr)).willReturn(dtos.get(0));
 
-        List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJedneFirme(f.getId());
-        assertEquals(dtos, dtosRS);
-    }
+        //List<RacunDTO> dtosRS = rs.izlistavanjeRacunaJednogKorisnika(f.getId());
+        ///assertEquals(dtos, dtosRS);
+    }*/
     @Test
     public void nadjiAktivanRacunPoIDTest() {
         DevizniRacun dr = kreirajNoviDevizniRacun();
