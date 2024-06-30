@@ -132,4 +132,19 @@ public class UserStockServiceImplTest {
 
         assertTrue(userStockService.getUserStocks(1L).isEmpty());
     }
+
+    @Test
+    public void testChangeUserStockQuantity_WhenUserStockIsNullAndQuantityIsNonNegative() {
+        UserStockRequest userStockRequest = new UserStockRequest();
+        userStockRequest.setUserId(1L);
+        userStockRequest.setTicker("AAPL");
+        userStockRequest.setQuantity(10);
+
+        when(userStockRepository.findByUserIdAndTicker(1L, "AAPL")).thenReturn(null);
+
+        boolean result = userStockService.changeUserStockQuantity(userStockRequest);
+
+        assertTrue(result);
+        verify(userStockRepository, times(1)).save(any(UserStock.class));
+    }
 }
