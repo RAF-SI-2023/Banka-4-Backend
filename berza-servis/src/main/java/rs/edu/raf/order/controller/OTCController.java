@@ -39,6 +39,12 @@ public class OTCController {
         return new ResponseEntity<>(otcService.getAllPendingOTC(userId), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Return all pending otc offers waiting for confirmation from bank.")
+    @GetMapping("/pending-otc-offers/bank")
+    public ResponseEntity<List<?>> getAllPendingOTCForBank() {
+        return new ResponseEntity<>(otcService.getAllPendingOTCForBank(), HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Accept or decline pending otc offer.")
     @PostMapping("/resolve-otc")
     public ResponseEntity<?> resolveOTC(@RequestBody OTCResolveDTO otcResolveDTO) {
