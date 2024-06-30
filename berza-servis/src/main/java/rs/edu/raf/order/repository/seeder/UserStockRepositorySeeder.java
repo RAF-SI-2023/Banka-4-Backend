@@ -357,7 +357,7 @@ public class UserStockRepositorySeeder implements CommandLineRunner {
                     "INTO requestStatus,radnik_firma_id,settlementDate,kupac,contractPrice,racunId,radnikId,futureContractId\n" +
                     "FROM berza_schema.future_contract_request fcr JOIN berza_schema.futures_contract fc\n" +
                     "ON (fcr.futures_contract_id = fc.id)\n" +
-                    "WHERE fcr.futures_contract_id = contract_id\n" +
+                    "WHERE fcr.id = contract_id\n" +
                     "FOR UPDATE;\n" +
                     "\n" +
                     "SELECT raspolozivo_stanje INTO balance FROM banka_schema.racun\n" +

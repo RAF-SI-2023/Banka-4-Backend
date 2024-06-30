@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import rs.edu.raf.annotations.Generated;
 import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedLegacyCode;
 import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.model.dto.transaction.RealizacijaTransakcije;
 import rs.edu.raf.model.entities.racun.*;
@@ -235,6 +236,7 @@ public class TransakcijaServisImpl implements TransakcijaServis {
     }
 
     @Override
+    @GeneratedLegacyCode
     public BigDecimal izracunajRezervisanaSredstva(Long brojRacuna) {
 
         return switch (racunServis.nadjiVrstuRacuna(brojRacuna)) {

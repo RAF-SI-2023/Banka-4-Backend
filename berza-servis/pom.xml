@@ -289,6 +289,12 @@
                                  <exclude>**/mapper/**</exclude>
                                  <exclude>**/repository/**</exclude>
                                  <exclude>**/seeder/**</exclude>
+                               <exclude>**/security/**</exclude>
+                               <exclude>**/swagger/**</exclude>
+                               <exclude>**/exceptions/**</exclude>
+                               <exclude>**/annotations/**</exclude>
+                               <exclude>**/OptionYahooApiMap.class</exclude>
+                               <exclude>**/GlobalQuoteApiMap.class</exclude>
                            </excludes>
                 </configuration>
             </plugin>

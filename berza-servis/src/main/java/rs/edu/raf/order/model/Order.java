@@ -24,6 +24,8 @@ public class Order {
     @Column(nullable = false)
     private Long userId;
 
+    private Long radnikId;
+
     @Column(nullable = false)
     private String ticker;
 

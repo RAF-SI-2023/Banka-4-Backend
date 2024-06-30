@@ -44,14 +44,23 @@ public class OTCServiceImpl implements OTCService {
                 if (otc.getSellerId().equals(id) && !otc.getSellerApproval()) {
                     // We're the seller and haven't confirmed the otc offer.
                     pendingOTC.add(otcMapper.otcToOtcOfferDto(otc));
-                } else if (otc.getSellerId().equals(-1L) && !otc.getBanksApproval()) {
-                    // We're the bank and haven't confirmed the otc offer.
-                    pendingOTC.add(otcMapper.otcToOtcOfferDto(otc));
                 }
             }
         }
 
         return pendingOTC;
+    }
+
+    @Override
+    public List<OTCOfferDTO> getAllPendingOTCForBank() {
+        List<OTCOfferDTO> otcs = new ArrayList<>();
+
+        for(OTC otc: otcRepository.findAll()) {
+            if(otc.getBuyerId() != null && otc.getSellerId() != -1L && !otc.getBanksApproval()) {
+                otcs.add(otcMapper.otcToOtcOfferDto(otc));
+            }
+        }
+        return otcs;
     }
 
     @Override
@@ -80,7 +89,7 @@ public class OTCServiceImpl implements OTCService {
 
         if (otcResolveDTO.getUserId() == -1L){
             otcOffer.setBanksApproval(true);
-        } else if (otcResolveDTO.getUserId().equals(otcOffer.getSellerId())){
+        } if (otcResolveDTO.getUserId().equals(otcOffer.getSellerId())){
             otcOffer.setSellerApproval(true);
         }
 
@@ -94,9 +103,11 @@ public class OTCServiceImpl implements OTCService {
             stockToBeAddedToBuyer = userStockRepository.findByUserIdAndTicker(otcOffer.getBuyerId(), otcOffer.getTicker());
             if (stockToBeAddedToBuyer == null){
                 stockToBeAddedToBuyer = new UserStock();
-                stockToBeAddedToBuyer.setId(otcOffer.getBuyerId());
+                stockToBeAddedToBuyer.setUserId(otcOffer.getBuyerId());
                 stockToBeAddedToBuyer.setTicker(otcOffer.getTicker());
                 stockToBeAddedToBuyer.setQuantity(otcOffer.getQuantityToBuy());
+                stockToBeAddedToBuyer.setCurrentBid(new BigDecimal("1.0"));
+                stockToBeAddedToBuyer.setCurrentAsk(new BigDecimal("1.0"));
             } else {
                 stockToBeAddedToBuyer.setQuantity(stockToBeAddedToBuyer.getQuantity() + otcOffer.getQuantityToBuy());
             }
@@ -105,6 +116,7 @@ public class OTCServiceImpl implements OTCService {
             // Add money to seller and subtract from buyer
 
         }
+        else otcRepository.save(otcOffer);
     }
 
     @Override
@@ -117,7 +129,7 @@ public class OTCServiceImpl implements OTCService {
             throw new QuantityOfOTCDoesntExist();
         } else if (otcOfferDTO.getPriceOffered().compareTo(BigDecimal.ZERO) <= 0){
             throw new PriceMustBePositive();
-        } else if (otcOfferDTO.getSellerId() != null) {
+        } else if (otcOffer.getBuyerId() != null) {
             throw new OTCOfferCurrentlyPlaced();
         }
 
