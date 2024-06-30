@@ -315,7 +315,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void modifyUserBalance(Long userId, BigDecimal valueChange, Long radnikId, String token) {
 
-        String marzniRacunUpdateFundsEndpoint = "localhost:8082/api/marzniRacuni/updateBalance";
+        String marzniRacunUpdateFundsEndpoint = "http://localhost:8082/api/marzniRacuni/updateBalance";
         Gson gson = new Gson();
 
         PairDTO pair = new PairDTO();

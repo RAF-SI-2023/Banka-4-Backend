@@ -13,7 +13,6 @@ import rs.edu.raf.order.service.mapper.UserStockMapper;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
 @AllArgsConstructor
 @Service
 public class UserStockServiceImpl implements UserStockService {
