@@ -112,7 +112,7 @@ public class BankOtcService {
             }
 
             //TODO: skidamo pare sa naseg racuna
-            String racunUpdateFundsEndpoint = "http://localhost:8082/api/racuni/atm";
+            String racunUpdateFundsEndpoint = "http://banka-service:8082/api/racuni/atm";
             Gson gson = new Gson();
 
             AtmDto atmDto = new AtmDto();
@@ -278,7 +278,7 @@ public class BankOtcService {
             myStockRepository.save(myStock);
 
             //TODO: dodajemo pare na nas racun
-            String racunUpdateFundsEndpoint = "http://localhost:8082/api/racuni/atm";
+            String racunUpdateFundsEndpoint = "http://banka-service:8082/api/racuni/atm";
             Gson gson = new Gson();
 
             AtmDto atmDto = new AtmDto();
