@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface KorisnikoveKupljeneOpcijeRepository extends JpaRepository<KorisnikoveKupljeneOpcije,Long> {
     Optional<KorisnikoveKupljeneOpcije> findFirstByOpcijaIdAndKorisnikIdAndIskoriscenaFalse(Long opcijaId, Long korisnikId);
 
-    List<KorisnikoveKupljeneOpcije> findKorisnikoveKupljeneOpcijeByKorisnikId(Long korisnikId);
+    List<KorisnikoveKupljeneOpcije> findAllKorisnikoveKupljeneOpcijeByKorisnikId(Long korisnikId);
 }
