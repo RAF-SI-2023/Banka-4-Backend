@@ -1,5 +1,6 @@
 package rs.edu.raf.order.service.impl;
 
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -9,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import rs.edu.raf.annotations.GeneratedCrudOperation;
 import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
 import rs.edu.raf.annotations.GeneratedScheduledOperation;
+import rs.edu.raf.order.dto.AtmDto;
 import rs.edu.raf.order.dto.banka3.FrontendOfferDto;
 import rs.edu.raf.order.dto.banka3.MyOfferDto;
 import rs.edu.raf.order.dto.banka3.MyStockDto;
@@ -20,6 +22,9 @@ import rs.edu.raf.order.repository.OfferRepository;
 import rs.edu.raf.order.repository.UserStockRepository;
 
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,9 +48,11 @@ public class BankOtcService {
         List<MyStockDto> dtos = new ArrayList<>();
         for(UserStock myStock: myStocks){
             MyStockDto dto = new MyStockDto();
-            dto.setAmount(myStock.getQuantity());
-            dto.setTicker(myStock.getTicker());
-            dtos.add(dto);
+            if(myStock.getPublicQuantity() > 0) {
+                dto.setAmount(myStock.getPublicQuantity());
+                dto.setTicker(myStock.getTicker());
+                dtos.add(dto);
+            }
         }
         return dtos;
     }
@@ -63,7 +70,7 @@ public class BankOtcService {
         UserStock myStock = myStockRepository.findByUserIdAndTicker(-1l,offer.getTicker());
 
         //provera da li mi imamo taj Stock
-        if(myStock != null && myStock.getQuantity() >= offer.getAmount() && offer.getAmount() >= 0) {
+        if(myStock != null && myStock.getPublicQuantity() >= offer.getAmount() && offer.getAmount() >= 0) {
             offer.setOfferStatus(OfferStatus.PROCESSING);
         } else {
             offer.setOfferStatus(OfferStatus.DECLINED);
@@ -89,6 +96,7 @@ public class BankOtcService {
                 myStock.setTicker(myOffer.getTicker());
                 myStock.setUserId(-1l);
                 myStock.setQuantity(myOffer.getAmount());
+                myStock.setPublicQuantity(0);
                 myStock.setCurrentAsk(new BigDecimal("1.0"));
                 myStock.setCurrentBid(new BigDecimal("1.0"));
 //                myStock.setPrivateAmount(0);
@@ -104,6 +112,27 @@ public class BankOtcService {
             }
 
             //TODO: skidamo pare sa naseg racuna
+            String racunUpdateFundsEndpoint = "http://localhost:8082/api/racuni/atm";
+            Gson gson = new Gson();
+
+            AtmDto atmDto = new AtmDto();
+            atmDto.setStanje(BigDecimal.valueOf(-myOffer.getPrice()));
+            atmDto.setBrojRacuna(444000000000000022L);
+
+
+            HttpClient client = HttpClient.newHttpClient();
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(URI.create(racunUpdateFundsEndpoint))
+                    .header("Content-Type", "application/json")
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(gson.toJson(atmDto)))
+                    .build();
+
+            try {
+                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println(response);
+            } catch (Exception e) {
+                System.out.println("Failed to send balance update to RacunController: " + e);
+            }
 
             myOfferRepository.save(myOffer);
             return true;
@@ -245,10 +274,30 @@ public class BankOtcService {
             //smanjujemo kolicinu, uzimamo pare
             UserStock myStock = myStockRepository.findByUserIdAndTicker(-1l,offer1.getTicker());
             myStock.setQuantity(myStock.getQuantity() - offer1.getAmount());
-//            myStock.setPublicAmount(myStock.getPublicAmount() - offer1.getAmount());
+            myStock.setPublicQuantity(myStock.getPublicQuantity() - offer1.getAmount());
             myStockRepository.save(myStock);
 
             //TODO: dodajemo pare na nas racun
+            String racunUpdateFundsEndpoint = "http://localhost:8082/api/racuni/atm";
+            Gson gson = new Gson();
+
+            AtmDto atmDto = new AtmDto();
+            atmDto.setStanje(BigDecimal.valueOf(offer1.getPrice()));
+            atmDto.setBrojRacuna(444000000000000022L);
+
+
+            HttpClient client = HttpClient.newHttpClient();
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(URI.create(racunUpdateFundsEndpoint))
+                    .header("Content-Type", "application/json")
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(gson.toJson(atmDto)))
+                    .build();
+
+            try {
+                client.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (Exception e) {
+                System.out.println("Failed to send balance update to RacunController: " + e);
+            }
 
             offerRepository.save(offer1);
             return true;
