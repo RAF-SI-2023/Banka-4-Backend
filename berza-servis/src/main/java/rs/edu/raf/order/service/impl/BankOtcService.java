@@ -112,27 +112,27 @@ public class BankOtcService {
             }
 
             //TODO: skidamo pare sa naseg racuna
-            String racunUpdateFundsEndpoint = "https://banka-4-dev.si.raf.edu.rs/banka-service/api/racuni/atm";
-            Gson gson = new Gson();
-
-            AtmDto atmDto = new AtmDto();
-            atmDto.setStanje(BigDecimal.valueOf(-myOffer.getPrice()));
-            atmDto.setBrojRacuna(444000000000000022L);
-
-
-            HttpClient client = HttpClient.newHttpClient();
-            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
-                    .uri(URI.create(racunUpdateFundsEndpoint))
-                    .header("Content-Type", "application/json")
-                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(gson.toJson(atmDto)))
-                    .build();
-
-            try {
-                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                System.out.println(response);
-            } catch (Exception e) {
-                System.out.println("Failed to send balance update to RacunController: " + e);
-            }
+//            String racunUpdateFundsEndpoint = "https://banka-4-dev.si.raf.edu.rs/banka-service/api/racuni/atm";
+//            Gson gson = new Gson();
+//
+//            AtmDto atmDto = new AtmDto();
+//            atmDto.setStanje(BigDecimal.valueOf(-myOffer.getPrice()));
+//            atmDto.setBrojRacuna(444000000000000022L);
+//
+//
+//            HttpClient client = HttpClient.newHttpClient();
+//            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+//                    .uri(URI.create(racunUpdateFundsEndpoint))
+//                    .header("Content-Type", "application/json")
+//                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(gson.toJson(atmDto)))
+//                    .build();
+//
+//            try {
+//                HttpResponse<?> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//                System.out.println(response);
+//            } catch (Exception e) {
+//                System.out.println("Failed to send balance update to RacunController: " + e);
+//            }
 
             myOfferRepository.save(myOffer);
             return true;
@@ -278,26 +278,26 @@ public class BankOtcService {
             myStockRepository.save(myStock);
 
             //TODO: dodajemo pare na nas racun
-            String racunUpdateFundsEndpoint = "https://banka-4-dev.si.raf.edu.rs/banka-service/api/racuni/atm";
-            Gson gson = new Gson();
-
-            AtmDto atmDto = new AtmDto();
-            atmDto.setStanje(BigDecimal.valueOf(offer1.getPrice()));
-            atmDto.setBrojRacuna(444000000000000022L);
-
-
-            HttpClient client = HttpClient.newHttpClient();
-            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
-                    .uri(URI.create(racunUpdateFundsEndpoint))
-                    .header("Content-Type", "application/json")
-                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(gson.toJson(atmDto)))
-                    .build();
-
-            try {
-                client.send(request, HttpResponse.BodyHandlers.ofString());
-            } catch (Exception e) {
-                System.out.println("Failed to send balance update to RacunController: " + e);
-            }
+//            String racunUpdateFundsEndpoint = "https://banka-4-dev.si.raf.edu.rs/banka-service/api/racuni/atm";
+//            Gson gson = new Gson();
+//
+//            AtmDto atmDto = new AtmDto();
+//            atmDto.setStanje(BigDecimal.valueOf(offer1.getPrice()));
+//            atmDto.setBrojRacuna(444000000000000022L);
+//
+//
+//            HttpClient client = HttpClient.newHttpClient();
+//            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+//                    .uri(URI.create(racunUpdateFundsEndpoint))
+//                    .header("Content-Type", "application/json")
+//                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(gson.toJson(atmDto)))
+//                    .build();
+//
+//            try {
+//                client.send(request, HttpResponse.BodyHandlers.ofString());
+//            } catch (Exception e) {
+//                System.out.println("Failed to send balance update to RacunController: " + e);
+//            }
 
             offerRepository.save(offer1);
             return true;
