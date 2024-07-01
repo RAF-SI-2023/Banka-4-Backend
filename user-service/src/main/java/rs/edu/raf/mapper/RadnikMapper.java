@@ -1,6 +1,8 @@
 package rs.edu.raf.mapper;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import rs.edu.raf.dto.NoviRadnikDTO;
 import rs.edu.raf.dto.RadnikDTO;
@@ -9,6 +11,9 @@ import rs.edu.raf.model.Radnik;
 @Component
 @AllArgsConstructor
 public class RadnikMapper {
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Radnik noviRadnikDtoToRadnik(NoviRadnikDTO noviRadnikDTO,Long firmaId){
         Radnik radnik = new Radnik();
@@ -23,7 +28,7 @@ public class RadnikMapper {
         radnik.setBrojTelefona(noviRadnikDTO.getBrojTelefona());
         radnik.setAdresa(noviRadnikDTO.getAdresa());
         radnik.setUsername(noviRadnikDTO.getUsername());
-        radnik.setPassword(noviRadnikDTO.getPassword());
+        radnik.setPassword(bCryptPasswordEncoder.encode(noviRadnikDTO.getPassword()));
         radnik.setSaltPassword(noviRadnikDTO.getSaltPassword());
         radnik.setPozicija(noviRadnikDTO.getPozicija());
         radnik.setDepartman(noviRadnikDTO.getDepartman());
