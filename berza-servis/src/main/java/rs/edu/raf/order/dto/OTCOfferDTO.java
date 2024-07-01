@@ -7,8 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 public class OTCOfferDTO {
-    private Long otcId;
-    private Long sellerId;
+    private Long stockId;
     private Long buyerId;
     private String ticker;
     @Positive

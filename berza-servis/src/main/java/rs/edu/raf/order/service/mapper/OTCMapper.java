@@ -1,50 +1,34 @@
 package rs.edu.raf.order.service.mapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import rs.edu.raf.order.dto.OTCDTO;
 import rs.edu.raf.order.dto.OTCOfferDTO;
 import rs.edu.raf.order.dto.OTCPlaceDTO;
 import rs.edu.raf.order.model.OTC;
+import rs.edu.raf.order.repository.UserStockRepository;
 
 @Component
 public class OTCMapper {
+    @Autowired
+    private UserStockRepository userStockRepository;
 
     public OTCDTO otcToOtcDto(OTC otc) {
-        OTCDTO otcDTO = new OTCDTO();
+        OTCDTO otcDto = new OTCDTO();
 
-        otcDTO.setOtcId(otc.getId());
-        otcDTO.setTicker(otc.getTicker());
-        otcDTO.setQuantity(otc.getQuantity());
-        otcDTO.setSellerId(otc.getSellerId());
+        otcDto.setId(otc.getId());
+        otcDto.setTicker(userStockRepository.findById(otc.getStock_id()).orElseThrow().getTicker());
+        otcDto.setSellerId(otc.getSellerId());
+        otcDto.setBuyerId(otc.getBuyerId());
+        otcDto.setSellerApproval(otc.getSellerApproval());
+        otcDto.setBanksApproval(otc.getBanksApproval());
+        otcDto.setQuantityToBuy(otc.getQuantityToBuy());
+        otcDto.setPriceOffer(otc.getPriceOffer());
+        otcDto.setRazlogOdbijanja(otc.getRazlogOdbijanja());
+        otcDto.setDatumKreiranja(otc.getDatumKreiranja());
+        otcDto.setDatumRealizacije(otc.getDatumRealizacije());
+        otcDto.setOpis(otc.getOpis());
 
-        return otcDTO;
-    }
-
-    public OTC otcPlaceDTOToOtc(OTCPlaceDTO otcPlaceDTO) {
-        OTC otc = new OTC();
-
-        otc.setSellerId(otcPlaceDTO.getUserId());
-        otc.setTicker(otcPlaceDTO.getTicker());
-        otc.setQuantity(otcPlaceDTO.getQuantity());
-        otc.setSellerApproval(false);
-        otc.setBanksApproval(false);
-        otc.setBuyerId(null);
-        otc.setQuantityToBuy(null);
-        otc.setPriceOffer(null);
-
-        return otc;
-    }
-
-    public OTCOfferDTO otcToOtcOfferDto(OTC otc) {
-        OTCOfferDTO otcOfferDTO = new OTCOfferDTO();
-
-        otcOfferDTO.setOtcId(otc.getId());
-        otcOfferDTO.setSellerId(otc.getSellerId());
-        otcOfferDTO.setBuyerId(otc.getBuyerId());
-        otcOfferDTO.setTicker(otc.getTicker());
-        otcOfferDTO.setQuantity(otc.getQuantity());
-        otcOfferDTO.setPriceOffered(otc.getPriceOffer());
-
-        return otcOfferDTO;
+        return otcDto;
     }
 }

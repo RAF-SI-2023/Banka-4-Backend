@@ -28,6 +28,7 @@ public class UserStock {
 
     @Column(nullable = false)
     private Integer quantity;
+    private Integer publicQuantity = 0;
 
     @Column(nullable = false)
     private BigDecimal currentBid;

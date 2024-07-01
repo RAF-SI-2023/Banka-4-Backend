@@ -53,6 +53,16 @@ public class UserStockServiceImpl implements UserStockService {
     }
 
     @Override
+    public UserStockDto setPublicQuantity(Long user_stock_id, Integer publicQuantity, Long userId) {
+        UserStock userStock = userStockRepository.findById(user_stock_id).orElseThrow();
+        if(userStock.getQuantity() < publicQuantity || publicQuantity < 0)
+            throw new RuntimeException("You dont have enough or quantity must be positive!");
+        if(userStock.getUserId() != userId) throw new RuntimeException("You don't own this stock!");
+        userStock.setPublicQuantity(publicQuantity);
+        return UserStockMapper.toDto(userStockRepository.save(userStock));
+    }
+
+    @Override
     public UserStockDto getUserStock(Long userId, String ticker) {
         return UserStockMapper.toDto(userStockRepository.findByUserIdAndTicker(userId, ticker));
     }

@@ -33,13 +33,8 @@ public class RadnikController {
     @PostMapping
     @Operation(description = "Dodaj novog radnika")
     public ResponseEntity<RadnikDTO> dodajRadnika(@RequestBody @Valid @Parameter(description = "Podaci o radniku") NoviRadnikDTO noviRadnikDTO) {
-        System.out.println(noviRadnikDTO);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long id = null;
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            id = ((Radnik) authentication.getPrincipal()).getFirmaId();
-        }
-        return new ResponseEntity<>(korisnikServis.kreirajNovogRadnika(noviRadnikDTO,id), HttpStatus.CREATED);
+
+        return new ResponseEntity<>(korisnikServis.kreirajNovogRadnika(noviRadnikDTO, noviRadnikDTO.getFirmaId()), HttpStatus.CREATED);
     }
 
     @PutMapping

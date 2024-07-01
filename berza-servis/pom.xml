@@ -291,10 +291,12 @@
                                  <exclude>**/seeder/**</exclude>
                                <exclude>**/security/**</exclude>
                                <exclude>**/swagger/**</exclude>
+                               <exclude>**/opcija/**</exclude>
                                <exclude>**/exceptions/**</exclude>
                                <exclude>**/annotations/**</exclude>
                                <exclude>**/OptionYahooApiMap.class</exclude>
-                               <exclude>**/GlobalQuoteApiMap.class</exclude>
+                               <exclude>**/GlobalQuoteApiMap.class</exclude>                               
+                           <exclude>**/PonudaServiceImpl.class</exclude>
                            </excludes>
                 </configuration>
             </plugin>
