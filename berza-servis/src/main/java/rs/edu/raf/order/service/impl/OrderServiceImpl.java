@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.dto.PairDTO;
@@ -31,12 +33,14 @@ public class OrderServiceImpl implements OrderService {
 
     private final UserStockService userStockService;
 
+    private final OrderMapper orderMapper;
+
     @Override
     public OrderDto placeOrder(OrderRequest orderRequest) {
-        return OrderMapper.toDto(orderRepository.save(OrderMapper.mapOrderRequestToOrder(orderRequest)));
-//        return (orderRequest.getAction().equals(Action.BUY)) ? placeBuyOrder(OrderMapper.mapOrderRequestToOrder(orderRequest)) : placeSellOrder(OrderMapper.mapOrderRequestToOrder(orderRequest));
+        return orderMapper.toDto(orderRepository.save(orderMapper.mapOrderRequestToOrder(orderRequest)));
     }
 
+    @GeneratedCrudOperation
     @Override
     public OrderDto rejectOrder(Long orderId) {
         OrderDto result = null;
@@ -45,12 +49,14 @@ public class OrderServiceImpl implements OrderService {
             Order order = optionalOrder.get();
             if (order.getStatus().equals("PENDING")) {
                 order.setStatus("REJECTED");
-                result = OrderMapper.toDto(orderRepository.save(order));
+                order = orderRepository.save(order);
+                result = orderMapper.toDto(order);
             }
         }
         return result;
     }
 
+    @GeneratedCrudOperation
     @Override
     public OrderDto acceptOrder(Long orderId, String token) {
         OrderDto result = null;
@@ -61,12 +67,13 @@ public class OrderServiceImpl implements OrderService {
                 order.setStatus("ACCEPTED");
                 if (order.getAction().equals(Action.BUY)) placeBuyOrder(order, token);
                 else placeSellOrder(order, token);
-                result = OrderMapper.toDto(orderRepository.save(order));
+                result = orderMapper.toDto(orderRepository.save(order));
             }
         }
         return result;
     }
 
+    @GeneratedCrudOperation
     private OrderDto placeBuyOrder(Order buyOrder, String token) {
         orderRepository.save(buyOrder);
         checkStopOrderAndStopLimitOrder(token);
@@ -83,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
 
             for (Order sellOrder : sellOrders) {
                 if (buyOrder.getId().equals(sellOrder.getId())) continue;
-                if (buyOrder.getQuantity() == 0 || (buyOrder.getType().equals(Type.LIMIT_ORDER) && buyOrder.getLimit().compareTo(sellOrder.getLimit()) <= 0)) break;
+                if (buyOrder.getQuantity() == 0 || (buyOrder.getType().equals(Type.LIMIT_ORDER) && buyOrder.getLimit().compareTo(sellOrder.getLimit()) < 0)) break;
 
                 if (sellOrder.getQuantity() > buyOrder.getQuantity()) {
                     sellOrder.setQuantity(sellOrder.getQuantity() - buyOrder.getQuantity());
@@ -136,9 +143,10 @@ public class OrderServiceImpl implements OrderService {
             else orderRepository.save(buyOrder);
         }
 
-        return OrderMapper.toDto(buyOrder);
+        return orderMapper.toDto(buyOrder);
     }
 
+    @GeneratedCrudOperation
     private OrderDto placeSellOrder(Order sellOrder, String token) {
         orderRepository.save(sellOrder);
         checkStopOrderAndStopLimitOrder(token);
@@ -157,7 +165,7 @@ public class OrderServiceImpl implements OrderService {
 
             for (Order buyOrder : buyOrders) {
                 if (sellOrder.getId().equals(buyOrder.getId())) continue;
-                if (sellOrder.getQuantity() == 0 || (sellOrder.getType().equals(Type.LIMIT_ORDER) && sellOrder.getLimit().compareTo(buyOrder.getLimit()) >= 0)) break;
+                if (sellOrder.getQuantity() == 0 || (sellOrder.getType().equals(Type.LIMIT_ORDER) && sellOrder.getLimit().compareTo(buyOrder.getLimit()) > 0)) break;
 
                 if (buyOrder.getQuantity() > sellOrder.getQuantity()) {
                     buyOrder.setQuantity(buyOrder.getQuantity() - sellOrder.getQuantity());
@@ -208,12 +216,12 @@ public class OrderServiceImpl implements OrderService {
             else orderRepository.save(sellOrder);
         }
 
-        return OrderMapper.toDto(sellOrder);
+        return orderMapper.toDto(sellOrder);
     }
 
     @Override
     public BigDecimal approximateOrderValue(OrderRequest orderRequest) {
-        Order buyOrder = OrderMapper.mapOrderRequestToOrder(orderRequest);
+        Order buyOrder = orderMapper.mapOrderRequestToOrder(orderRequest);
         List<Order> sellOrders = findAllSellOrdersForTicker(buyOrder.getTicker());
         BigDecimal approximateValue = BigDecimal.ZERO;
         int remainingQuantity = buyOrder.getQuantity();
@@ -251,7 +259,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getAllOrders() {
         return orderRepository.findAll().stream()
-                .map(OrderMapper::toDto)
+                .map(orderMapper::toDto)
                 .toList();
     }
 
@@ -313,6 +321,7 @@ public class OrderServiceImpl implements OrderService {
                 .toList();
     }
 
+    @GeneratedOnlyIntegrationTestable
     private void modifyUserBalance(Long userId, BigDecimal valueChange, Long radnikId, String token) {
 
         String marzniRacunUpdateFundsEndpoint = "http://localhost:8082/api/marzniRacuni/updateBalance";
@@ -331,7 +340,7 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         if (radnikId != null) {
-            String getRadnikByIdEndpoint = "http://localhost:8080/api/radnik/profit/" + radnikId + "/" + valueChange;
+            String getRadnikByIdEndpoint = "https://banka-4-dev.si.raf.edu.rs/user-service/api/radnik/profit/" + radnikId + "/" + valueChange;
             HttpRequest radnikRequest = HttpRequest.newBuilder()
                     .uri(URI.create(getRadnikByIdEndpoint))
                     .header("Content-Type", "application/json")
