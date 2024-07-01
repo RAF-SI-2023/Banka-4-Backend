@@ -85,6 +85,7 @@ public class BankOtcService {
     @GeneratedCrudOperation
     public boolean offerAccepted(Long id){
         Optional<MyOffer> myOfferOptional = myOfferRepository.findById(id);
+        System.out.println("BANKA 3 PRIHVATILA PONUDU");
 
         if(myOfferOptional.isPresent()){
             MyOffer myOffer = myOfferOptional.get();
@@ -146,6 +147,7 @@ public class BankOtcService {
     @GeneratedCrudOperation
     public boolean offerDeclined(Long id){
         Optional<MyOffer> myOfferOptional = myOfferRepository.findById(id);
+        System.out.println("BANKA 3 ODBILA PONUDU!");
         if(myOfferOptional.isPresent()){
             MyOffer myOffer = myOfferOptional.get();
             myOffer.setOfferStatus(OfferStatus.DECLINED);
@@ -354,10 +356,14 @@ public class BankOtcService {
     @GeneratedScheduledOperation
     private void sendAcceptedOffers() {
         List<Offer> offers = offerRepository.findAllByOfferStatus(OfferStatus.ACCEPTED);
+        System.out.println("SVE PRIHVACENE PONUDE");
+        System.out.println(offers);
+        System.out.println("SVE PONUDE");
+        System.out.println(offerRepository.findAll());
         if (!offers.isEmpty()) {
             for (Offer offer : offers) {
                 String url = URL_TO_BANK3 + "/offerAccepted/bank4/" + offer.getIdBank();
-
+                System.out.println("Potvrdjena ponuda" + offer);
                 try {
                     RestTemplate restTemplate = new RestTemplate();
                     ResponseEntity<String> response = restTemplate.exchange(
@@ -372,6 +378,7 @@ public class BankOtcService {
                         offer.setOfferStatus(OfferStatus.FINISHED_ACCEPTED);
                         offerRepository.save(offer);
                     }
+                    else System.out.println("GRESKA PRI SLANJU POTVRDE");
                 } catch (Exception e) {
                     return;
                 }
@@ -383,10 +390,14 @@ public class BankOtcService {
     @GeneratedScheduledOperation
     private void sendDeclinedOffers(){
         List<Offer> offers = offerRepository.findAllByOfferStatus(OfferStatus.DECLINED);
+        System.out.println("SVE ODBIJENE PONUDE");
+        System.out.println(offers);
+        System.out.println("SVE PONUDE");
+        System.out.println(offerRepository.findAll());
         if(!offers.isEmpty()){
             for(Offer offer : offers){
                 String url = URL_TO_BANK3 + "/offerDeclined/bank4/" + offer.getIdBank();
-
+                System.out.println("Odbijena ponuda" + offer);
                 try {
                     RestTemplate restTemplate = new RestTemplate();
                     ResponseEntity<String> response = restTemplate.exchange(
@@ -401,6 +412,7 @@ public class BankOtcService {
                         offer.setOfferStatus(OfferStatus.FINISHED_DECLINED);
                         offerRepository.save(offer);
                     }
+                    else System.out.println("GRESKA PRI SLANJU ODBIJANJA");
                 }catch (Exception e){
                     return;
                 }
