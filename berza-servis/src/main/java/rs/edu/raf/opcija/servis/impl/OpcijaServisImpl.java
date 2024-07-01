@@ -136,7 +136,7 @@ public class OpcijaServisImpl implements OpcijaServis {
     @Override
     @GeneratedCrudOperation
     public List<OpcijaKorisnikaDto> findAllForUser(Long id) {
-        Optional<KorisnikoveKupljeneOpcije> opcije = korisnikKupljeneOpcijeRepository.findKorisnikoveKupljeneOpcijeByKorisnikId(id);
+        List<KorisnikoveKupljeneOpcije> opcije = korisnikKupljeneOpcijeRepository.findAllKorisnikoveKupljeneOpcijeByKorisnikId(id);
         return opcije.stream().map(opcija -> opcijaMapper.opcijaKorisnikaToNovaKorisnikovaKupljenaOpcijaDTO(opcija)).collect(Collectors.toList());
     }
 

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 
 @Data
 public class NoviRadnikDTO {
+    private Long firmaId;
 
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Samo jedno ili više slova su dozvoljena!")
     private String ime;
