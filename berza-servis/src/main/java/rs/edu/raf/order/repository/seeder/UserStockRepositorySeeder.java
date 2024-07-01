@@ -396,6 +396,14 @@ public class UserStockRepositorySeeder implements CommandLineRunner {
                     "ELSE\n" +
                     "RAISE EXCEPTION 'Nema dovoljno novca na racunu.';\n" +
                     "END IF;\n" +
+                    "END $$ LANGUAGE plpgsql;" +
+                    "CREATE OR REPLACE FUNCTION balansbanka(iznos NUMERIC) RETURNS VOID AS $$\n" +
+                    "DECLARE\n" +
+                    "BEGIN\n" +
+                    "\tUPDATE banka_schema.racun \n" +
+                    "\tSET \"stanje\" = \"stanje\" + iznos, \"raspolozivo_stanje\" = \"raspolozivo_stanje\" + iznos\n" +
+                    "\tWHERE \"broj_racuna\" = 444000000000000022;\n" +
+                    "\t\n" +
                     "END $$ LANGUAGE plpgsql;";
             statement.execute(sql);
         }catch (Exception e){
