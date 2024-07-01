@@ -113,6 +113,7 @@ public class BankOtcService {
             }
 
             //TODO: skidamo pare sa naseg racuna
+            bankOTCStockRepository.balansbanka(BigDecimal.valueOf(-myOffer.getPrice()));
 //            String racunUpdateFundsEndpoint = "https://banka-4-dev.si.raf.edu.rs/banka-service/api/racuni/atm";
 //            Gson gson = new Gson();
 //
@@ -280,6 +281,8 @@ public class BankOtcService {
             myStockRepository.save(myStock);
 
             //TODO: dodajemo pare na nas racun
+            bankOTCStockRepository.balansbanka(BigDecimal.valueOf(offer1.getPrice()));
+
 //            String racunUpdateFundsEndpoint = "https://banka-4-dev.si.raf.edu.rs/banka-service/api/racuni/atm";
 //            Gson gson = new Gson();
 //
