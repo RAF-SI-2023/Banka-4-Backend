@@ -2,6 +2,7 @@ package rs.edu.raf.order.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedLegacyCode;
 import rs.edu.raf.order.dto.*;
 import rs.edu.raf.order.exceptions.*;
 import rs.edu.raf.order.model.OTC;
@@ -194,6 +195,7 @@ public class OTCServiceImpl implements OTCService {
     }
 
     @Override
+    @GeneratedLegacyCode
     public void placeOTCPublic(OTCPlaceDTO otcPlaceDTO, Long userId) {
 //        UserStock userStock = userStockRepository.findByUserIdAndTicker(userId, otcPlaceDTO.getTicker());
 //
