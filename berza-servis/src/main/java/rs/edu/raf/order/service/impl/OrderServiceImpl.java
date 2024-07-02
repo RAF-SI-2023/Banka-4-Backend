@@ -220,6 +220,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @GeneratedCrudOperation
     public BigDecimal approximateOrderValue(OrderRequest orderRequest) {
         Order buyOrder = orderMapper.mapOrderRequestToOrder(orderRequest);
         List<Order> sellOrders = findAllSellOrdersForTicker(buyOrder.getTicker());
@@ -268,6 +269,7 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByUserId(userId);
     }
 
+    @GeneratedOnlyIntegrationTestable
     private void checkStopOrderAndStopLimitOrder(String token) {
         List<Order> allOrders = orderRepository.findAll();
         for (Order order : allOrders) {
@@ -313,6 +315,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<Order> findAllSellOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.SELL, ticker)
                 .stream()
