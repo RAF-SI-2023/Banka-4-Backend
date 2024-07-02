@@ -3,6 +3,7 @@ package rs.edu.raf.order.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
 import rs.edu.raf.order.dto.UserStockDto;
 import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.UserStock;
@@ -53,6 +54,7 @@ public class UserStockServiceImpl implements UserStockService {
     }
 
     @Override
+    @GeneratedCrudOperation
     public UserStockDto setPublicQuantity(Long user_stock_id, Integer publicQuantity, Long userId) {
         UserStock userStock = userStockRepository.findById(user_stock_id).orElseThrow();
         if(userStock.getQuantity() < publicQuantity || publicQuantity < 0)

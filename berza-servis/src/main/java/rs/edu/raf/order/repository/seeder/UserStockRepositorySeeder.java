@@ -404,6 +404,45 @@ public class UserStockRepositorySeeder implements CommandLineRunner {
                     "\tSET \"stanje\" = \"stanje\" + iznos, \"raspolozivo_stanje\" = \"raspolozivo_stanje\" + iznos\n" +
                     "\tWHERE \"broj_racuna\" = 444000000000000022;\n" +
                     "\t\n" +
+                    "END $$ LANGUAGE plpgsql;" +
+                    "CREATE OR REPLACE FUNCTION otc_u_banci(posiljalac NUMERIC, primalac NUMERIC, iznos NUMERIC) RETURNS VOID AS $$\n" +
+                    "DECLARE\n" +
+                    "\tracunPosiljaoca NUMERIC;\n" +
+                    "\tracunPrimaoca NUMERIC;\n" +
+                    "BEGIN\n" +
+                    "\tIF(posiljalac > 0) THEN\n" +
+                    "\t\tSELECT broj_racuna FROM banka_schema.tekuci_racun tr JOIN banka_schema.racun r\n" +
+                    "\t\tON(tr.id = r.id)\n" +
+                    "\t\tINTO racunPosiljaoca\n" +
+                    "\t\tWHERE r.vlasnik = posiljalac\n" +
+                    "\t\tLIMIT 1;\n" +
+                    "\t\t\n" +
+                    "\t\tSELECT broj_racuna FROM banka_schema.tekuci_racun tr JOIN banka_schema.racun r\n" +
+                    "\t\tON(tr.id = r.id)\n" +
+                    "\t\tINTO racunPrimaoca\n" +
+                    "\t\tWHERE r.vlasnik = primalac\n" +
+                    "\t\tLIMIT 1;\n" +
+                    "\tELSE\n" +
+                    "\t\tSELECT broj_racuna FROM banka_schema.pravni_racun tr JOIN banka_schema.racun r\n" +
+                    "\t\tON(tr.id = r.id)\n" +
+                    "\t\tINTO racunPosiljaoca\n" +
+                    "\t\tWHERE r.vlasnik = posiljalac\n" +
+                    "\t\tLIMIT 1;\n" +
+                    "\t\t\n" +
+                    "\t\tSELECT broj_racuna FROM banka_schema.pravni_racun tr JOIN banka_schema.racun r\n" +
+                    "\t\tON(tr.id = r.id)\n" +
+                    "\t\tINTO racunPrimaoca\n" +
+                    "\t\tWHERE r.vlasnik = primalac\n" +
+                    "\t\tLIMIT 1;\n" +
+                    "\tEND IF;\n" +
+                    "\t\n" +
+                    "\tUPDATE banka_schema.racun\n" +
+                    "\tSET \"stanje\" = \"stanje\" - iznos, \"raspolozivo_stanje\" = \"raspolozivo_stanje\" - iznos\n" +
+                    "\tWHERE \"broj_racuna\" = racunPosiljaoca;\n" +
+                    "\t\n" +
+                    "\tUPDATE banka_schema.racun\n" +
+                    "\tSET \"stanje\" = \"stanje\" + iznos, \"raspolozivo_stanje\" = \"raspolozivo_stanje\" + iznos\n" +
+                    "\tWHERE \"broj_racuna\" = racunPrimaoca;\n" +
                     "END $$ LANGUAGE plpgsql;";
             statement.execute(sql);
         }catch (Exception e){
