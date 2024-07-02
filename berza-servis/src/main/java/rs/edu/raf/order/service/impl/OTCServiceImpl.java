@@ -151,6 +151,7 @@ public class OTCServiceImpl implements OTCService {
 
             // Add money to seller and subtract from buyer
             // TODO: prebacivanje para
+            otcRepository.prebaciNovac(otcOffer.getBuyerId(),otcOffer.getSellerId(),otcOffer.getPriceOffer());
         }
         else otcRepository.save(otcOffer);
     }
