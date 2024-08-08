@@ -247,15 +247,6 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.7</version>
-                <configuration>
-                    <excludes>
-                        <exclude>rs/edu/raf/model/entities/**/*</exclude>
-                        <exclude>rs/edu/raf/model/dto/**/*</exclude>
-                        <exclude>rs/edu/raf/exceptions/**/*</exclude>
-                        <exclude>rs/edu/raf/repository/**/*</exclude>
-                        <exclude>rs/edu/raf/security/**/*</exclude>
-                    </excludes>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -270,6 +261,22 @@
                         </goals>
                     </execution>
                 </executions>
+                     <configuration>
+                    <excludes>
+                        <exclude>**/configuration/**</exclude>
+                        <exclude>**/controller/**</exclude>
+                        <exclude>**/seeder/**</exclude>
+                        <exclude>**/request/**</exclude>
+                        <exclude>**/exceptions/**</exclude>
+                        <exclude>**/response/**</exclude>
+                        <exclude>**/mapper/**</exclude>
+                        <exclude>**/model/**</exclude>
+                        <exclude>**/repository/**</exclude>
+                        <exclude>**/security/**</exclude>
+                        <exclude>**/swagger/**</exclude>
+                        <exclude>**/annotations/**</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
 
         </plugins>

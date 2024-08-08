@@ -10,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedExternalAPI;
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
+import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.exceptions.BankAccountNotFoundException;
 import rs.edu.raf.exceptions.InsufficientAmountOfStockException;
 import rs.edu.raf.exceptions.StockForUsersMarginAccountException;
@@ -58,6 +62,7 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
                 .body(marzniRacunRepository.findAllByVlasnik(userId).stream().map(MarzniRacunMapper::mapToDTO).toList());
     }
 
+    @GeneratedCrudOperation
     @Override
     public ResponseEntity<?> bankProfit() {
 
@@ -113,6 +118,7 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
         return ResponseEntity.ok().build();
     }
 
+    @GeneratedScheduledOperation
     @Scheduled(cron = "0 0 12 * * ?")
     public void midDayJob() {
         marzniRacunRepository.findAll().stream()
@@ -120,6 +126,7 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
                 .forEach(this::executeCut);
     }
 
+    @GeneratedScheduledOperation
     @Scheduled(cron = "0 0 21 * * ?")
     public void endOfDayJob() {
         marzniRacunRepository.findAll().stream()
@@ -127,6 +134,7 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
                 .forEach(this::executeCut);
     }
 
+    @GeneratedOnlyIntegrationTestable
     public void executeCut(MarzniRacun marzniRacun) {
         if (marzniRacun.getMarginCall() && marzniRacun.getMaintenanceDeadline().compareTo(System.currentTimeMillis()) <= 0) {
             liquidate(marzniRacun, null);
@@ -136,7 +144,7 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
             marzniRacunRepository.save(marzniRacun);
         }
     }
-
+    @GeneratedOnlyIntegrationTestable
     @Override
     public ResponseEntity<?> changeFundsFromOrder(PairDTO pairDTO) {
 
@@ -163,6 +171,7 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
         return ResponseEntity.ok().build();
     }
 
+    @GeneratedOnlyIntegrationTestable
     private void liquidate(MarzniRacun marzniRacun, Map<String, Integer> tickers) {
         // Mapa tickers je String za ticker integer za amount stocka da proda sa tim tickerom
         ObjectMapper objectMapper = new ObjectMapper();
@@ -279,6 +288,7 @@ public class MarzniRacunServiceImpl implements MarzniRacunService{
         }
     }
 
+    @GeneratedOnlyIntegrationTestable
     @Override
     public ResponseEntity<?> addFundsToMarzniRacun(MarzniRacunUpdateDTO marzniRacunUpdateDTO) {
         Optional<MarzniRacun> optionalMarzniRacun = marzniRacunRepository.findByVlasnikAndGrupaHartija(marzniRacunUpdateDTO.getUserId(), marzniRacunUpdateDTO.getGrupaHartija());

@@ -8,8 +8,10 @@ import java.math.BigDecimal;
 @Data
 public class UserStockDto {
 
+    private Long id;
     private String ticker;
     private Integer quantity;
+    private Integer publicQuantity;
     private BigDecimal currentBid;
     private BigDecimal currentAsk;
 

@@ -149,11 +149,22 @@ public class OpcijaMapper {
         KorisnikoveKupljeneOpcije korisnikoveKupljeneOpcije = new KorisnikoveKupljeneOpcije();
         korisnikoveKupljeneOpcije.setOpcijaId(opcijaKorisnikaDto.getOpcijaId());
         korisnikoveKupljeneOpcije.setIskoriscena(false);
-        korisnikoveKupljeneOpcije.setAkcijaId(opcijaKorisnikaDto.getAkcijaId());
+        korisnikoveKupljeneOpcije.setTicker(opcijaKorisnikaDto.getTicker());
         korisnikoveKupljeneOpcije.setAkcijaTickerCenaPrilikomIskoriscenja(opcijaKorisnikaDto.getAkcijaTickerCenaPrilikomIskoriscenja());
         korisnikoveKupljeneOpcije.setKorisnikId(opcijaKorisnikaDto.getKorisnikId());
 
         return korisnikoveKupljeneOpcije;
     }
 
+
+    public OpcijaKorisnikaDto opcijaKorisnikaToNovaKorisnikovaKupljenaOpcijaDTO(KorisnikoveKupljeneOpcije opcijaKorisnikaDto){
+
+        OpcijaKorisnikaDto korisnikoveKupljeneOpcije = new OpcijaKorisnikaDto();
+        korisnikoveKupljeneOpcije.setOpcijaId(opcijaKorisnikaDto.getOpcijaId());
+        korisnikoveKupljeneOpcije.setTicker(opcijaKorisnikaDto.getTicker());
+        korisnikoveKupljeneOpcije.setAkcijaTickerCenaPrilikomIskoriscenja(opcijaKorisnikaDto.getAkcijaTickerCenaPrilikomIskoriscenja());
+        korisnikoveKupljeneOpcije.setKorisnikId(opcijaKorisnikaDto.getKorisnikId());
+
+        return korisnikoveKupljeneOpcije;
+    }
 }

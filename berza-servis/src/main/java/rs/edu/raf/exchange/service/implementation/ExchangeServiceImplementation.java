@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import rs.edu.raf.annotations.GeneratedLegacyCode;
 import rs.edu.raf.exchange.dto.ExchangeDTO;
 import rs.edu.raf.exchange.mapper.ExchangeMapper;
 import rs.edu.raf.exchange.model.Exchange;
@@ -160,7 +161,7 @@ public class ExchangeServiceImplementation implements ExchangeService {
         }
     }*/
 
-
+    @GeneratedLegacyCode
     public ZonedDateTime getCurrentTimeForExchange(String exchangeName) {
         Exchange exchange = exchangeRepository.findByExchangeName(exchangeName);
         if (exchange == null) {
@@ -171,6 +172,7 @@ public class ExchangeServiceImplementation implements ExchangeService {
         return ZonedDateTime.now(timeZone);
     }
 
+    @GeneratedLegacyCode
     public boolean isDaylightSavingTime(String exchangeName) {
         Exchange exchange = exchangeRepository.findByExchangeName(exchangeName);
         if (exchange == null) {

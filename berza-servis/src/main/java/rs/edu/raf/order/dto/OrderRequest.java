@@ -1,5 +1,6 @@
 package rs.edu.raf.order.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -8,6 +9,8 @@ import java.math.BigDecimal;
 public class OrderRequest {
 
     private Long userId;
+
+    private Long radnikId;
 
     private String ticker;
 

@@ -1,5 +1,9 @@
 package rs.edu.raf.order.service.mapper;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import rs.edu.raf.order.dto.OrderDto;
 import org.junit.jupiter.api.Test;
 import rs.edu.raf.order.dto.OrderRequest;
@@ -11,6 +15,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderMapperTest {
 
+    @Mock
+    private OrderMapper orderMapper;
+
+    @BeforeEach
+    public void setup() {
+        orderMapper = new OrderMapper();
+    }
+
     @Test
     public void testMapOrderRequestToOrder() {
         OrderRequest orderRequest = new OrderRequest();
@@ -20,7 +32,7 @@ public class OrderMapperTest {
         orderRequest.setStop(BigDecimal.valueOf(90.0));
         orderRequest.setAction("BUY");
 
-        Order order = OrderMapper.mapOrderRequestToOrder(orderRequest);
+        Order order = orderMapper.mapOrderRequestToOrder(orderRequest);
 
         assertNotNull(order);
         assertEquals("AAPL", order.getTicker());
@@ -39,7 +51,7 @@ public class OrderMapperTest {
         order.setStop(BigDecimal.valueOf(90.0));
         order.setAction("BUY");
 
-        OrderDto orderDto = OrderMapper.toDto(order);
+        OrderDto orderDto = orderMapper.toDto(order);
 
         assertNotNull(orderDto);
         assertEquals("AAPL", orderDto.getTicker());

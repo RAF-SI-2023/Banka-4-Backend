@@ -11,8 +11,10 @@ public class UserStockMapper {
         if (userStock == null) return null;
 
         UserStockDto userStockDto = new UserStockDto();
+        userStockDto.setId(userStock.getId());
         userStockDto.setTicker(userStock.getTicker());
         userStockDto.setQuantity(userStock.getQuantity());
+        userStockDto.setPublicQuantity(userStock.getPublicQuantity());
         userStockDto.setCurrentBid(userStock.getCurrentBid());
         userStockDto.setCurrentAsk(userStock.getCurrentAsk());
         return userStockDto;

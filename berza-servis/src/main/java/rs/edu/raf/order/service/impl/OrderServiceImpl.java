@@ -4,12 +4,13 @@ import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
 import rs.edu.raf.order.dto.OrderDto;
 import rs.edu.raf.order.dto.OrderRequest;
 import rs.edu.raf.order.dto.PairDTO;
 import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.Enums.Action;
-import rs.edu.raf.order.model.Enums.Status;
 import rs.edu.raf.order.model.Enums.Type;
 import rs.edu.raf.order.model.Order;
 import rs.edu.raf.order.repository.OrderRepository;
@@ -24,7 +25,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
 
-@Data
 @AllArgsConstructor
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -33,12 +33,14 @@ public class OrderServiceImpl implements OrderService {
 
     private final UserStockService userStockService;
 
+    private final OrderMapper orderMapper;
+
     @Override
     public OrderDto placeOrder(OrderRequest orderRequest) {
-        return OrderMapper.toDto(orderRepository.save(OrderMapper.mapOrderRequestToOrder(orderRequest)));
-//        return (orderRequest.getAction().equals(Action.BUY)) ? placeBuyOrder(OrderMapper.mapOrderRequestToOrder(orderRequest)) : placeSellOrder(OrderMapper.mapOrderRequestToOrder(orderRequest));
+        return orderMapper.toDto(orderRepository.save(orderMapper.mapOrderRequestToOrder(orderRequest)));
     }
 
+    @GeneratedCrudOperation
     @Override
     public OrderDto rejectOrder(Long orderId) {
         OrderDto result = null;
@@ -47,31 +49,34 @@ public class OrderServiceImpl implements OrderService {
             Order order = optionalOrder.get();
             if (order.getStatus().equals("PENDING")) {
                 order.setStatus("REJECTED");
-                result = OrderMapper.toDto(orderRepository.save(order));
+                order = orderRepository.save(order);
+                result = orderMapper.toDto(order);
             }
         }
         return result;
     }
 
+    @GeneratedCrudOperation
     @Override
-    public OrderDto acceptOrder(Long orderId) {
+    public OrderDto acceptOrder(Long orderId, String token) {
         OrderDto result = null;
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             Order order = optionalOrder.get();
             if (order.getStatus().equals("PENDING")) {
                 order.setStatus("ACCEPTED");
-                if (order.getAction().equals(Action.BUY)) placeBuyOrder(order);
-                else placeSellOrder(order);
-                result = OrderMapper.toDto(orderRepository.save(order));
+                if (order.getAction().equals(Action.BUY)) placeBuyOrder(order, token);
+                else placeSellOrder(order, token);
+                result = orderMapper.toDto(orderRepository.save(order));
             }
         }
         return result;
     }
 
-    private OrderDto placeBuyOrder(Order buyOrder) {
+    @GeneratedCrudOperation
+    private OrderDto placeBuyOrder(Order buyOrder, String token) {
         orderRepository.save(buyOrder);
-        checkStopOrderAndStopLimitOrder();
+        checkStopOrderAndStopLimitOrder(token);
 
         if (buyOrder.getType().equals(Type.MARKET_ORDER) || buyOrder.getType().equals(Type.LIMIT_ORDER)) {
 
@@ -84,7 +89,8 @@ public class OrderServiceImpl implements OrderService {
             Map<Order, Integer> matchedSellOrders = new HashMap<>();
 
             for (Order sellOrder : sellOrders) {
-                if (buyOrder.getQuantity() == 0 || (buyOrder.getType().equals(Type.LIMIT_ORDER) && buyOrder.getLimit().compareTo(sellOrder.getLimit()) <= 0)) break;
+                if (buyOrder.getId().equals(sellOrder.getId())) continue;
+                if (buyOrder.getQuantity() == 0 || (buyOrder.getType().equals(Type.LIMIT_ORDER) && buyOrder.getLimit().compareTo(sellOrder.getLimit()) < 0)) break;
 
                 if (sellOrder.getQuantity() > buyOrder.getQuantity()) {
                     sellOrder.setQuantity(sellOrder.getQuantity() - buyOrder.getQuantity());
@@ -110,14 +116,14 @@ public class OrderServiceImpl implements OrderService {
 
             // future margin order check
 
-            modifyUserBalance(buyOrder.getUserId(), totalValueChange.negate());
+            modifyUserBalance(buyOrder.getUserId(), totalValueChange.negate(), buyOrder.getRadnikId(), token);
             int totalQuantitySold = 0;
 
             for (Map.Entry<Order, Integer> entry : matchedSellOrders.entrySet()) {
                 Order sellOrder = entry.getKey();
                 Integer quantitySold = entry.getValue();
 
-                modifyUserBalance(sellOrder.getUserId(), sellOrder.getLimit().multiply(new BigDecimal(quantitySold)));
+                modifyUserBalance(sellOrder.getUserId(), sellOrder.getLimit().multiply(new BigDecimal(quantitySold)), sellOrder.getRadnikId(), token);
 
                 totalQuantitySold += quantitySold;
             }
@@ -137,12 +143,13 @@ public class OrderServiceImpl implements OrderService {
             else orderRepository.save(buyOrder);
         }
 
-        return OrderMapper.toDto(buyOrder);
+        return orderMapper.toDto(buyOrder);
     }
 
-    private OrderDto placeSellOrder(Order sellOrder) {
+    @GeneratedCrudOperation
+    private OrderDto placeSellOrder(Order sellOrder, String token) {
         orderRepository.save(sellOrder);
-        checkStopOrderAndStopLimitOrder();
+        checkStopOrderAndStopLimitOrder(token);
 
         UserStockRequest userStockRequest = new UserStockRequest();
         userStockRequest.setUserId(sellOrder.getUserId());
@@ -157,7 +164,8 @@ public class OrderServiceImpl implements OrderService {
             Map<Order, Integer> matchedBuyOrders = new HashMap<>();
 
             for (Order buyOrder : buyOrders) {
-                if (sellOrder.getQuantity() == 0 || (sellOrder.getType().equals(Type.LIMIT_ORDER) && sellOrder.getLimit().compareTo(buyOrder.getLimit()) >= 0)) break;
+                if (sellOrder.getId().equals(buyOrder.getId())) continue;
+                if (sellOrder.getQuantity() == 0 || (sellOrder.getType().equals(Type.LIMIT_ORDER) && sellOrder.getLimit().compareTo(buyOrder.getLimit()) > 0)) break;
 
                 if (buyOrder.getQuantity() > sellOrder.getQuantity()) {
                     buyOrder.setQuantity(buyOrder.getQuantity() - sellOrder.getQuantity());
@@ -183,14 +191,14 @@ public class OrderServiceImpl implements OrderService {
 
             // future margin order check
 
-            modifyUserBalance(sellOrder.getUserId(), totalValueChange);
+            modifyUserBalance(sellOrder.getUserId(), totalValueChange, sellOrder.getRadnikId(), token);
 
             for (Map.Entry<Order, Integer> entry : matchedBuyOrders.entrySet()) {
                 Order buyOrder = entry.getKey();
                 Integer quantityBought = entry.getValue();
 
                 // Modify buyer's balance
-                modifyUserBalance(buyOrder.getUserId(), buyOrder.getLimit().multiply(new BigDecimal(quantityBought)).negate());
+                modifyUserBalance(buyOrder.getUserId(), buyOrder.getLimit().multiply(new BigDecimal(quantityBought)).negate(), buyOrder.getRadnikId(), token);
 
                 // Modify buyer's stock quantity
                 UserStockRequest userStockRequestBuyer = new UserStockRequest();
@@ -208,12 +216,13 @@ public class OrderServiceImpl implements OrderService {
             else orderRepository.save(sellOrder);
         }
 
-        return OrderMapper.toDto(sellOrder);
+        return orderMapper.toDto(sellOrder);
     }
 
     @Override
+    @GeneratedCrudOperation
     public BigDecimal approximateOrderValue(OrderRequest orderRequest) {
-        Order buyOrder = OrderMapper.mapOrderRequestToOrder(orderRequest);
+        Order buyOrder = orderMapper.mapOrderRequestToOrder(orderRequest);
         List<Order> sellOrders = findAllSellOrdersForTicker(buyOrder.getTicker());
         BigDecimal approximateValue = BigDecimal.ZERO;
         int remainingQuantity = buyOrder.getQuantity();
@@ -251,7 +260,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getAllOrders() {
         return orderRepository.findAll().stream()
-                .map(OrderMapper::toDto)
+                .map(orderMapper::toDto)
                 .toList();
     }
 
@@ -260,7 +269,8 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByUserId(userId);
     }
 
-    private void checkStopOrderAndStopLimitOrder() {
+    @GeneratedOnlyIntegrationTestable
+    private void checkStopOrderAndStopLimitOrder(String token) {
         List<Order> allOrders = orderRepository.findAll();
         for (Order order : allOrders) {
             if (order.getType().equals(Type.STOP_ORDER)) {
@@ -268,13 +278,13 @@ public class OrderServiceImpl implements OrderService {
                     List<Order> sellOrders = findAllSellOrdersForTicker(order.getTicker());
                     if (!sellOrders.isEmpty() && sellOrders.get(0).getLimit().compareTo(order.getStop()) >= 0) {
                         order.setType(Type.MARKET_ORDER);
-                        placeBuyOrder(order);
+                        placeBuyOrder(order, token);
                     }
                 } else if (order.getAction().equals(Action.SELL)) {
                     List<Order> buyOrders = findAllBuyOrdersForTicker(order.getTicker());
                     if (!buyOrders.isEmpty() && buyOrders.get(0).getLimit().compareTo(order.getStop()) <= 0) {
                         order.setType(Type.MARKET_ORDER);
-                        placeSellOrder(order);
+                        placeSellOrder(order, token);
                     }
                 }
             } else if (order.getType().equals(Type.STOP_LIMIT_ORDER)) {
@@ -282,13 +292,13 @@ public class OrderServiceImpl implements OrderService {
                     List<Order> sellOrders = findAllSellOrdersForTicker(order.getTicker());
                     if (!sellOrders.isEmpty() && sellOrders.get(0).getLimit().compareTo(order.getStop()) >= 0) {
                         order.setType(Type.LIMIT_ORDER);
-                        placeBuyOrder(order);
+                        placeBuyOrder(order, token);
                     }
                 } else if (order.getAction().equals(Action.SELL)) {
                     List<Order> buyOrders = findAllBuyOrdersForTicker(order.getTicker());
                     if (!buyOrders.isEmpty() && buyOrders.get(0).getLimit().compareTo(order.getStop()) <= 0) {
                         order.setType(Type.LIMIT_ORDER);
-                        placeSellOrder(order);
+                        placeSellOrder(order, token);
                     }
                 }
             }
@@ -299,21 +309,25 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findAllBuyOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.BUY, ticker)
                 .stream()
+                .filter(order -> order.getStatus().equals("ACCEPTED"))
                 .sorted(Comparator.comparing(Order::getLimit).reversed())
                 .toList();
     }
 
     @Override
+    @GeneratedCrudOperation
     public List<Order> findAllSellOrdersForTicker(String ticker) {
         return orderRepository.findAllByActionAndTicker(Action.SELL, ticker)
                 .stream()
+                .filter(order -> order.getStatus().equals("ACCEPTED"))
                 .sorted(Comparator.comparing(Order::getLimit))
                 .toList();
     }
 
-    private void modifyUserBalance(Long userId, BigDecimal valueChange) {
+    @GeneratedOnlyIntegrationTestable
+    private void modifyUserBalance(Long userId, BigDecimal valueChange, Long radnikId, String token) {
 
-        String marzniRacunUpdateFundsEndpoint = "localhost:8082/api/marzniRacuni/updateBalance";
+        String marzniRacunUpdateFundsEndpoint = "http://localhost:8082/api/marzniRacuni/updateBalance";
         Gson gson = new Gson();
 
         PairDTO pair = new PairDTO();
@@ -324,11 +338,28 @@ public class OrderServiceImpl implements OrderService {
         HttpRequest stocksRequest = HttpRequest.newBuilder()
                 .uri(URI.create(marzniRacunUpdateFundsEndpoint))
                 .header("Content-Type", "application/json")
+                .header("Authorization", token)
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(pair)))
                 .build();
 
+        if (radnikId != null) {
+            String getRadnikByIdEndpoint = "https://banka-4-dev.si.raf.edu.rs/user-service/api/radnik/profit/" + radnikId + "/" + valueChange;
+            HttpRequest radnikRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(getRadnikByIdEndpoint))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", token)
+                    .PUT(HttpRequest.BodyPublishers.noBody())
+                    .build();
+
+            try {
+                client.send(radnikRequest, HttpResponse.BodyHandlers.ofString());
+            } catch (Exception e) {
+                System.out.println("Failed to send balance update to MarniRacunController: " + e);
+            }
+        }
+
         try {
-            HttpResponse<String> stocksResponse = client.send(stocksRequest, HttpResponse.BodyHandlers.ofString());
+            client.send(stocksRequest, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
             System.out.println("Failed to send balance update to MarniRacunController: " + e);
         }

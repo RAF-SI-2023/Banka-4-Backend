@@ -2,10 +2,8 @@ package rs.edu.raf.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rs.edu.raf.model.dto.CardNameDto;
 import rs.edu.raf.model.dto.CardResponseDto;
@@ -40,7 +38,7 @@ public class CardServiceImplTest {
 
 
     @Test
-    void createCard() {
+    void createCardVisa() {
         CreateCardDto createCardDto = new CreateCardDto();
         createCardDto.setName("visa");
         createCardDto.setLimit(BigDecimal.valueOf(5000));
@@ -73,8 +71,110 @@ public class CardServiceImplTest {
     }
 
     @Test
-    void deleteCard() {
+    void createCardMasterCard(){
+        CreateCardDto createCardDto = new CreateCardDto();
+        createCardDto.setName("mastercard");
+        createCardDto.setLimit(BigDecimal.valueOf(5000));
+        createCardDto.setType("mastercard");
+        createCardDto.setBankAccountNumber("123456789");
 
+        Card card = new Card();
+        card.setName("TestName MasterCard");
+        card.setCardLimit(BigDecimal.valueOf(5000));
+        card.setType("visa");
+        card.setCreationDate(System.currentTimeMillis());
+        card.setExpirationDate(System.currentTimeMillis() + 157680000000L);
+        card.setStatus("active");
+        card.setBankAccountNumber(4123451234567890L);
+        card.setBlocked(false);
+        card.setCvv("123");
+
+        given(cardRepository.save(any(Card.class))).willReturn(card);
+
+        String result = cardService.createCard(createCardDto);
+        String expected = "Uspesno kreirana kartica";
+
+        assertEquals(expected, result);
+        if(!expected.equals(result)){
+            fail("Expected " + expected);
+        }
+
+        verify(cardRepository, times(1)).save(any(Card.class));
+
+    }
+
+    @Test
+    void createCardAmericanExpress(){
+        CreateCardDto createCardDto = new CreateCardDto();
+        createCardDto.setName("american_express");
+        createCardDto.setLimit(BigDecimal.valueOf(5000));
+        createCardDto.setType("american_express");
+        createCardDto.setBankAccountNumber("123456789");
+
+        Card card = new Card();
+        card.setName("TestName");
+        card.setCardLimit(BigDecimal.valueOf(5000));
+        card.setType("american_express");
+        card.setCreationDate(System.currentTimeMillis());
+        card.setExpirationDate(System.currentTimeMillis() + 157680000000L);
+        card.setStatus("active");
+        card.setBankAccountNumber(4123451234567890L);
+        card.setBlocked(false);
+        card.setCvv("123");
+
+        given(cardRepository.save(any(Card.class))).willReturn(card);
+
+        String result = cardService.createCard(createCardDto);
+        String expected = "Uspesno kreirana kartica";
+
+        assertEquals(expected, result);
+        if(!expected.equals(result)){
+            fail("Expected " + expected);
+        }
+
+        verify(cardRepository, times(1)).save(any(Card.class));
+    }
+
+    @Test
+    void createCard_UnsupportedType() {
+        CreateCardDto createCardDto = new CreateCardDto();
+        createCardDto.setName("Test Unsupported");
+        createCardDto.setLimit(BigDecimal.valueOf(5000));
+        createCardDto.setType("unsupported");
+        createCardDto.setBankAccountNumber("123456789");
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            cardService.createCard(createCardDto);
+        });
+
+        assertEquals("Unsupported card type", exception.getMessage());
+        verify(cardRepository, times(0)).save(any(Card.class));
+    }
+
+    @Test
+    void deleteCard() {
+        String cardNumber = "1234567890123456";
+        Card card = new Card();
+        card.setNumber(cardNumber);
+
+        given(cardRepository.findCardByNumber(cardNumber)).willReturn(Optional.of(card));
+
+        cardService.deleteCard(cardNumber);
+
+        verify(cardRepository, times(1)).findCardByNumber(cardNumber);
+        verify(cardRepository, times(1)).delete(card);
+    }
+
+    @Test
+    void deleteCard_NotFound() {
+        String cardNumber = "1234567890123456";
+
+        given(cardRepository.findCardByNumber(cardNumber)).willReturn(Optional.empty());
+
+        cardService.deleteCard(cardNumber);
+
+        verify(cardRepository, times(1)).findCardByNumber(cardNumber);
+        verify(cardRepository, times(0)).delete(any(Card.class));
     }
 
     @Test
@@ -96,6 +196,18 @@ public class CardServiceImplTest {
         verify(cardRepository, times(1)).findCardByNumber("1234567890123456");
         verify(cardRepository, times(1)).save(card);
 
+    }
+
+    @Test
+    void blockCard_NotFound() {
+        String cardNumber = "1234567890123456";
+
+        given(cardRepository.findCardByNumber(cardNumber)).willReturn(Optional.empty());
+
+        cardService.blockCard(cardNumber);
+
+        verify(cardRepository, times(1)).findCardByNumber(cardNumber);
+        verify(cardRepository, times(0)).save(any(Card.class));
     }
 
     @Test
@@ -121,6 +233,18 @@ public class CardServiceImplTest {
     }
 
     @Test
+    void activateCard_NotFound() {
+        String cardNumber = "1234567890123456";
+
+        given(cardRepository.findCardByNumber(cardNumber)).willReturn(Optional.empty());
+
+        cardService.activateCard(cardNumber);
+
+        verify(cardRepository, times(1)).findCardByNumber(cardNumber);
+        verify(cardRepository, times(0)).save(any(Card.class));
+    }
+
+    @Test
     void deactivateCard() {
         Card card = new Card();
         card.setNumber("1234567890123456");
@@ -142,6 +266,20 @@ public class CardServiceImplTest {
         verify(cardRepository, times(1)).save(card);
 
     }
+
+    @Test
+    void deactivateCard_NotFound() {
+        String cardNumber = "1234567890123456";
+
+        given(cardRepository.findCardByNumber(cardNumber)).willReturn(Optional.empty());
+
+        cardService.deactivateCard(cardNumber);
+
+        verify(cardRepository, times(1)).findCardByNumber(cardNumber);
+        verify(cardRepository, times(0)).save(any(Card.class));
+    }
+
+
 
     @Test
     void getCardNames() {

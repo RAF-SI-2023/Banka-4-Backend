@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
+import rs.edu.raf.annotations.GeneratedExternalAPI;
+import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.dto.*;
 import rs.edu.raf.exceptions.JMBGDateMismatchException;
 import rs.edu.raf.exceptions.UserNotFoundException;
@@ -64,6 +67,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return korisnikMapper.korisnikToKorisnikDto(korisnikRepository.save(korisnik));
     }
 
+    @GeneratedExternalAPI
     @Override
     public boolean registrujNovogKorisnika(RegistrujKorisnikDTO registrujKorisnikDTO) {
 
@@ -90,6 +94,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return false;
     }
 
+    @GeneratedExternalAPI
     @Override
     public KorisnikDTO promeniSifruKorisnikaUzKod(IzmenaSifreUzKodDto izmenaSifreUzKodDto) {
         if(kodServis.dobarKod(izmenaSifreUzKodDto.getEmail(), izmenaSifreUzKodDto.getKod(),true)) {
@@ -99,6 +104,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return null;
     }
 
+    @GeneratedExternalAPI
     @Override
     public KorisnikDTO promeniSifruKorisnika(String email, IzmenaSifreDto izmenaSifreDto) {
         Optional<Korisnik> korisnik = korisnikRepository.findByEmailAndAktivanIsTrue(email);
@@ -141,21 +147,21 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Korisnik> korisnik = korisnikRepository.findById(izmenaKorisnikaDTO.getId());
 
         if (korisnik.isPresent()) {
-            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
-            if (korisnik.get().getJmbg().toString().length() == 12) {
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 1)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(1, 3)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(3, 6))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
-            else{
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 2)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2, 4)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4, 7))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
+//            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(korisnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+//            if (korisnik.get().getJmbg().toString().length() == 12) {
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 1)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(1, 3)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(3, 6))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
+//            else{
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(0, 2)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(korisnik.get().getJmbg().toString().substring(2, 4)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(korisnik.get().getJmbg().toString().substring(4, 7))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
 
             if(izmenaKorisnikaDTO.getPrezime()!=null && !izmenaKorisnikaDTO.getPrezime().equals(""))
                 korisnik.get().setPrezime(izmenaKorisnikaDTO.getPrezime());
@@ -185,21 +191,21 @@ public class KorisnikServisImpl implements KorisnikServis {
         Optional<Radnik> radnik = radnikRepository.findById(izmenaRadnikaDTO.getId());
 
         if (radnik.isPresent()) {
-            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
-            if (radnik.get().getJmbg().toString().length() == 12) {
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 1)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(1, 3)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(3, 6))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
-            else{
-                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 2)) ||
-                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2, 4)) ||
-                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(4, 7))) {
-                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
-                }
-            }
+//            LocalDateTime datumRodjenja = LocalDateTime.ofInstant(Instant.ofEpochMilli(radnik.get().getDatumRodjenja()), ZoneOffset.systemDefault());
+//            if (radnik.get().getJmbg().toString().length() == 12) {
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 1)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(1, 3)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(3, 6))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
+//            else{
+//                if (datumRodjenja.getDayOfMonth() != Integer.parseInt(radnik.get().getJmbg().toString().substring(0, 2)) ||
+//                        datumRodjenja.getMonthValue() != Integer.parseInt(radnik.get().getJmbg().toString().substring(2, 4)) ||
+//                        datumRodjenja.getYear() % 1000 != Integer.parseInt(radnik.get().getJmbg().toString().substring(4, 7))) {
+//                    throw new JMBGDateMismatchException("Datum rodjenja i JMBG se ne poklapaju!");
+//                }
+//            }
 
             if(izmenaRadnikaDTO.getPrezime()!=null && !izmenaRadnikaDTO.getPrezime().equals(""))
                 radnik.get().setPrezime(izmenaRadnikaDTO.getPrezime());
@@ -244,6 +250,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return korisnici.stream().map(korisnikMapper::korisnikToKorisnikDto).collect(Collectors.toList());
     }
 
+
     @Override
     public RadnikDTO nadjiAktivnogRadnikaPoEmail(String email) {
 
@@ -251,6 +258,7 @@ public class KorisnikServisImpl implements KorisnikServis {
 
         return radnik.map(radnikMapper::radnikToRadnikDto).orElseThrow(()->new UserNotFoundException("Employee with phone " + email + " not found!"));
     }
+
 
     @Override
     public KorisnikDTO nadjiAktivnogKorisnikaPoEmail(String email) {
@@ -276,6 +284,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return korisnik.map(korisnikMapper::korisnikToKorisnikDto).orElseThrow(()->new UserNotFoundException("User with phone " + brojTelefona + " not found!"));
     }
 
+    @GeneratedCrudOperation
     @Override
     public KorisnikDTO findUserById(Long id) {
         Korisnik korisnik = korisnikRepository.findKorisnikByIdAndAktivanIsTrue(id).orElse(null);
@@ -283,6 +292,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return null;
     }
 
+    @GeneratedCrudOperation
     public RadnikDTO findWorkerById(Long id){
         return radnikMapper.radnikToRadnikDto(radnikRepository.findById(id).orElse(null));
     }
@@ -319,6 +329,7 @@ public class KorisnikServisImpl implements KorisnikServis {
         return radnikMapper.radnikToRadnikDto(radnikRepository.save(radnik));
     }
 
+    @GeneratedScheduledOperation
     @Override
     public void updateDailySpent(Long id, BigDecimal price) {
         Radnik radnik = radnikRepository.findById(id).orElseThrow(()->new UserNotFoundException("Employee with id " + id + " not found!"));
@@ -326,7 +337,16 @@ public class KorisnikServisImpl implements KorisnikServis {
         radnikRepository.save(radnik);
     }
 
-    @Scheduled(initialDelay = 180000, fixedRate = 60000)
+    @Override
+    @GeneratedCrudOperation
+    public void updateProfit(Long id, BigDecimal price) {
+        Radnik radnik = radnikRepository.findById(id).orElseThrow(()->new UserNotFoundException("Employee with id " + id + " not found!"));
+        radnik.setProfit(radnik.getProfit().add(price));
+        radnikRepository.save(radnik);
+    }
+
+    @GeneratedScheduledOperation
+    @Scheduled(cron = "0 0 0 * * ?")
     public void clearDailySpent() {
         radnikRepository.clearDailySpent();
     }

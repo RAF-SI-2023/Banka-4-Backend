@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import rs.edu.raf.annotations.GeneratedOnlyIntegrationTestable;
 import rs.edu.raf.exceptions.BankAccountNotFoundException;
 import rs.edu.raf.exceptions.CompanyNotFoundException;
 import rs.edu.raf.model.dto.KorisnikDTO;
@@ -52,6 +53,7 @@ public class RacunServisImpl implements RacunServis {
         this.racunRepository = racunRepository;
     }
 
+    @GeneratedOnlyIntegrationTestable
     @Override
     public DevizniRacun kreirajDevizniRacun(NoviDevizniRacunDTO noviDevizniRacunDTO) {
         DevizniRacun dr = racunMapper.noviDevizniRacunDTOToDevizniRacun(noviDevizniRacunDTO);
@@ -85,6 +87,7 @@ public class RacunServisImpl implements RacunServis {
         return prRepo;
     }
 
+    @GeneratedOnlyIntegrationTestable
     @Override
     public TekuciRacun kreirajTekuciRacun(NoviTekuciRacunDTO noviTekuciRacunDTO) {
         TekuciRacun tr = racunMapper.noviTekuciRacunDTOToTekuciRacun(noviTekuciRacunDTO);
@@ -108,6 +111,7 @@ public class RacunServisImpl implements RacunServis {
         }
     }
 
+    @GeneratedOnlyIntegrationTestable
     @Override
     public List<RacunDTO> izlistavanjeRacunaJednogKorisnika(Long idKorisnika, String token) {
 
@@ -293,6 +297,15 @@ public class RacunServisImpl implements RacunServis {
     }
 
     @Override
+    public FirmaDTO dohvatiFirmu(Long id){
+        Optional<Firma> firma = firmaRepository.findById(id);
+        if (firma.isEmpty()) {
+            return null;
+        }
+        return firmaMapper.firmaToFirmaDTO(firmaRepository.findById(id).get());
+    }
+
+    @Override
     public Firma kreirajFirmu(NovaFirmaDTO firmaDTO) {
         Firma f = firmaMapper.novaFirmaDTOToFirma(firmaDTO);
         return this.firmaRepository.save(f);
@@ -300,25 +313,27 @@ public class RacunServisImpl implements RacunServis {
 
     @Override
     public boolean deaktiviraj(Long brojRacuna) {
-        String  vrsta = nadjiVrstuRacuna(brojRacuna);
-        switch (vrsta){
-            case "PravniRacun" -> {
-                PravniRacun pravniRacun = nadjiAktivanPravniRacunPoBrojuRacuna(brojRacuna);
-                pravniRacun.setAktivan(false);
-                pravniRacunRepository.save(pravniRacun);
-                return true;
-            }
-            case "DevizniRacun" -> {
-                DevizniRacun devizniRacun = nadjiAktivanDevizniRacunPoBrojuRacuna(brojRacuna);
-                devizniRacun.setAktivan(false);
-                devizniRacunRepository.save(devizniRacun);
-                return true;
-            }
-            case "TekuciRacun" -> {
-                TekuciRacun tekuciRacun = nadjiAktivanTekuciRacunPoBrojuRacuna(brojRacuna);
-                tekuciRacun.setAktivan(false);
-                tekuciRacunRepository.save(tekuciRacun);
-                return true;
+        String vrsta = nadjiVrstuRacuna(brojRacuna);
+        if (vrsta != null) {
+            switch (vrsta) {
+                case "PravniRacun" -> {
+                    PravniRacun pravniRacun = nadjiAktivanPravniRacunPoBrojuRacuna(brojRacuna);
+                    pravniRacun.setAktivan(false);
+                    pravniRacunRepository.save(pravniRacun);
+                    return true;
+                }
+                case "DevizniRacun" -> {
+                    DevizniRacun devizniRacun = nadjiAktivanDevizniRacunPoBrojuRacuna(brojRacuna);
+                    devizniRacun.setAktivan(false);
+                    devizniRacunRepository.save(devizniRacun);
+                    return true;
+                }
+                case "TekuciRacun" -> {
+                    TekuciRacun tekuciRacun = nadjiAktivanTekuciRacunPoBrojuRacuna(brojRacuna);
+                    tekuciRacun.setAktivan(false);
+                    tekuciRacunRepository.save(tekuciRacun);
+                    return true;
+                }
             }
         }
         return false;
@@ -338,16 +353,22 @@ public class RacunServisImpl implements RacunServis {
     }
 
     public Object nadjiRacunPoBrojuRacuna(Long brojRacuna){
-        TekuciRacun tekuciRacun = nadjiAktivanTekuciRacunPoBrojuRacuna(brojRacuna);
-        if(tekuciRacun != null){
-            return tekuciRacun;
-        }
+        String vrsta = nadjiVrstuRacuna(brojRacuna);
+        if (vrsta != null) {
+            if (vrsta.equals("TekuciRacun")) {
+                TekuciRacun tekuciRacun = nadjiAktivanTekuciRacunPoBrojuRacuna(brojRacuna);
+                if (tekuciRacun != null) {
+                    return tekuciRacun;
+                }
+            }
 
-        DevizniRacun devizniRacun = nadjiAktivanDevizniRacunPoBrojuRacuna(brojRacuna);
-        if(devizniRacun != null){
-            return devizniRacun;
+            if (vrsta.equals("DevizniRacun")) {
+                DevizniRacun devizniRacun = nadjiAktivanDevizniRacunPoBrojuRacuna(brojRacuna);
+                if (devizniRacun != null) {
+                    return devizniRacun;
+                }
+            }
         }
-
         return null;
     }
 

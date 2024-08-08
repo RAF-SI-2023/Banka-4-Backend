@@ -15,7 +15,7 @@ public class OpcijaKorisnikaDto {
 
     private Long opcijaId;
 
-    private Long akcijaId;
+    private String ticker;
 
     private BigDecimal akcijaTickerCenaPrilikomIskoriscenja;//stvarna cena akcija prilikom iskoriscenja opcije
 

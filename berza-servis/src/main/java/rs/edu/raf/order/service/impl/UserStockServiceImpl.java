@@ -3,6 +3,7 @@ package rs.edu.raf.order.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedCrudOperation;
 import rs.edu.raf.order.dto.UserStockDto;
 import rs.edu.raf.order.dto.UserStockRequest;
 import rs.edu.raf.order.model.UserStock;
@@ -10,9 +11,9 @@ import rs.edu.raf.order.repository.UserStockRepository;
 import rs.edu.raf.order.service.UserStockService;
 import rs.edu.raf.order.service.mapper.UserStockMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-@Data
 @AllArgsConstructor
 @Service
 public class UserStockServiceImpl implements UserStockService {
@@ -32,6 +33,8 @@ public class UserStockServiceImpl implements UserStockService {
                 newUserStock.setUserId(userId);
                 newUserStock.setTicker(ticker);
                 newUserStock.setQuantity(quantity);
+                newUserStock.setCurrentAsk(new BigDecimal("1.0"));
+                newUserStock.setCurrentBid(new BigDecimal("1.0"));
                 userStockRepository.save(newUserStock);
             } else {
                 return false;
@@ -48,6 +51,17 @@ public class UserStockServiceImpl implements UserStockService {
             }
         }
         return true;
+    }
+
+    @Override
+    @GeneratedCrudOperation
+    public UserStockDto setPublicQuantity(Long user_stock_id, Integer publicQuantity, Long userId) {
+        UserStock userStock = userStockRepository.findById(user_stock_id).orElseThrow();
+        if(userStock.getQuantity() < publicQuantity || publicQuantity < 0)
+            throw new RuntimeException("You dont have enough or quantity must be positive!");
+        if(userStock.getUserId() != userId) throw new RuntimeException("You don't own this stock!");
+        userStock.setPublicQuantity(publicQuantity);
+        return UserStockMapper.toDto(userStockRepository.save(userStock));
     }
 
     @Override

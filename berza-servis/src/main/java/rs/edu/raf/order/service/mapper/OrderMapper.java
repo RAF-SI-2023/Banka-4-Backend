@@ -10,7 +10,7 @@ import rs.edu.raf.order.model.Order;
 @Component
 public class OrderMapper {
 
-    public static Order mapOrderRequestToOrder(OrderRequest orderRequest) {
+    public Order mapOrderRequestToOrder(OrderRequest orderRequest) {
         String type;
 
         if      (orderRequest.getLimit() == null && orderRequest.getStop() == null) type = Type.MARKET_ORDER;
@@ -31,9 +31,10 @@ public class OrderMapper {
                 .build();
     }
 
-    public static OrderDto toDto(Order order) {
+    public OrderDto toDto(Order order) {
         return OrderDto.builder()
                 .id(order.getId())
+                .userId(order.getUserId())
                 .ticker(order.getTicker())
                 .quantity(order.getQuantity())
                 .limit(order.getLimit())

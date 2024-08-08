@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import rs.edu.raf.annotations.GeneratedExternalAPI;
+import rs.edu.raf.annotations.GeneratedScheduledOperation;
 import rs.edu.raf.stocks.dto.*;
 import rs.edu.raf.stocks.exceptions.ApiLimitReachException;
 import rs.edu.raf.stocks.exceptions.BadDateInputException;
@@ -36,6 +38,8 @@ public class StockServiceImpl implements StockService {
 
     private String alphaVantageApiKey = "OF6BVKZOCXWHD9NS";
 
+    @GeneratedScheduledOperation
+    @GeneratedExternalAPI
     @Scheduled(fixedRate = 180000)
     private void scheduledUpdateStock() {
         List<Stock> stocks = stockRepository.findAll();
@@ -146,6 +150,7 @@ public class StockServiceImpl implements StockService {
         return stocks.stream().map(stockMapper::stockToStockDTO).collect(Collectors.toList());
     }
 
+    @GeneratedExternalAPI
     @Override
     public StockDTO addStock(TickerDTO tickerDTO) {
 
@@ -257,6 +262,7 @@ public class StockServiceImpl implements StockService {
         throw new TickerDoesntExist();
     }
 
+    @GeneratedExternalAPI
     @Override
     public Map<String, StockHistoryInfo> getDailyStockHistory(String ticker) {
 
@@ -284,6 +290,7 @@ public class StockServiceImpl implements StockService {
         }
     }
 
+    @GeneratedExternalAPI
     @Override
     public Map<String, StockHistoryInfo> getWeeklyStockHistory(String ticker) {
 
@@ -311,6 +318,7 @@ public class StockServiceImpl implements StockService {
         }
     }
 
+    @GeneratedExternalAPI
     @Override
     public Map<String, StockHistoryInfo> getMonthlyStockHistory(String ticker) {
 

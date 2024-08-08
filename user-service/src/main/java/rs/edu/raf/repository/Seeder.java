@@ -21,6 +21,7 @@ public class Seeder implements CommandLineRunner {
         try{
             if(!reseed)
                 return;
+//            if(korisnikRepository.findAll().size() > 0 || radnikRepository.findAll().size() > 0) return;
             korisnikRepository.deleteAll();
             radnikRepository.deleteAll();
 
@@ -83,7 +84,7 @@ public class Seeder implements CommandLineRunner {
             Radnik radnik1 = new Radnik();
             radnik1.setIme("Petr");
             radnik1.setPrezime("Stamenic");
-            radnik.setFirmaId(-1L);
+            radnik1.setFirmaId(-1L);
             radnik1.setJmbg(String.valueOf(1706999793422L));
             radnik1.setDatumRodjenja(929631358000L);
             radnik1.setPol("M");
